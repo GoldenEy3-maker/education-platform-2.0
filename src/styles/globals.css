@@ -56,39 +56,9 @@
   body {
     @apply bg-background text-foreground;
   }
-}
 
-.auth-bg {
-  /* background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%); */
-  background: radial-gradient(
-      circle at bottom left,
-      rgba(250, 232, 226, 1) 10%,
-      rgba(249, 225, 238, 1) 30%,
-      rgba(216, 232, 252, 1) 50%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      rgb(115, 234, 236) 10%,
-      rgb(170, 202, 244) 30%,
-      rgba(216, 232, 252, 1) 50%,
-      transparent 100%
-    );
-}
-
-.dark .auth-bg {
-  background: radial-gradient(
-      circle at bottom left,
-      rgb(141, 111, 172) 10%,
-      rgb(27, 165, 161) 30%,
-      rgb(36, 136, 176) 50%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle at top right,
-      rgb(141, 111, 172) 10%,
-      rgb(27, 165, 161) 30%,
-      rgb(36, 136, 176) 50%,
-      transparent 100%
-    );
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none;
+  }
 }

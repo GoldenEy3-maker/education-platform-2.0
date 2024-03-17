@@ -17,7 +17,7 @@ export const ScaffoldLayout: React.FC<MainLayoutProps> = ({
           name="keywords"
           content="Образовательный портал АГУ, АГУ, Портал АГУ, Образовательный портал, Портал, Образовательный"
         />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <div className="flex min-h-svh flex-col overflow-x-hidden">
         {children}
