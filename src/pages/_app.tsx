@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { type AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "~/components/theme-provider";
+import { Toaster } from "~/components/ui/sonner";
 
 import { api } from "~/libs/api";
 
@@ -44,6 +45,7 @@ function MyApp({
         <div className={`font-sans ${inter.variable}`}>
           {getLayout(<Component {...pageProps} />)}
         </div>
+        <Toaster richColors />
       </SessionProvider>
     </ThemeProvider>
   );
