@@ -1,10 +1,10 @@
 import Head from "next/head";
 
-type MainLayoutProps = {
+type ScaffoldLayoutProps = {
   title?: string;
 } & React.PropsWithChildren;
 
-export const ScaffoldLayout: React.FC<MainLayoutProps> = ({
+export const ScaffoldLayout: React.FC<ScaffoldLayoutProps> = ({
   title,
   children,
 }) => {
@@ -19,9 +19,7 @@ export const ScaffoldLayout: React.FC<MainLayoutProps> = ({
         />
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <div className="flex min-h-svh flex-col overflow-x-hidden">
-        {children}
-      </div>
+      <div className="flex min-h-svh flex-col">{children}</div>
     </>
   );
 };

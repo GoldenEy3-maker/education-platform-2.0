@@ -1,71 +1,32 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import { Avatar } from "~/components/avatar";
-import { Spinner } from "~/components/spinner";
-import { Button } from "~/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { ScaffoldLayout } from "~/layouts/scaffold";
-import { api } from "~/libs/api";
+  BiBook,
+  BiCalendar,
+  BiCog,
+  BiGroup,
+  BiHelpCircle,
+  BiHome,
+  BiLogOutCircle,
+  BiX,
+} from "react-icons/bi";
 import { PagePathMap } from "~/libs/enums";
-import { type NextPageWithLayout } from "./_app";
+import { cn } from "~/libs/utils";
+import { Button } from "./ui/button";
 
-const formSchema = z.object({
-  login: z.string().min(1, "Обязательное поле!"),
-  password: z.string().min(1, "Обязательное поле!"),
-});
-
-type FormSchema = z.infer<typeof formSchema>;
-
-const AuthPage: NextPageWithLayout = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      login: "",
-      password: "",
-    },
-  });
-
-  const onSubmit = async (values: FormSchema) => {
-    setIsLoading(true);
-
-    const res = await signIn("credentials", {
-      ...values,
-      redirect: false,
-    });
-
-    if (res?.error) {
-      setIsLoading(false);
-      toast.error(res.error);
-      return;
-    }
-
-    setIsLoading(false);
-    toast.success("Вы успешно авторизовались!");
-    form.reset();
-    await router.push(PagePathMap.Home);
-  };
-
+export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
+  className,
+  ...props
+}) => {
   return (
-    <main className="flex min-h-svh flex-col items-center justify-center bg-[radial-gradient(circle_at_bottom_left,rgb(250,232,2261)_10%,rgb(249,225,238)_30%,rgb(216,232,252)_50%,transparent_100%),radial-gradient(circle_at_bottom_right,rgb(115,234,236)_10%,rgb(170,202,244)_30%,rgba(216,232,252,1)_50%,transparent_100%)] px-2 py-3 dark:bg-[radial-gradient(circle_at_bottom_left,rgb(141,111,172)_10%,rgb(27,165,161)_30%,rgb(36,136,176)_50%,transparent_100%),radial-gradient(circle_at_top_right,rgb(141,111,172)_10%,rgb(27,165,161)_30%,rgb(36,136,176)_50%,transparent_100%)]">
-      <div className="mb-5 flex flex-col items-center justify-center gap-2 sm:mb-7">
-        <span className="block text-8xl">
+    <aside
+      className={cn(
+        "sticky left-0 top-0 grid max-h-svh grid-rows-[auto_1fr] space-y-4 overflow-auto border border-r bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/70",
+        className,
+      )}
+      {...props}
+    >
+      <div className="flex items-center gap-2">
+        <span className="block text-6xl">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="1em"
@@ -91,96 +52,73 @@ const AuthPage: NextPageWithLayout = () => {
             />
           </svg>
         </span>
-        <h2 className="text-center text-xl font-medium [text-wrap:balance] sm:text-2xl">
-          Образовательный портал АГУ
-        </h2>
+        <h3 className="font-medium">Образовательный портал АГУ</h3>
       </div>
-      <div className="flex overflow-hidden rounded-lg shadow-sm">
-        <div className="items-center justify-center bg-background px-6 py-6 sm:px-10 sm:py-8">
-          <div className="md:w-80">
-            <h3 className="mb-1 text-center text-xl font-medium">
-              Авторизация
-            </h3>
-            <p className="mb-4 text-center text-sm text-muted-foreground">
-              Введите свой корпоративный логин и пароль от учетной записи АГУ
-            </p>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="login"
-                  disabled={isLoading}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Логин</FormLabel>
-                      <FormControl>
-                        <Input placeholder="ivanov.101s1" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  disabled={isLoading}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Пароль</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="********"
-                          type="password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex items-center justify-between gap-4">
-                  <Button asChild variant="link">
-                    <Link href="#">Забыли пароль?</Link>
-                  </Button>
-
-                  <Button
-                    className="gap-2"
-                    variant="default"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <span className="inline-block text-lg">
-                        <Spinner strokeWidth={5} />
-                      </span>
-                    ) : null}
-                    Войти
-                  </Button>
-                </div>
-              </form>
-            </Form>
+      <nav className="flex flex-col gap-2">
+        <Button asChild className="w-full justify-normal gap-2" variant="ghost">
+          <Link href={PagePathMap.Home}>
+            <BiHome className="text-xl" /> <span>Главная</span>
+          </Link>
+        </Button>
+        <Button asChild className="w-full justify-normal gap-2" variant="ghost">
+          <Link href={PagePathMap.Home}>
+            <BiBook className="text-xl" /> <span>Курсы</span>
+          </Link>
+        </Button>
+        <Button asChild className="w-full justify-normal gap-2" variant="ghost">
+          <Link href={PagePathMap.Home}>
+            <BiCalendar className="text-xl" /> <span>Расписание</span>
+          </Link>
+        </Button>
+        <Button asChild className="w-full justify-normal gap-2" variant="ghost">
+          <Link href={PagePathMap.Home}>
+            <BiGroup className="text-xl" /> <span>Пользователи</span>
+          </Link>
+        </Button>
+        <div className="relative mt-auto rounded-lg p-4">
+          <div className="mb-2 flex items-center gap-2">
+            <BiHelpCircle className="text-xl" /> <span>Нужна помощь?</span>
           </div>
+          <p className="text-sm">
+            <Link href={"#"} className="text-primary">
+              Свяжитесь
+            </Link>{" "}
+            с нашими экспертами или{" "}
+            <Link href="#" className="text-primary">
+              посетите часто задаваемые вопросы
+            </Link>
+            .
+          </p>
+          {/* <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-1 top-1"
+          >
+            <BiX className="text-xl text-muted-foreground" />
+          </Button> */}
         </div>
-        <div className="hidden flex-col items-center justify-center bg-background/35 px-3 py-8 backdrop-blur md:flex">
-          <div className="flex w-80 flex-col items-center text-center">
-            <q>
-              Наш образовательный портал позволяет нам двигаться в ногу со
-              временем, преодолевая все препятствия на пути
-            </q>
-            <Avatar src={undefined} fallback="ИИ" className="mb-3 mt-9" />
-            <p className="text-sm font-medium">Иванов Иван</p>
-            <span className="text-sm text-muted-foreground">Студент</span>
-          </div>
+        <div className="space-y-1">
+          <span className="mb-1 block text-muted-foreground">Общее</span>
+          <Button
+            asChild
+            className="w-full justify-normal gap-2"
+            variant="ghost"
+          >
+            <Link href={PagePathMap.Home}>
+              <BiCog className="text-xl" /> <span>Настройки</span>
+            </Link>
+          </Button>
+          <Button
+            asChild
+            className="w-full justify-normal gap-2"
+            variant="ghost"
+          >
+            <Link href={PagePathMap.Home}>
+              <BiLogOutCircle className="text-xl" /> <span>Выход</span>
+            </Link>
+          </Button>
         </div>
-      </div>
-    </main>
+      </nav>
+    </aside>
   );
 };
-
-AuthPage.getLayout = (page) => (
-  <ScaffoldLayout title="Авторизация">{page}</ScaffoldLayout>
-);
-
-export default AuthPage;
