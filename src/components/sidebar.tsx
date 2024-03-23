@@ -7,10 +7,10 @@ import {
   BiHelpCircle,
   BiHome,
   BiLogOutCircle,
-  BiX,
 } from "react-icons/bi";
 import { PagePathMap } from "~/libs/enums";
 import { cn } from "~/libs/utils";
+import { SignOutAlertDrawer } from "./sign-out-alert-drawer";
 import { Button } from "./ui/button";
 
 export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
@@ -20,7 +20,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
   return (
     <aside
       className={cn(
-        "sticky left-0 top-0 grid max-h-svh grid-rows-[auto_1fr] space-y-4 overflow-auto border border-r bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/70",
+        "sticky left-0 top-0 hidden max-h-svh grid-rows-[auto_1fr] space-y-4 overflow-auto border border-r bg-[linear-gradient(45deg,hsla(333,35%,87%,.5)_0%,hsla(214,53%,92%,.5)_50%,transparent_100%)] p-4 dark:bg-[linear-gradient(45deg,hsla(270,70%,41%,.15)_0%,hsla(217,49%,42%,.15)_50%,transparent_100%)] md:grid",
         className,
       )}
       {...props}
@@ -108,15 +108,11 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
               <BiCog className="text-xl" /> <span>Настройки</span>
             </Link>
           </Button>
-          <Button
-            asChild
-            className="w-full justify-normal gap-2"
-            variant="ghost"
-          >
-            <Link href={PagePathMap.Home}>
+          <SignOutAlertDrawer>
+            <Button className="w-full justify-normal gap-2" variant="ghost">
               <BiLogOutCircle className="text-xl" /> <span>Выход</span>
-            </Link>
-          </Button>
+            </Button>
+          </SignOutAlertDrawer>
         </div>
       </nav>
     </aside>

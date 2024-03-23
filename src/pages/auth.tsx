@@ -19,7 +19,6 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { ScaffoldLayout } from "~/layouts/scaffold";
-import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
 import { type NextPageWithLayout } from "./_app";
 
@@ -47,7 +46,7 @@ const AuthPage: NextPageWithLayout = () => {
 
     const res = await signIn("credentials", {
       ...values,
-      redirect: false,
+      callbackUrl: (router.query.callbackUrl as string) ?? PagePathMap.Home,
     });
 
     if (res?.error) {
@@ -59,11 +58,10 @@ const AuthPage: NextPageWithLayout = () => {
     setIsLoading(false);
     toast.success("Вы успешно авторизовались!");
     form.reset();
-    await router.push(PagePathMap.Home);
   };
 
   return (
-    <main className="flex min-h-svh flex-col items-center justify-center bg-[radial-gradient(circle_at_bottom_left,rgb(250,232,2261)_10%,rgb(249,225,238)_30%,rgb(216,232,252)_50%,transparent_100%),radial-gradient(circle_at_bottom_right,rgb(115,234,236)_10%,rgb(170,202,244)_30%,rgba(216,232,252,1)_50%,transparent_100%)] px-2 py-3 dark:bg-[radial-gradient(circle_at_bottom_left,rgb(141,111,172)_10%,rgb(27,165,161)_30%,rgb(36,136,176)_50%,transparent_100%),radial-gradient(circle_at_top_right,rgb(141,111,172)_10%,rgb(27,165,161)_30%,rgb(36,136,176)_50%,transparent_100%)]">
+    <main className="flex min-h-svh flex-col items-center justify-center bg-[radial-gradient(circle_at_bottom_left,rgb(250,232,2261)_10%,rgb(249,225,238)_30%,rgb(216,232,252)_50%,transparent_100%),radial-gradient(circle_at_bottom_right,rgb(115,234,236)_10%,rgb(170,202,244)_30%,rgba(216,232,252,1)_50%,transparent_100%)] bg-fixed px-2 py-3 dark:bg-[radial-gradient(circle_at_bottom_left,#6820b2_15%,#3760a1_40%,#4d68b6_60%,transparent_100%),radial-gradient(circle_at_bottom_right,#5a2492_20%,#3668b9_40%,#3258c5_60%,transparent_100%)]">
       <div className="mb-5 flex flex-col items-center justify-center gap-2 sm:mb-7">
         <span className="block text-8xl">
           <svg

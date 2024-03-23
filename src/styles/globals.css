@@ -57,6 +57,28 @@
     @apply bg-background text-foreground;
   }
 
+  html {
+    scrollbar-color: hsl(0, 0%, 38%) transparent;
+  }
+
+  html.dark {
+    scrollbar-color: hsl(0, 0%, 67%) transparent;
+  }
+
+  html * {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 200ms ease;
+  }
+
+  html *:hover {
+    scrollbar-color: hsl(0, 0%, 56%) transparent;
+  }
+
+  html.dark *:hover {
+    scrollbar-color: hsl(0, 0%, 44%) transparent;
+  }
+
   input::-ms-reveal,
   input::-ms-clear {
     display: none;

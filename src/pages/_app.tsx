@@ -5,6 +5,7 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppProps } from "next/app";
 import { Inter } from "next/font/google";
+import { useIsomorphicLayoutEffect } from "usehooks-ts";
 import { ThemeProvider } from "~/components/theme-provider";
 import { Toaster } from "~/components/ui/sonner";
 
@@ -34,6 +35,10 @@ function MyApp({
 }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
 
+  useIsomorphicLayoutEffect(() => {
+    document.body.classList.add("font-sans", inter.variable);
+  }, []);
+
   return (
     <ThemeProvider
       attribute="class"
@@ -42,9 +47,7 @@ function MyApp({
       disableTransitionOnChange
     >
       <SessionProvider session={session}>
-        <div className={`font-sans ${inter.variable}`}>
-          {getLayout(<Component {...pageProps} />)}
-        </div>
+        {getLayout(<Component {...pageProps} />)}
         <Toaster richColors />
       </SessionProvider>
     </ThemeProvider>
