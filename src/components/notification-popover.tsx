@@ -98,7 +98,7 @@ export const NotificationPopover = () => {
             <div className="mt-3 flex items-center justify-between gap-2 border-b">
               <TabsList className="h-auto bg-transparent p-0">
                 <TabsTrigger
-                  className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:bg-accent"
+                  className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:bg-accent"
                   value={TabsMap.Inbox}
                   asChild
                 >
@@ -110,7 +110,7 @@ export const NotificationPopover = () => {
                   </Button>
                 </TabsTrigger>
                 <TabsTrigger
-                  className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:bg-accent"
+                  className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:bg-accent"
                   value={TabsMap.General}
                   asChild
                 >
