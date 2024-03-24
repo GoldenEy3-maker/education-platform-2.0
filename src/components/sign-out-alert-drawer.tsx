@@ -37,7 +37,7 @@ export const SignOutAlertDrawer: React.FC<SignOutAlertDrawerProps> = ({
     return (
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="sm:max-w-[600px]">
+        <AlertDialogContent className="sm:max-w-[31.25rem]">
           <AlertDialogHeader>
             <AlertDialogTitle>Вы точно уверены?</AlertDialogTitle>
             <AlertDialogDescription>

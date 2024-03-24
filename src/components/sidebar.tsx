@@ -1,4 +1,6 @@
+import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
   BiBook,
   BiCalendar,
@@ -7,16 +9,27 @@ import {
   BiHelpCircle,
   BiHome,
   BiLogOutCircle,
+  BiMoon,
 } from "react-icons/bi";
 import { PagePathMap } from "~/libs/enums";
 import { cn } from "~/libs/utils";
 import { SignOutAlertDrawer } from "./sign-out-alert-drawer";
 import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { Skeleton } from "./ui/skeleton";
+import { Switch } from "./ui/switch";
 
 export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
   className,
   ...props
 }) => {
+  const [isMounted, setIsMounted] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <aside
       className={cn(
@@ -52,7 +65,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
             />
           </svg>
         </span>
-        <h3 className="font-medium">Образовательный портал АГУ</h3>
+        <p className="font-medium">Образовательный портал АГУ</p>
       </div>
       <nav className="flex flex-col gap-2">
         <Button asChild className="w-full justify-normal gap-2" variant="ghost">
@@ -89,16 +102,32 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
             </Link>
             .
           </p>
-          {/* <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-1 top-1"
-          >
-            <BiX className="text-xl text-muted-foreground" />
-          </Button> */}
         </div>
         <div className="space-y-1">
           <span className="mb-1 block text-muted-foreground">Общее</span>
+          {isMounted ? (
+            <Button
+              asChild
+              variant="ghost"
+              className="w-full justify-between gap-2"
+              onClick={() =>
+                setTheme(resolvedTheme === "dark" ? "light" : "dark")
+              }
+            >
+              <div>
+                <Label
+                  htmlFor="dark-theme"
+                  className="pointer-events-none flex items-center gap-2"
+                >
+                  <BiMoon className="text-xl" />
+                  <span>Темная тема</span>
+                </Label>
+                <Switch id="dark-theme" checked={resolvedTheme === "dark"} />
+              </div>
+            </Button>
+          ) : (
+            <Skeleton className="h-11 w-full rounded-lg" />
+          )}
           <Button
             asChild
             className="w-full justify-normal gap-2"

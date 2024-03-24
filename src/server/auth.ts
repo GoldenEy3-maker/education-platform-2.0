@@ -1,17 +1,21 @@
 import { type User as PrismaUser } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { type GetServerSidePropsContext } from "next";
-import { getServerSession, type NextAuthOptions } from "next-auth";
+import {
+  type DefaultSession,
+  getServerSession,
+  type NextAuthOptions,
+} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
 
 declare module "next-auth" {
-  // interface Session extends DefaultSession {
-  //   user: DefaultSession["user"] &
-  //     Omit<PrismaUser, "password" | "tokenVersion">;
-  // }
+  interface Session extends DefaultSession {
+    user: DefaultSession["user"] &
+      Omit<PrismaUser, "password" | "tokenVersion">;
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface User extends Omit<PrismaUser, "password" | "tokenVersion"> {}

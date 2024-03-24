@@ -1,6 +1,6 @@
-import { BiBell } from "react-icons/bi";
 import { cn } from "~/libs/utils";
 import { Avatar } from "./avatar";
+import { NotificationPopover } from "./notification-popover";
 import { SearchCommandDialog } from "./search-command-dialog";
 import { Button } from "./ui/button";
 
@@ -18,9 +18,7 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
     >
       <div className="flex items-center gap-2">
         <SearchCommandDialog className="flex-grow" />
-        <Button variant="ghost" type="button" size="icon">
-          <BiBell className="text-xl" />
-        </Button>
+        <NotificationPopover />
         <Button
           type="button"
           variant="ghost"

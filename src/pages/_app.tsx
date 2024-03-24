@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import "dayjs/locale/ru";
 import relativeTimePlugin from "dayjs/plugin/relativeTime";
 import { type NextPage } from "next";
 import { type Session } from "next-auth";
