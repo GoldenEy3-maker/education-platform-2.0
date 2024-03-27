@@ -31,6 +31,14 @@ const config = {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        useful: {
+          DEFAULT: "hsl(var(--useful))",
+          foreground: "hsl(var(--useful-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -58,20 +66,6 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        // "rotate-spinner-circle": {
-        //   from: { "stroke-dashoffset": "60" },
-        //   "50%": {
-        //     "stroke-dashoffset": "15",
-        //     rotate: "135deg",
-        //   },
-        //   to: {
-        //     "stroke-dashoffset": "60",
-        //     rotate: "450deg",
-        //   },
-        // },
-        // "rotate-spinner": {
-        //   to: { rotate: "270deg" },
-        // },
         "rotate-spinner-circle": {
           from: {
             "stroke-dasharray": "1px, 200px",

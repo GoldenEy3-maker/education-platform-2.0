@@ -1,14 +1,7 @@
 import Link from "next/link";
-import {
-  BiBarChartSquare,
-  BiBook,
-  BiCalendar,
-  BiHelpCircle,
-  BiNote,
-  BiNotepad,
-  BiTachometer,
-  BiTimer,
-} from "react-icons/bi";
+import { BiBarChartSquare, BiCalendar, BiHelpCircle } from "react-icons/bi";
+import { CoursesSection } from "~/components/courses-section";
+import { DeadlinesSection } from "~/components/deadlines-section";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { MainLayout } from "~/layouts/main";
@@ -18,26 +11,8 @@ import { type NextPageWithLayout } from "./_app";
 const HomePage: NextPageWithLayout = () => {
   return (
     <main className="grid grid-cols-[repeat(auto-fit,minmax(25rem,1fr))] gap-4">
-      <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <header className="flex items-center gap-2 pb-3">
-          <BiTachometer className="text-xl" />
-          <h4 className="flex-grow text-lg font-medium">Дедлайны</h4>
-          <Button variant="outline" type="button" asChild>
-            <Link href="#">Смотреть все</Link>
-          </Button>
-        </header>
-        <Separator />
-      </section>
-      <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <header className="flex items-center gap-2 pb-3">
-          <BiBook className="text-xl" />
-          <h4 className="flex-grow text-lg font-medium">Курсы</h4>
-          <Button variant="outline" type="button" asChild>
-            <Link href="#">Смотреть все</Link>
-          </Button>
-        </header>
-        <Separator />
-      </section>
+      <DeadlinesSection />
+      <CoursesSection />
       <section className="row-span-2 rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <header className="flex items-center gap-2 pb-3">
           <BiCalendar className="text-xl" />
@@ -48,7 +23,7 @@ const HomePage: NextPageWithLayout = () => {
         </header>
         <Separator />
       </section>
-      <section className="col-start-1 row-start-2 rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <header className="flex items-center gap-2 pb-3">
           <BiBarChartSquare className="text-xl" />
           <h4 className="flex-grow text-lg font-medium">Успеваемость</h4>
@@ -58,7 +33,7 @@ const HomePage: NextPageWithLayout = () => {
         </header>
         <Separator />
       </section>
-      <section className="col-start-2 row-start-2 rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <header className="flex items-center gap-2 pb-3">
           <BiHelpCircle className="text-xl" />
           <h4 className="flex-grow text-lg font-medium">

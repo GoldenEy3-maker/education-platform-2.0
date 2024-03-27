@@ -24,29 +24,6 @@ const TabsMap = {
 
 type TabsMap = ValueOf<typeof TabsMap>;
 
-const NotificationEmpty: React.FC = () => {
-  return (
-    <div className="flex flex-col items-center justify-center py-4">
-      {/* <span className="block rounded-full bg-muted p-6"> */}
-      <TbBellZFilled className="text-7xl text-muted-foreground" />
-      {/* </span> */}
-      <p className="mt-2 text-center [text-wrap:balance]">
-        Мы дадим знать, когда у нас будет что-то новое для вас.
-      </p>
-    </div>
-  );
-};
-
-const NotificationItemSkeleton: React.FC = () => {
-  return (
-    <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 px-4 py-2">
-      <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
-      <Skeleton className="h-3 w-40 rounded-lg" />
-      <Skeleton className="col-start-2 row-start-2 h-3 w-20 rounded-lg" />
-    </div>
-  );
-};
-
 type NotificationItemProps = {
   sender: Omit<User, "password" | "tokenVersion">;
   title: string;
@@ -100,6 +77,27 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         ) : null}
       </Link>
     </Button>
+  );
+};
+
+const NotificationItemSkeleton: React.FC = () => {
+  return (
+    <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 px-4 py-2">
+      <Skeleton className="row-span-2 h-12 w-12 rounded-full" />
+      <Skeleton className="h-3 w-40 rounded-lg" />
+      <Skeleton className="col-start-2 row-start-2 h-3 w-20 rounded-lg" />
+    </div>
+  );
+};
+
+const NotificationsEmpty: React.FC = () => {
+  return (
+    <div className="flex flex-col items-center justify-center py-4">
+      <TbBellZFilled className="text-7xl text-muted-foreground" />
+      <p className="mt-2 text-center [text-wrap:balance]">
+        Мы дадим знать, когда у нас будет что-то новое для вас.
+      </p>
+    </div>
   );
 };
 
@@ -231,7 +229,7 @@ export const NotificationPopover = () => {
               value={TabsMap.General}
               className="max-h-80 space-y-1 overflow-auto"
             >
-              <NotificationEmpty />
+              <NotificationsEmpty />
             </TabsContent>
           </Tabs>
         ) : null}
