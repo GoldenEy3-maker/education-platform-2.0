@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { BiBook, BiSolidFileFind } from "react-icons/bi";
 import { cn } from "~/libs/utils";
@@ -86,7 +87,8 @@ const CoursesEmpty: React.FC = () => {
 };
 
 export const CoursesSection: React.FC = () => {
-  const isLoading = false;
+  const { data: session, status } = useSession();
+  const isLoading = status === "loading" || !session?.user;
   const isEmpty = false;
 
   return (
@@ -99,10 +101,30 @@ export const CoursesSection: React.FC = () => {
         </Button>
       </header>
       <Separator />
-      <div className="min-[1120px]::max-h-[19rem] mt-3 max-h-[25rem] space-y-1 overflow-auto min-[1120px]:min-h-[19rem]">
+      <div className="mt-3 max-h-[25rem] space-y-1 overflow-auto min-[1120px]:max-h-[19rem] min-[1120px]:min-h-[19rem]">
         {!isLoading ? (
           !isEmpty ? (
             <>
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
               <CourseItem
                 title="Иностранный язык в профессиональной деятельности"
                 author={{

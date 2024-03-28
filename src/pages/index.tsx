@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BiBarChartSquare, BiCalendar, BiHelpCircle } from "react-icons/bi";
 import { CoursesSection } from "~/components/courses-section";
 import { DeadlinesSection } from "~/components/deadlines-section";
+import { ScheduleSection } from "~/components/schedule-section";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { MainLayout } from "~/layouts/main";
@@ -13,16 +14,7 @@ const HomePage: NextPageWithLayout = () => {
     <main className="grid grid-cols-[repeat(auto-fit,minmax(25rem,1fr))] gap-4">
       <DeadlinesSection />
       <CoursesSection />
-      <section className="row-span-2 rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <header className="flex items-center gap-2 pb-3">
-          <BiCalendar className="text-xl" />
-          <h4 className="flex-grow text-lg font-medium">Расписание</h4>
-          <Button variant="outline" type="button" asChild>
-            <Link href="#">Смотреть все</Link>
-          </Button>
-        </header>
-        <Separator />
-      </section>
+      <ScheduleSection />
       <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <header className="flex items-center gap-2 pb-3">
           <BiBarChartSquare className="text-xl" />

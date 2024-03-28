@@ -1,5 +1,6 @@
 import { cva } from "class-variance-authority";
 import dayjs from "dayjs";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 import {
@@ -108,7 +109,7 @@ const deadlineItemBadgeVariants = cva("rounded-full", {
       warning: "bg-warning/30 text-warning-foreground hover:bg-warning/60",
       useful: "bg-useful/30 text-useful-foreground hover:bg-useful/60",
       destructive:
-        "bg-destructive/30 text-destructive-foreground hover:bg-destructive/60",
+        "bg-destructive/30 text-destructive-foreground-variant hover:bg-destructive/60",
     },
   },
 });
@@ -174,7 +175,8 @@ const DeadlinesEmpty: React.FC = () => {
 };
 
 export const DeadlinesSection: React.FC = () => {
-  const isLoading = false;
+  const { data: session, status } = useSession();
+  const isLoading = status === "loading" || !session?.user;
   const isEmpty = false;
 
   return (
