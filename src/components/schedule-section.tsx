@@ -5,21 +5,74 @@ import {
   BiCalendar,
   BiChevronLeft,
   BiChevronRight,
+  BiMap,
   BiSolidBookBookmark,
+  BiSolidDetail,
   BiSolidFlask,
   BiSolidWidget,
 } from "react-icons/bi";
 import { capitalizeFirstLetter, cn } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { Button } from "./ui/button";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { Separator } from "./ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 const TabsMap = {
+  All: "all",
   Lecture: "lecture",
   LaboratoryWork: "laboratory-work",
   PracticalLession: "practical-lession",
 } as const;
+
+const ScheduleItem: React.FC = () => {
+  return (
+    <div className="rounded-lg bg-[linear-gradient(180deg,hsla(36,65%,93%,1)_0%,transparent_100%)] p-4 dark:bg-[linear-gradient(180deg,hsla(36,65%,10%,1)_0%,transparent_100%)]">
+      <header>
+        <h4>Иностранный язык в профессиональной деятельности</h4>
+        <span className="mt-1 block text-muted-foreground">8:00 - 9:30</span>
+      </header>
+      <footer className="flex items-center justify-between gap-2">
+        <HoverCard openDelay={200} closeDelay={200}>
+          <HoverCardTrigger asChild>
+            <span className="cursor-pointer text-muted-foreground underline-offset-4 hover:text-foreground hover:underline data-[state=open]:text-foreground data-[state=open]:underline">
+              Корпус &quot;М&quot;
+            </span>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-auto bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
+            <div className="flex">
+              {/* <Avatar fallback="М" /> */}
+              <div className="">
+                <h4 className="text-sm font-semibold">Корпус &quot;М&quot;</h4>
+                <p className="text-sm">пр-т Ленина, 61</p>
+                <Link
+                  href="https://2gis.ru/barnaul/firm/70000001081247836/83.775902%2C53.348167?m=83.776398%2C53.347882%2F18.05%2Fp%2F36.27%2Fr%2F-11.02"
+                  className="mt-2 flex items-center"
+                >
+                  <BiMap className="mr-1 opacity-70" />{" "}
+                  <span className="text-xs text-muted-foreground">
+                    Найти на карте
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+        <Button
+          asChild
+          variant="ghost"
+          type="button"
+          className="h-auto gap-3 px-2 py-1"
+        >
+          <Link href="#">
+            <Avatar fallback="Д" className="h-9 w-9" />
+            <span>Демкина Л. М.</span>
+          </Link>
+        </Button>
+      </footer>
+    </div>
+  );
+};
 
 export const ScheduleSection: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
@@ -53,7 +106,7 @@ export const ScheduleSection: React.FC = () => {
   }, [currentDate]);
 
   return (
-    <section className="row-span-2 rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <section className="z-50 row-span-2 rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <header className="flex items-center gap-2 pb-3">
         <BiCalendar className="text-xl" />
         <h4 className="flex-grow text-lg font-medium">Расписание</h4>
@@ -140,8 +193,19 @@ export const ScheduleSection: React.FC = () => {
             trailingIcon={<BiFilter className="text-xl" />}
           />
         </div> */}
-        <Tabs defaultValue={TabsMap.Lecture} className="mt-4">
-          <TabsList className="grid h-auto grid-cols-3 rounded-none border-b bg-transparent p-0">
+        <Tabs defaultValue={TabsMap.All} className="mt-4">
+          <TabsList className="grid h-auto grid-cols-4 rounded-none border-b bg-transparent p-0">
+            <TabsTrigger
+              className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"
+              value={TabsMap.All}
+              asChild
+              disabled={isLoading}
+            >
+              <Button type="button" variant="ghost">
+                <BiSolidDetail className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
+                Все
+              </Button>
+            </TabsTrigger>
             <TabsTrigger
               className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"
               value={TabsMap.Lecture}
@@ -161,7 +225,7 @@ export const ScheduleSection: React.FC = () => {
             >
               <Button type="button" variant="ghost">
                 <BiSolidFlask className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
-                Лаб.
+                Лаб
               </Button>
             </TabsTrigger>
             <TabsTrigger
@@ -172,86 +236,17 @@ export const ScheduleSection: React.FC = () => {
             >
               <Button type="button" variant="ghost">
                 <BiSolidWidget className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
-                Практ.
+                Практ
               </Button>
             </TabsTrigger>
           </TabsList>
-          <TabsContent value={TabsMap.Lecture} className="space-y-1">
-            <div className="rounded-lg bg-[linear-gradient(180deg,hsla(36,65%,93%,1)_0%,transparent_100%)] p-4">
-              <header>
-                <h4>Иностранный язык в профессиональной деятельности</h4>
-                <span className="text-muted-foreground">8:00 - 9:30</span>
-              </header>
-              <Button
-                asChild
-                variant="ghost"
-                type="button"
-                className="my-2 h-auto gap-3 px-2 py-1"
-              >
-                <Link href="#">
-                  <Avatar fallback="Д" className="h-9 w-9" />
-                  <span>Демкина Л. М.</span>
-                </Link>
-              </Button>
-              <footer className="flex items-center justify-between gap-2">
-                <span className="text-muted-foreground">
-                  Корпус &quot;М&quot;
-                </span>
-                <span className="rounded-full border px-4 py-1 text-sm">
-                  Лекция
-                </span>
-              </footer>
-            </div>
-            <div className="rounded-lg bg-[linear-gradient(180deg,hsla(192,100%,93%,1)_0%,transparent_100%)] p-4">
-              <header>
-                <h4>Иностранный язык в профессиональной деятельности</h4>
-                <span className="text-muted-foreground">8:00 - 9:30</span>
-              </header>
-              <Button
-                asChild
-                variant="ghost"
-                type="button"
-                className="my-2 h-auto gap-3 px-2 py-1"
-              >
-                <Link href="#">
-                  <Avatar fallback="Д" className="h-9 w-9" />
-                  <span>Демкина Л. М.</span>
-                </Link>
-              </Button>
-              <footer className="flex items-center justify-between gap-2">
-                <span className="text-muted-foreground">
-                  Корпус &quot;М&quot;
-                </span>
-                <span className="rounded-full border px-4 py-1 text-sm">
-                  Лекция
-                </span>
-              </footer>
-            </div>
-            <div className="rounded-lg bg-[linear-gradient(180deg,hsla(285,100%,93%,1)_0%,transparent_100%)] p-4">
-              <header>
-                <h4>Иностранный язык в профессиональной деятельности</h4>
-                <span className="text-muted-foreground">8:00 - 9:30</span>
-              </header>
-              <Button
-                asChild
-                variant="ghost"
-                type="button"
-                className="my-2 h-auto gap-3 px-2 py-1"
-              >
-                <Link href="#">
-                  <Avatar fallback="Д" className="h-9 w-9" />
-                  <span>Демкина Л. М.</span>
-                </Link>
-              </Button>
-              <footer className="flex items-center justify-between gap-2">
-                <span className="text-muted-foreground">
-                  Корпус &quot;М&quot;
-                </span>
-                <span className="rounded-full border px-4 py-1 text-sm">
-                  Лекция
-                </span>
-              </footer>
-            </div>
+          <TabsContent
+            value={TabsMap.All}
+            className="custom-scroll max-h-[34rem] space-y-1 overflow-auto"
+          >
+            <ScheduleItem />
+            <ScheduleItem />
+            <ScheduleItem />
           </TabsContent>
           <TabsContent value={TabsMap.LaboratoryWork}></TabsContent>
           <TabsContent value={TabsMap.PracticalLession}></TabsContent>

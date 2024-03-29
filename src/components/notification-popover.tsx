@@ -121,7 +121,7 @@ export const NotificationPopover = () => {
           </Badge>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[26rem] overflow-hidden bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <PopoverContent className="w-[26rem] overflow-hidden bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
         <header className="flex items-center justify-between gap-2">
           <p className="font-medium">Уведомления</p>
           <Button
@@ -183,7 +183,7 @@ export const NotificationPopover = () => {
             </div>
             <TabsContent
               value={TabsMap.Inbox}
-              className="max-h-[min(calc(100vh-12.5rem),20rem)] space-y-1 overflow-auto"
+              className="custom-scroll max-h-[min(calc(100vh-12.5rem),20rem)] space-y-1 overflow-auto"
             >
               {!isLoading ? (
                 <>
@@ -227,7 +227,7 @@ export const NotificationPopover = () => {
             </TabsContent>
             <TabsContent
               value={TabsMap.General}
-              className="max-h-80 space-y-1 overflow-auto"
+              className="custom-scroll max-h-[min(calc(100vh-12.5rem),20rem)] space-y-1 overflow-auto"
             >
               <NotificationsEmpty />
             </TabsContent>

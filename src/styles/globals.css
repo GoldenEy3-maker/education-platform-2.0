@@ -75,20 +75,6 @@
     scrollbar-color: hsl(0, 0%, 67%) transparent;
   }
 
-  html * {
-    scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
-    transition: scrollbar-color 200ms ease;
-  }
-
-  html *:hover {
-    scrollbar-color: hsl(0, 0%, 56%) transparent;
-  }
-
-  html.dark *:hover {
-    scrollbar-color: hsl(0, 0%, 44%) transparent;
-  }
-
   input::-ms-reveal,
   input::-ms-clear {
     display: none;
@@ -96,6 +82,20 @@
 }
 
 @layer utilities {
+  .custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 200ms ease;
+  }
+
+  .custom-scroll:hover {
+    scrollbar-color: hsl(0, 0%, 56%) transparent;
+  }
+
+  .dark .custom-scroll:hover {
+    scrollbar-color: hsl(0, 0%, 44%) transparent;
+  }
+
   .container-grid {
     --padding-inline: 1rem;
     --container-max-widht: 140ch;

@@ -201,7 +201,7 @@ export const DeadlinesSection: React.FC = () => {
           </>
         ) : null}
         <div
-          className={cn("h-full space-y-1 overflow-auto", {
+          className={cn("custom-scroll h-full space-y-1 overflow-auto", {
             "max-h-[16rem] min-[1120px]:max-h-[11.75rem]": !isEmpty,
           })}
         >
@@ -218,6 +218,11 @@ export const DeadlinesSection: React.FC = () => {
                   course="Иностранный язык в профессиональной деятельности"
                   date={new Date("3/26/2024")}
                   isCompleted
+                />
+                <DeadlineItem
+                  title="Лабораторная работа #1"
+                  course="Иностранный язык в профессиональной деятельности"
+                  date={new Date("3/26/2024")}
                 />
                 <DeadlineItem
                   title="Лабораторная работа #1"

@@ -45,10 +45,11 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
             </Button>
           </>
         ) : (
-          <>
-            <Skeleton className="h-10 w-10 rounded-md" />
-            <Skeleton className="h-12 w-32 rounded-md" />
-          </>
+          <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 px-4 py-1">
+            <Skeleton className="row-span-2 h-10 w-10 rounded-full" />
+            <Skeleton className="h-3 w-32 rounded-lg" />
+            <Skeleton className="h-3 w-20 rounded-lg" />
+          </div>
         )}
       </div>
     </header>
