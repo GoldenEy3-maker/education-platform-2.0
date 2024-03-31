@@ -16,7 +16,7 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
   return (
     <header
       className={cn(
-        "container-grid sticky inset-y-0 top-0 z-10 border-b bg-background/95 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/40",
+        "container-grid sticky inset-y-0 top-0 z-50 border-b bg-background/95 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/40",
         className,
       )}
       {...props}
@@ -26,11 +26,7 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
         {session?.user ? (
           <>
             <NotificationPopover />
-            <Button
-              type="button"
-              variant="ghost"
-              className="grid h-auto grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-3 py-1 text-left"
-            >
+            <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-3 px-4 py-1 text-left text-sm">
               <Avatar
                 className="row-span-2 h-10 w-10"
                 fallback={session.user.name?.at(0)}
@@ -42,7 +38,7 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
               <span className="text-xs text-muted-foreground">
                 {TranslateRoleMap[session.user.role]}
               </span>
-            </Button>
+            </div>
           </>
         ) : (
           <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 px-4 py-1">

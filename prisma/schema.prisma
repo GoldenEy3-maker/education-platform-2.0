@@ -21,10 +21,47 @@ model User {
   password      String
   tokenVersion  Int       @default(0)
   role          Role
+  status        String?
+  lessions      Lession[]
+}
+
+model Pavilion {
+  id       String    @id @default(cuid())
+  name     String
+  address  String
+  infoLink String
+  mapLink  String
+  lessions Lession[]
+}
+
+model Lession {
+  id         String        @id @default(cuid())
+  title      String
+  start      DateTime
+  end        DateTime
+  classRoom  Int?
+  pavilion   Pavilion?     @relation(fields: [pavilionId], references: [id])
+  pavilionId String?
+  type       LessionType
+  teacher    User          @relation(fields: [teacherId], references: [id])
+  teacherId  String
+  status     LessionStatus
 }
 
 enum Role {
   Student
   Admin
   Teacher
+}
+
+enum LessionStatus {
+  Full
+  Sync
+  Async
+}
+
+enum LessionType {
+  Lec
+  Lab
+  Pract
 }
