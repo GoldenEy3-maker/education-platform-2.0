@@ -15,7 +15,7 @@ const HomePage: NextPageWithLayout = () => {
       <DeadlinesSection />
       <CoursesSection />
       <ScheduleSection />
-      <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <header className="flex items-center gap-2 pb-3">
           <BiBarChartSquare className="text-xl" />
           <h4 className="flex-grow text-lg font-medium">Успеваемость</h4>
@@ -24,7 +24,7 @@ const HomePage: NextPageWithLayout = () => {
           </Button>
         </header>
         <Separator />
-      </section>
+      </section> */}
       <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <header className="flex items-center gap-2 pb-3">
           <BiHelpCircle className="text-xl" />
@@ -36,9 +36,8 @@ const HomePage: NextPageWithLayout = () => {
         <Separator />
         <div className="mt-4">
           <iframe
-            className="rounded-md"
+            className="h-[19rem] rounded-md 2xl:h-[calc(100vh-37.5rem)]"
             width="100%"
-            height="315"
             src="https://www.youtube.com/embed/j70dL0JZXGI?si=S8Gad7Il1421X1mJ"
             title="YouTube video player"
             frameBorder="0"

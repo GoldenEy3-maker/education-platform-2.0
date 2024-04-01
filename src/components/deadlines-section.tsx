@@ -180,7 +180,7 @@ export const DeadlinesSection: React.FC = () => {
   const isEmpty = false;
 
   return (
-    <section className="grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <section className="grid h-fit grid-rows-[auto_auto_1fr] rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <header className="flex items-center gap-2 pb-3">
         <BiTimer className="text-xl" />
         <h4 className="flex-grow text-lg font-medium">Дедлайны</h4>

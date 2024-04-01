@@ -92,7 +92,7 @@ export const CoursesSection: React.FC = () => {
   const isEmpty = false;
 
   return (
-    <section className="overflow-hidden rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <section className="row-span-2 overflow-hidden rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <header className="flex items-center gap-2 pb-3">
         <BiBook className="text-xl" />
         <h4 className="flex-grow text-lg font-medium">Курсы</h4>
@@ -101,10 +101,100 @@ export const CoursesSection: React.FC = () => {
         </Button>
       </header>
       <Separator />
-      <div className="custom-scroll mt-3 max-h-[25rem] space-y-1 overflow-auto min-[1120px]:max-h-[19rem] min-[1120px]:min-h-[19rem]">
+      <div className="custom-scroll mt-3 max-h-[30rem] space-y-1 overflow-auto min-[1120px]:max-h-[36.5rem] 2xl:max-h-[calc(100vh-11.5rem)]">
         {!isLoading ? (
           !isEmpty ? (
             <>
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
+              <CourseItem
+                title="Иностранный язык в профессиональной деятельности"
+                author={{
+                  surname: "Демкина",
+                  name: "Людмила",
+                  fathername: "Михайловна",
+                }}
+                href="#"
+                progressValue={20}
+              />
               <CourseItem
                 title="Иностранный язык в профессиональной деятельности"
                 author={{

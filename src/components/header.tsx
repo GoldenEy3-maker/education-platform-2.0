@@ -32,10 +32,10 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
                 fallback={session.user.name?.at(0)}
                 src={session.user.image}
               />
-              <p>
+              <p className="max-sm:hidden">
                 {session.user.surname} {session.user.name}
               </p>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground max-sm:hidden">
                 {TranslateRoleMap[session.user.role]}
               </span>
             </div>

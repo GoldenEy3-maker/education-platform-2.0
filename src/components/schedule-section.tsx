@@ -21,7 +21,6 @@ import {
   BiChevronRight,
   BiHelpCircle,
   BiMap,
-  BiSolidBook,
   BiSolidBookBookmark,
   BiSolidDetail,
   BiSolidFlask,
@@ -47,11 +46,11 @@ import {
 } from "./ui/tooltip";
 
 const TabsMap = {
-  All: "all",
-  Lec: "lec",
-  Lab: "lab",
-  Pract: "pract",
+  All: "All",
+  ...LessionType,
 } as const;
+
+type TabsMapKeys = keyof typeof TabsMap;
 
 const TranslateLessionTypeMap = {
   [LessionType.Lab]: "Лабораторная",
@@ -151,6 +150,114 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     type: "Lab",
     status: "Full",
   },
+  {
+    id: crypto.randomUUID(),
+    classRoom: 203,
+    pavilion: MOK_PAVILION_DATA[0]!,
+    pavilionId: MOK_PAVILION_DATA[0]!.id,
+    start: new Date("03/31/2024 11:20"),
+    end: new Date("03/31/2024 12:50"),
+    teacher: {
+      fathername: "Михайловна",
+      name: "Любовь",
+      surname: "Демкина",
+      status: "Преподаватель английского языка",
+    },
+    teacherId: "teacher_1",
+    title: "Иностранный язык в профессиональной деятельности",
+    type: "Lab",
+    status: "Full",
+  },
+  {
+    id: crypto.randomUUID(),
+    classRoom: 203,
+    pavilion: MOK_PAVILION_DATA[0]!,
+    pavilionId: MOK_PAVILION_DATA[0]!.id,
+    start: new Date("03/31/2024 11:20"),
+    end: new Date("03/31/2024 12:50"),
+    teacher: {
+      fathername: "Михайловна",
+      name: "Любовь",
+      surname: "Демкина",
+      status: "Преподаватель английского языка",
+    },
+    teacherId: "teacher_1",
+    title: "Иностранный язык в профессиональной деятельности",
+    type: "Lab",
+    status: "Full",
+  },
+  {
+    id: crypto.randomUUID(),
+    classRoom: 203,
+    pavilion: MOK_PAVILION_DATA[0]!,
+    pavilionId: MOK_PAVILION_DATA[0]!.id,
+    start: new Date("03/31/2024 11:20"),
+    end: new Date("03/31/2024 12:50"),
+    teacher: {
+      fathername: "Михайловна",
+      name: "Любовь",
+      surname: "Демкина",
+      status: "Преподаватель английского языка",
+    },
+    teacherId: "teacher_1",
+    title: "Иностранный язык в профессиональной деятельности",
+    type: "Lab",
+    status: "Full",
+  },
+  {
+    id: crypto.randomUUID(),
+    classRoom: 203,
+    pavilion: MOK_PAVILION_DATA[0]!,
+    pavilionId: MOK_PAVILION_DATA[0]!.id,
+    start: new Date("03/31/2024 11:20"),
+    end: new Date("03/31/2024 12:50"),
+    teacher: {
+      fathername: "Михайловна",
+      name: "Любовь",
+      surname: "Демкина",
+      status: "Преподаватель английского языка",
+    },
+    teacherId: "teacher_1",
+    title: "Иностранный язык в профессиональной деятельности",
+    type: "Lab",
+    status: "Full",
+  },
+  {
+    id: crypto.randomUUID(),
+    classRoom: 203,
+    pavilion: MOK_PAVILION_DATA[0]!,
+    pavilionId: MOK_PAVILION_DATA[0]!.id,
+    start: new Date("03/31/2024 11:20"),
+    end: new Date("03/31/2024 12:50"),
+    teacher: {
+      fathername: "Михайловна",
+      name: "Любовь",
+      surname: "Демкина",
+      status: "Преподаватель английского языка",
+    },
+    teacherId: "teacher_1",
+    title: "Иностранный язык в профессиональной деятельности",
+    type: "Lab",
+    status: "Full",
+  },
+  {
+    id: crypto.randomUUID(),
+    classRoom: 203,
+    pavilion: MOK_PAVILION_DATA[0]!,
+    pavilionId: MOK_PAVILION_DATA[0]!.id,
+    start: new Date("03/31/2024 11:20"),
+    end: new Date("03/31/2024 12:50"),
+    teacher: {
+      fathername: "Михайловна",
+      name: "Любовь",
+      surname: "Демкина",
+      status: "Преподаватель английского языка",
+    },
+    teacherId: "teacher_1",
+    title: "Иностранный язык в профессиональной деятельности",
+    type: "Lab",
+    status: "Full",
+  },
 ];
 
 type ScheduleItemProps = {
@@ -164,7 +271,22 @@ type ScheduleItemProps = {
   pavilion?: Pavilion | null;
   type: LessionType;
   status: LessionStatus;
+  index: number;
 } & React.ComponentProps<"div">;
+
+const ScheduleItemsBgClrHMap: Record<number, string> = {
+  0: "24",
+  1: "220",
+  2: "248",
+  3: "107",
+  4: "178",
+  5: "300",
+  6: "340",
+  7: "63",
+  8: "132",
+  9: "206",
+  10: "276",
+};
 
 const ScheduleItem: React.FC<ScheduleItemProps> = ({
   title,
@@ -175,16 +297,15 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
   pavilion,
   type,
   status,
+  index,
   className,
   ...props
 }) => {
-  const randomClrH = useRef(getRandomInt(1, 360));
-
   return (
     <div
-      style={{ "--random-clr-h": randomClrH.current } as CSSProperties}
+      style={{ "--bg-clr-h": ScheduleItemsBgClrHMap[index] } as CSSProperties}
       className={cn(
-        `rounded-lg bg-[linear-gradient(180deg,hsla(var(--random-clr-h),65%,93%,1)_0%,transparent_100%)] p-4 dark:bg-[linear-gradient(180deg,hsla(var(--random-clr-h),65%,10%,1)_0%,transparent_100%)]`,
+        `rounded-lg bg-[linear-gradient(180deg,hsla(var(--bg-clr-h),70%,93%,1)_0%,transparent_100%)] p-4 dark:bg-[linear-gradient(180deg,hsla(var(--bg-clr-h),70%,10%,1)_0%,transparent_100%)]`,
         className,
       )}
       {...props}
@@ -308,6 +429,77 @@ const getLessionsPromise = (date: Date) => {
   );
 };
 
+type LessionsEmptyProps = {
+  icon: React.ReactNode;
+  text: string;
+};
+
+const LessionsEmpty: React.FC<LessionsEmptyProps> = ({ icon, text }) => {
+  return (
+    <div className="flex h-full flex-col items-center justify-center">
+      {icon}
+      <p className="mt-2 text-center">{text}</p>
+    </div>
+  );
+};
+
+const EmptyDataMap: Record<TabsMapKeys, React.ReactNode> = {
+  All: (
+    <LessionsEmpty
+      icon={<BiSolidDetail className="text-7xl text-muted-foreground" />}
+      text="На этот день у вас не запланировано занятий."
+    />
+  ),
+  Lec: (
+    <LessionsEmpty
+      icon={<BiSolidBookBookmark className="text-7xl text-muted-foreground" />}
+      text="На этот день у вас не запланировано лекций."
+    />
+  ),
+  Lab: (
+    <LessionsEmpty
+      icon={<BiSolidFlask className="text-7xl text-muted-foreground" />}
+      text="На этот день у вас не запланировано лабораторных."
+    />
+  ),
+  Pract: (
+    <LessionsEmpty
+      icon={<BiSolidWidget className="text-7xl text-muted-foreground" />}
+      text="На этот день у вас не запланировано практических."
+    />
+  ),
+};
+
+const TabsTriggerMap: Record<
+  TabsMapKeys,
+  { icon: React.ReactNode; text: string }
+> = {
+  All: {
+    icon: (
+      <BiSolidDetail className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
+    ),
+    text: "Все",
+  },
+  Lec: {
+    icon: (
+      <BiSolidBookBookmark className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
+    ),
+    text: "Лекции",
+  },
+  Lab: {
+    icon: (
+      <BiSolidFlask className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
+    ),
+    text: "Лаб",
+  },
+  Pract: {
+    icon: (
+      <BiSolidWidget className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
+    ),
+    text: "Практ",
+  },
+};
+
 export const ScheduleSection: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [data, setData] = useState<typeof MOK_DATA>([]);
@@ -353,6 +545,13 @@ export const ScheduleSection: React.FC = () => {
   const lecLessions = data.filter((lession) => lession.type === "Lec");
   const labLessions = data.filter((lession) => lession.type === "Lab");
   const practLessions = data.filter((lession) => lession.type === "Pract");
+
+  const DataMap: Record<TabsMapKeys, typeof MOK_DATA> = {
+    All: data,
+    Lec: lecLessions,
+    Lab: labLessions,
+    Pract: practLessions,
+  };
 
   return (
     <section className="z-10 row-span-2 grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -435,172 +634,53 @@ export const ScheduleSection: React.FC = () => {
             <BiChevronRight className="text-xl" />
           </Button>
         </div>
-        {/* <div className="mt-3">
-          <Input
-            placeholder="Поиск"
-            leadingIcon={<BiSearch className="text-xl" />}
-            trailingIcon={<BiFilter className="text-xl" />}
-          />
-        </div> */}
         <Tabs defaultValue={TabsMap.All} className="mt-4">
           <TabsList className="grid h-auto grid-cols-4 rounded-none border-b bg-transparent p-0">
-            <TabsTrigger
-              className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"
-              value={TabsMap.All}
-              asChild
-              disabled={isLoading}
-            >
-              <Button type="button" variant="ghost">
-                <BiSolidDetail className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
-                Все
-              </Button>
-            </TabsTrigger>
-            <TabsTrigger
-              className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"
-              value={TabsMap.Lec}
-              asChild
-              disabled={isLoading}
-            >
-              <Button type="button" variant="ghost">
-                <BiSolidBookBookmark className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
-                Лекции
-              </Button>
-            </TabsTrigger>
-            <TabsTrigger
-              className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"
-              value={TabsMap.Lab}
-              asChild
-              disabled={isLoading}
-            >
-              <Button type="button" variant="ghost">
-                <BiSolidFlask className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
-                Лаб
-              </Button>
-            </TabsTrigger>
-            <TabsTrigger
-              className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"
-              value={TabsMap.Pract}
-              asChild
-              disabled={isLoading}
-            >
-              <Button type="button" variant="ghost">
-                <BiSolidWidget className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
-                Практ
-              </Button>
-            </TabsTrigger>
+            {Object.entries(TabsMap).map(([key, value]) => (
+              <TabsTrigger
+                key={key}
+                className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"
+                value={value}
+                asChild
+                disabled={isLoading}
+              >
+                <Button type="button" variant="ghost">
+                  {TabsTriggerMap[key as TabsMapKeys].icon}
+                  {TabsTriggerMap[key as TabsMapKeys].text}
+                </Button>
+              </TabsTrigger>
+            ))}
           </TabsList>
-          <TabsContent
-            value={TabsMap.All}
-            className="custom-scroll h-full max-h-[34rem] space-y-2 overflow-auto"
-          >
-            {!isLoading ? (
-              data.length > 0 ? (
-                data
-                  .sort(sortLessionsFn)
-                  .map((lession) => (
-                    <ScheduleItem key={lession.id} {...lession} />
-                  ))
+          {Object.entries(TabsMap).map(([key, value]) => (
+            <TabsContent
+              key={key}
+              value={value}
+              className="custom-scroll h-full max-h-[30rem] space-y-2 overflow-auto min-[1120px]:max-h-[25rem] 2xl:max-h-[calc(100vh-24rem)]"
+            >
+              {!isLoading ? (
+                DataMap[key as TabsMapKeys].length > 0 ? (
+                  DataMap[key as TabsMapKeys]
+                    .sort(sortLessionsFn)
+                    .map((lession, index) => (
+                      <ScheduleItem
+                        key={lession.id}
+                        index={index}
+                        {...lession}
+                      />
+                    ))
+                ) : (
+                  EmptyDataMap[key as TabsMapKeys]
+                )
               ) : (
-                <div className="flex h-full flex-col items-center justify-center">
-                  <BiSolidDetail className="text-7xl text-muted-foreground" />
-                  <p className="mt-2 text-center">
-                    На этот день у вас не запланировано занятий.
-                  </p>
-                </div>
-              )
-            ) : (
-              <>
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-              </>
-            )}
-          </TabsContent>
-          <TabsContent
-            value={TabsMap.Lec}
-            className="custom-scroll h-full max-h-[34rem] space-y-2 overflow-auto"
-          >
-            {!isLoading ? (
-              lecLessions.length > 0 ? (
-                lecLessions
-                  .sort(sortLessionsFn)
-                  .map((lession) => (
-                    <ScheduleItem key={lession.id} {...lession} />
-                  ))
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center">
-                  <BiSolidBook className="text-7xl text-muted-foreground" />
-                  <p className="mt-2 text-center">
-                    На этот день у вас не запланировано лекций.
-                  </p>
-                </div>
-              )
-            ) : (
-              <>
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-              </>
-            )}
-          </TabsContent>
-          <TabsContent
-            value={TabsMap.Lab}
-            className="custom-scroll h-full max-h-[34rem] space-y-2 overflow-auto"
-          >
-            {!isLoading ? (
-              labLessions.length > 0 ? (
-                labLessions
-                  .sort(sortLessionsFn)
-                  .map((lession) => (
-                    <ScheduleItem key={lession.id} {...lession} />
-                  ))
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center">
-                  <BiSolidFlask className="text-7xl text-muted-foreground" />
-                  <p className="mt-2 text-center">
-                    На этот день у вас не запланировано лабораторных.
-                  </p>
-                </div>
-              )
-            ) : (
-              <>
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-              </>
-            )}
-          </TabsContent>
-          <TabsContent
-            value={TabsMap.Pract}
-            className="custom-scroll h-full max-h-[34rem] space-y-2 overflow-auto"
-          >
-            {!isLoading ? (
-              practLessions.length > 0 ? (
-                practLessions
-                  .sort(sortLessionsFn)
-                  .map((lession) => (
-                    <ScheduleItem key={lession.id} {...lession} />
-                  ))
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center">
-                  <BiSolidWidget className="text-7xl text-muted-foreground" />
-                  <p className="mt-2 text-center">
-                    На этот день у вас не запланировано практических.
-                  </p>
-                </div>
-              )
-            ) : (
-              <>
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-                <ScheduleItemSkeleton />
-              </>
-            )}
-          </TabsContent>
+                <>
+                  <ScheduleItemSkeleton />
+                  <ScheduleItemSkeleton />
+                  <ScheduleItemSkeleton />
+                  <ScheduleItemSkeleton />
+                </>
+              )}
+            </TabsContent>
+          ))}
         </Tabs>
       </div>
     </section>
