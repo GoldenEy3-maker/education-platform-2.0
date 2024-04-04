@@ -4,7 +4,6 @@ import { cn } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { NotificationPopover } from "./notification-popover";
 import { SearchCommandDialog } from "./search-command-dialog";
-import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 
 export const Header: React.FC<React.ComponentProps<"header">> = ({

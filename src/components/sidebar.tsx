@@ -33,7 +33,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
   return (
     <aside
       className={cn(
-        "custom-scroll sticky left-0 top-0 hidden max-h-svh grid-rows-[auto_1fr] space-y-4 overflow-auto border border-r bg-[linear-gradient(45deg,hsla(333,35%,87%,.5)_0%,hsla(214,53%,92%,.5)_50%,transparent_100%)] p-4 dark:bg-[linear-gradient(45deg,hsla(270,70%,41%,.15)_0%,hsla(217,49%,42%,.15)_50%,transparent_100%)] md:grid",
+        "custom-scrollbar sticky left-0 top-0 hidden max-h-svh grid-rows-[auto_1fr] space-y-4 overflow-auto border border-r bg-[linear-gradient(45deg,hsla(333,35%,87%,.5)_0%,hsla(214,53%,92%,.5)_50%,transparent_100%)] p-4 dark:bg-[linear-gradient(45deg,hsla(270,70%,41%,.15)_0%,hsla(217,49%,42%,.15)_50%,transparent_100%)] md:grid",
         className,
       )}
       {...props}

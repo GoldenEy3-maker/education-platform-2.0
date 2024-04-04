@@ -2,13 +2,8 @@ import { type User } from "@prisma/client";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import {
-  BiAlarmSnooze,
-  BiBell,
-  BiCog,
-  BiSolidAlarmSnooze,
-} from "react-icons/bi";
-import { TbAlarmSnoozeFilled, TbBellZFilled } from "react-icons/tb";
+import { BiBell, BiCog } from "react-icons/bi";
+import { TbBellZFilled } from "react-icons/tb";
 import { cn, type ValueOf } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { Badge } from "./ui/badge";
@@ -183,7 +178,7 @@ export const NotificationPopover = () => {
             </div>
             <TabsContent
               value={TabsMap.Inbox}
-              className="custom-scroll max-h-[min(calc(100vh-12.5rem),20rem)] space-y-1 overflow-auto"
+              className="custom-scrollbar max-h-[min(calc(100vh-12.5rem),20rem)] space-y-1 overflow-auto"
             >
               {!isLoading ? (
                 <>
@@ -227,7 +222,7 @@ export const NotificationPopover = () => {
             </TabsContent>
             <TabsContent
               value={TabsMap.General}
-              className="custom-scroll max-h-[min(calc(100vh-12.5rem),20rem)] space-y-1 overflow-auto"
+              className="custom-scrollbar max-h-[min(calc(100vh-12.5rem),20rem)] space-y-1 overflow-auto"
             >
               <NotificationsEmpty />
             </TabsContent>

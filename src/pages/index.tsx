@@ -1,9 +1,7 @@
-import Link from "next/link";
-import { BiBarChartSquare, BiCalendar, BiHelpCircle } from "react-icons/bi";
+import { BiHelpCircle } from "react-icons/bi";
 import { CoursesSection } from "~/components/courses-section";
 import { DeadlinesSection } from "~/components/deadlines-section";
 import { ScheduleSection } from "~/components/schedule-section";
-import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
@@ -11,7 +9,7 @@ import { type NextPageWithLayout } from "./_app";
 
 const HomePage: NextPageWithLayout = () => {
   return (
-    <main className="grid grid-cols-[repeat(auto-fit,minmax(25rem,1fr))] gap-4">
+    <main className="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-4 min-[687px]:grid-cols-[repeat(auto-fit,minmax(25rem,1fr))]">
       <DeadlinesSection />
       <CoursesSection />
       <ScheduleSection />

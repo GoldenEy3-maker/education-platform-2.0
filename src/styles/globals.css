@@ -82,17 +82,26 @@
 }
 
 @layer utilities {
-  .custom-scroll {
+  .hidden-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hidden-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: transparent transparent;
     transition: scrollbar-color 200ms ease;
   }
 
-  .custom-scroll:hover {
+  .custom-scrollbar:hover {
     scrollbar-color: hsl(0, 0%, 56%) transparent;
   }
 
-  .dark .custom-scroll:hover {
+  .dark .custom-scrollbar:hover {
     scrollbar-color: hsl(0, 0%, 44%) transparent;
   }
 

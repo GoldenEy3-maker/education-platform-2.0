@@ -101,7 +101,7 @@ export const CoursesSection: React.FC = () => {
         </Button>
       </header>
       <Separator />
-      <div className="custom-scroll mt-3 max-h-[30rem] space-y-1 overflow-auto min-[1120px]:max-h-[36.5rem] 2xl:max-h-[calc(100vh-11.5rem)]">
+      <div className="custom-scrollbar mt-3 max-h-[30rem] space-y-1 overflow-auto min-[1120px]:max-h-[36.5rem] 2xl:max-h-[calc(100vh-11.5rem)]">
         {!isLoading ? (
           !isEmpty ? (
             <>

@@ -7,13 +7,7 @@ import {
 } from "@prisma/client";
 import dayjs from "dayjs";
 import Link from "next/link";
-import {
-  type CSSProperties,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import {
   BiBook,
   BiCalendar,
@@ -26,12 +20,8 @@ import {
   BiSolidFlask,
   BiSolidWidget,
 } from "react-icons/bi";
-import {
-  capitalizeFirstLetter,
-  cn,
-  getPersonInitials,
-  getRandomInt,
-} from "~/libs/utils";
+import { useMediaQuery } from "usehooks-ts";
+import { capitalizeFirstLetter, cn, getPersonInitials } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { Button } from "./ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
@@ -436,7 +426,7 @@ type LessionsEmptyProps = {
 
 const LessionsEmpty: React.FC<LessionsEmptyProps> = ({ icon, text }) => {
   return (
-    <div className="flex h-full flex-col items-center justify-center">
+    <div className="flex h-full min-h-[30rem] flex-col items-center justify-center min-[1120px]:min-h-[25rem] 2xl:min-h-[calc(100vh-24rem)]">
       {icon}
       <p className="mt-2 text-center">{text}</p>
     </div>
@@ -504,6 +494,7 @@ export const ScheduleSection: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [data, setData] = useState<typeof MOK_DATA>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const isMobileL = useMediaQuery("(max-width: 425px)");
 
   useEffect(() => {
     setIsLoading(true);
@@ -531,13 +522,14 @@ export const ScheduleSection: React.FC = () => {
 
   const comingDays = useMemo(() => {
     const days: dayjs.Dayjs[] = [];
+    const max = isMobileL ? 1 : 2;
 
-    for (let i = -2; i <= 2; i++) {
+    for (let i = isMobileL ? -1 : -2; i <= max; i++) {
       days.push(currentDate.add(i, "d"));
     }
 
     return days;
-  }, [currentDate]);
+  }, [currentDate, isMobileL]);
 
   const sortLessionsFn = (a: Lession, b: Lession) =>
     +a.start.getTime() - +b.start.getTime();
@@ -597,7 +589,11 @@ export const ScheduleSection: React.FC = () => {
           >
             <BiChevronLeft className="text-xl" />
           </Button>
-          <div className="grid grid-cols-5 items-center gap-1">
+          <div
+            className={cn("grid grid-cols-5 items-center gap-1", {
+              "grid-cols-3": isMobileL,
+            })}
+          >
             {comingDays.map((date) => {
               const isCurrentDate = date.isSame(currentDate);
               const isRealDate = date.isSame(dayjs(), "d");
@@ -634,12 +630,12 @@ export const ScheduleSection: React.FC = () => {
             <BiChevronRight className="text-xl" />
           </Button>
         </div>
-        <Tabs defaultValue={TabsMap.All} className="mt-4">
-          <TabsList className="grid h-auto grid-cols-4 rounded-none border-b bg-transparent p-0">
+        <Tabs defaultValue={TabsMap.All} className="mt-4 overflow-hidden">
+          <TabsList className="hidden-scrollbar flex h-auto justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
             {Object.entries(TabsMap).map(([key, value]) => (
               <TabsTrigger
                 key={key}
-                className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"
+                className="group h-auto shrink-0 grow gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"
                 value={value}
                 asChild
                 disabled={isLoading}
@@ -655,7 +651,7 @@ export const ScheduleSection: React.FC = () => {
             <TabsContent
               key={key}
               value={value}
-              className="custom-scroll h-full max-h-[30rem] space-y-2 overflow-auto min-[1120px]:max-h-[25rem] 2xl:max-h-[calc(100vh-24rem)]"
+              className="custom-scrollbar h-full max-h-[30rem] space-y-2 overflow-auto min-[1120px]:max-h-[25rem] 2xl:max-h-[calc(100vh-24rem)]"
             >
               {!isLoading ? (
                 DataMap[key as TabsMapKeys].length > 0 ? (

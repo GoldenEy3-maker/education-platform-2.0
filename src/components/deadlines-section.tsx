@@ -201,7 +201,7 @@ export const DeadlinesSection: React.FC = () => {
           </>
         ) : null}
         <div
-          className={cn("custom-scroll h-full space-y-1 overflow-auto", {
+          className={cn("custom-scrollbar h-full space-y-1 overflow-auto", {
             "max-h-[16rem] min-[1120px]:max-h-[11.75rem]": !isEmpty,
           })}
         >

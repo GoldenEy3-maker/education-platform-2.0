@@ -1,7 +1,7 @@
 import { Role } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
   singUp: publicProcedure
