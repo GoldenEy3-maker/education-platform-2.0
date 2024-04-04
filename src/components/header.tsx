@@ -4,6 +4,7 @@ import { cn } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { NotificationPopover } from "./notification-popover";
 import { SearchCommandDialog } from "./search-command-dialog";
+import { SidebarDrawer } from "./sidebar-drawer";
 import { Skeleton } from "./ui/skeleton";
 
 export const Header: React.FC<React.ComponentProps<"header">> = ({
@@ -21,7 +22,8 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
       {...props}
     >
       <div className="flex items-center gap-2">
-        <SearchCommandDialog className="flex-grow" />
+        <SidebarDrawer />
+        <SearchCommandDialog className="max-xs:justify-end flex flex-grow" />
         {session?.user ? (
           <>
             <NotificationPopover />

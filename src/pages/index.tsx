@@ -9,20 +9,10 @@ import { type NextPageWithLayout } from "./_app";
 
 const HomePage: NextPageWithLayout = () => {
   return (
-    <main className="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-4 min-[687px]:grid-cols-[repeat(auto-fit,minmax(25rem,1fr))]">
+    <main className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-4 min-[624px]:grid-cols-[repeat(auto-fit,minmax(25rem,1fr))]">
       <DeadlinesSection />
       <CoursesSection />
       <ScheduleSection />
-      {/* <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <header className="flex items-center gap-2 pb-3">
-          <BiBarChartSquare className="text-xl" />
-          <h4 className="flex-grow text-lg font-medium">Успеваемость</h4>
-          <Button variant="outline" type="button" asChild>
-            <Link href="#">Смотреть все</Link>
-          </Button>
-        </header>
-        <Separator />
-      </section> */}
       <section className="rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <header className="flex items-center gap-2 pb-3">
           <BiHelpCircle className="text-xl" />

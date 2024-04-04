@@ -143,7 +143,7 @@ const DeadlineItem: React.FC<DeadlineItemProps> = ({
         <span className="col-start-2 row-start-2 truncate text-muted-foreground">
           {course}
         </span>
-        <div className="row-span-2 flex items-center justify-center">
+        <div className="xs:flex row-span-2 hidden items-center justify-center">
           <Badge className={cn(deadlineItemBadgeVariants({ variant }))}>
             {DeadlineItemBadgeMap[variant]}
           </Badge>

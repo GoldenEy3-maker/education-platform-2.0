@@ -116,7 +116,7 @@ export const NotificationPopover = () => {
           </Badge>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[26rem] overflow-hidden bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
+      <PopoverContent className="xs:w-[26rem] w-screen overflow-hidden bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
         <header className="flex items-center justify-between gap-2">
           <p className="font-medium">Уведомления</p>
           <Button

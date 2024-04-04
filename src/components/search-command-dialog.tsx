@@ -8,6 +8,7 @@ import {
   BiSmile,
   BiUser,
 } from "react-icons/bi";
+import { useMediaQuery } from "usehooks-ts";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";
 import {
@@ -41,6 +42,7 @@ export const SearchCommandDialog: React.FC<SearchCommandDialogProps> = ({
   className,
   ...props
 }) => {
+  const isMobileL = useMediaQuery("(max-width: 425px)");
   const [isOpen, setIsOpen] = useState(false);
 
   useCtrlKeyKBind(() => setIsOpen(true));
@@ -48,16 +50,21 @@ export const SearchCommandDialog: React.FC<SearchCommandDialogProps> = ({
   return (
     <div className={cn(className)} {...props}>
       <Button
-        variant="outline"
+        variant={isMobileL ? "ghost" : "outline"}
         type="button"
-        className="group w-full max-w-64 gap-3"
+        size={isMobileL ? "icon" : "default"}
+        className="xs:w-full group max-w-64 gap-3"
         onClick={() => setIsOpen(true)}
       >
         <BiSearch className="text-xl" />
-        <p className="flex-grow text-left">Поиск</p>
-        <span className="rounded-md border bg-secondary px-2 py-1 text-xs tracking-widest text-muted-foreground group-hover:bg-background">
-          Ctrl K
-        </span>
+        {!isMobileL ? (
+          <>
+            <p className="flex-grow text-left">Поиск</p>
+            <span className="rounded-md border bg-secondary px-2 py-1 text-xs tracking-widest text-muted-foreground group-hover:bg-background">
+              Ctrl K
+            </span>
+          </>
+        ) : null}
       </Button>
       <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
         <CommandInput placeholder="Type a command or search..." />
