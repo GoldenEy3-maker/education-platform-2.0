@@ -74,7 +74,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
           </Link>
         </Button>
         <Button asChild className="w-full justify-normal gap-2" variant="ghost">
-          <Link href={PagePathMap.Home}>
+          <Link href={PagePathMap.Courses}>
             <BiBook className="text-xl" /> <span>Курсы</span>
           </Link>
         </Button>

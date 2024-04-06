@@ -1,6 +1,8 @@
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import {
   BiBook,
   BiCalendar,
@@ -22,6 +24,8 @@ import { Separator } from "./ui/separator";
 import { Switch } from "./ui/switch";
 
 export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
   const { data: session } = useSession();
 
@@ -37,8 +41,12 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
     return surnameLetter + nameLetter;
   };
 
+  useEffect(() => {
+    if (router.isReady) setIsOpen(false);
+  }, [router]);
+
   return (
-    <Drawer direction="left">
+    <Drawer direction="left" open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <Button size="icon" variant="ghost" type="button" className="md:hidden">
           <BiMenu className="text-xl" />
@@ -87,7 +95,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
             className="w-full shrink-0 justify-normal gap-2"
             variant="ghost"
           >
-            <Link href={PagePathMap.Home}>
+            <Link href={PagePathMap.Courses}>
               <BiBook className="text-xl" /> <span>Курсы</span>
             </Link>
           </Button>

@@ -27,7 +27,7 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
         {session?.user ? (
           <>
             <NotificationPopover />
-            <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal px-4 py-1 text-left text-sm sm:gap-x-3">
+            <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal px-2 py-1 text-left text-sm sm:gap-x-3">
               <Avatar
                 className="row-span-2 h-10 w-10"
                 fallback={session.user.name?.at(0)}
@@ -42,10 +42,10 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
             </div>
           </>
         ) : (
-          <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 px-4 py-1">
+          <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center px-2 py-1 sm:gap-x-3">
             <Skeleton className="row-span-2 h-10 w-10 rounded-full" />
-            <Skeleton className="h-3 w-32 rounded-lg" />
-            <Skeleton className="h-3 w-20 rounded-lg" />
+            <Skeleton className="h-3 w-32 rounded-lg max-sm:hidden" />
+            <Skeleton className="h-3 w-20 rounded-lg max-sm:hidden" />
           </div>
         )}
       </div>

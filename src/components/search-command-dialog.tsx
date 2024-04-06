@@ -9,6 +9,7 @@ import {
   BiUser,
 } from "react-icons/bi";
 import { useMediaQuery } from "usehooks-ts";
+import { useNavigatorUserAgent } from "~/hooks/navigatorUserAgent";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";
 import {
@@ -42,7 +43,7 @@ export const SearchCommandDialog: React.FC<SearchCommandDialogProps> = ({
   className,
   ...props
 }) => {
-  const isMobileL = useMediaQuery("(max-width: 425px)");
+  const { isMac } = useNavigatorUserAgent();
   const [isOpen, setIsOpen] = useState(false);
 
   useCtrlKeyKBind(() => setIsOpen(true));
@@ -50,21 +51,16 @@ export const SearchCommandDialog: React.FC<SearchCommandDialogProps> = ({
   return (
     <div className={cn(className)} {...props}>
       <Button
-        variant={isMobileL ? "ghost" : "outline"}
+        variant="outline"
         type="button"
-        size={isMobileL ? "icon" : "default"}
-        className="xs:w-full group max-w-64 gap-3"
+        className="group w-10 max-w-64 gap-3 max-xs:border-none max-xs:bg-transparent max-xs:shadow-none xs:w-full"
         onClick={() => setIsOpen(true)}
       >
-        <BiSearch className="text-xl" />
-        {!isMobileL ? (
-          <>
-            <p className="flex-grow text-left">Поиск</p>
-            <span className="rounded-md border bg-secondary px-2 py-1 text-xs tracking-widest text-muted-foreground group-hover:bg-background">
-              Ctrl K
-            </span>
-          </>
-        ) : null}
+        <BiSearch className="shrink-0 text-xl" />
+        <p className="flex-grow text-left max-xs:hidden">Поиск</p>
+        <span className="rounded-md border bg-secondary px-2 py-1 text-xs tracking-widest text-muted-foreground group-hover:bg-background max-xs:hidden">
+          {isMac ? "Cmd" : "Ctrl"} K
+        </span>
       </Button>
       <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
         <CommandInput placeholder="Type a command or search..." />

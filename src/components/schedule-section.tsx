@@ -522,14 +522,14 @@ export const ScheduleSection: React.FC = () => {
 
   const comingDays = useMemo(() => {
     const days: dayjs.Dayjs[] = [];
-    const max = isMobileL ? 1 : 2;
+    // const max = isMobileL ? 1 : 2;
 
-    for (let i = isMobileL ? -1 : -2; i <= max; i++) {
+    for (let i = -2; i <= 2; i++) {
       days.push(currentDate.add(i, "d"));
     }
 
     return days;
-  }, [currentDate, isMobileL]);
+  }, [currentDate]);
 
   const sortLessionsFn = (a: Lession, b: Lession) =>
     +a.start.getTime() - +b.start.getTime();
@@ -547,9 +547,9 @@ export const ScheduleSection: React.FC = () => {
 
   return (
     <section className="z-10 row-span-2 grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background/60 px-4 py-3 shadow">
-      <header className="flex items-center gap-2 pb-3">
+      <header className="flex items-center gap-2 overflow-hidden pb-3">
         <BiCalendar className="text-xl" />
-        <h4 className="flex-grow text-lg font-medium">Расписание</h4>
+        <h4 className="flex-grow truncate text-lg font-medium">Расписание</h4>
         <Button variant="outline" type="button" asChild>
           <Link href="#">Смотреть все</Link>
         </Button>
@@ -589,12 +589,11 @@ export const ScheduleSection: React.FC = () => {
           >
             <BiChevronLeft className="text-xl" />
           </Button>
-          <div
-            className={cn("grid grid-cols-5 items-center gap-1", {
-              "grid-cols-3": isMobileL,
-            })}
-          >
-            {comingDays.map((date) => {
+          <div className="grid grid-cols-3 items-center gap-1 xs:grid-cols-5">
+            {comingDays.map((date, index) => {
+              const isFirst = index === 0;
+              const isLast = index === comingDays.length - 1;
+
               const isCurrentDate = date.isSame(currentDate);
               const isRealDate = date.isSame(dayjs(), "d");
 
@@ -605,6 +604,7 @@ export const ScheduleSection: React.FC = () => {
                   variant={isCurrentDate ? "default" : "ghost"}
                   className={cn("h-auto flex-col transition-none", {
                     "outline outline-input": isRealDate,
+                    "max-xs:hidden": isFirst || isLast,
                   })}
                   onClick={() => setCurrentDate(date)}
                 >

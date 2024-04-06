@@ -3,6 +3,7 @@ import { type ValueOf } from "./utils";
 export const PagePathMap = {
   Home: "/",
   Auth: "/auth",
+  Courses: "/courses",
 } as const;
 
 export const TranslateRoleMap = {
