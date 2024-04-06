@@ -143,7 +143,7 @@ const DeadlineItem: React.FC<DeadlineItemProps> = ({
         <span className="col-start-2 row-start-2 truncate text-muted-foreground">
           {course}
         </span>
-        <div className="xs:flex row-span-2 hidden items-center justify-center">
+        <div className="row-span-2 hidden items-center justify-center xs:flex">
           <Badge className={cn(deadlineItemBadgeVariants({ variant }))}>
             {DeadlineItemBadgeMap[variant]}
           </Badge>
@@ -180,7 +180,7 @@ export const DeadlinesSection: React.FC = () => {
   const isEmpty = false;
 
   return (
-    <section className="grid h-fit grid-rows-[auto_auto_1fr] rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <section className="grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background/60 px-4 py-3 shadow">
       <header className="flex items-center gap-2 pb-3">
         <BiTimer className="text-xl" />
         <h4 className="flex-grow text-lg font-medium">Дедлайны</h4>

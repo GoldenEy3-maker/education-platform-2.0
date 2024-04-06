@@ -23,11 +23,11 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
     >
       <div className="flex items-center gap-2">
         <SidebarDrawer />
-        <SearchCommandDialog className="max-xs:justify-end flex flex-grow" />
+        <SearchCommandDialog className="flex flex-grow max-xs:justify-end" />
         {session?.user ? (
           <>
             <NotificationPopover />
-            <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal gap-x-3 px-4 py-1 text-left text-sm">
+            <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal px-4 py-1 text-left text-sm sm:gap-x-3">
               <Avatar
                 className="row-span-2 h-10 w-10"
                 fallback={session.user.name?.at(0)}

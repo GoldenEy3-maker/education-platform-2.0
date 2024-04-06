@@ -32,6 +32,8 @@ export const SignOutAlertDrawer: React.FC<SignOutAlertDrawerProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const textContent =
+    "Вы перейдете в режим гостя, потеряете доступ к своим данным и многому функционалу портала.";
 
   if (isDesktop) {
     return (
@@ -40,11 +42,7 @@ export const SignOutAlertDrawer: React.FC<SignOutAlertDrawerProps> = ({
         <AlertDialogContent className="sm:max-w-[31.25rem]">
           <AlertDialogHeader>
             <AlertDialogTitle>Вы точно уверены?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Это действие нельзя отменить. Вы будите перенаправлены на главную
-              страницу в режиме &rdquo;гость&rdquo;, потеряв доступ к некоторому
-              функционалу портала.
-            </AlertDialogDescription>
+            <AlertDialogDescription>{textContent}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
@@ -78,9 +76,7 @@ export const SignOutAlertDrawer: React.FC<SignOutAlertDrawerProps> = ({
         <DrawerHeader className="text-left">
           <DrawerTitle className="text-center">Вы точно уверены?</DrawerTitle>
           <DrawerDescription className="text-center">
-            Это действие нельзя отменить. Вы будите перенаправлены на главную
-            страницу в режиме &rdquo;гость&rdquo;, потеряв доступ к некоторому
-            функционалу портала.
+            {textContent}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="pt-2">

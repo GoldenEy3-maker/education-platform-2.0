@@ -426,7 +426,7 @@ type LessionsEmptyProps = {
 
 const LessionsEmpty: React.FC<LessionsEmptyProps> = ({ icon, text }) => {
   return (
-    <div className="flex h-full min-h-[30rem] flex-col items-center justify-center min-[1120px]:min-h-[25rem] 2xl:min-h-[calc(100vh-24rem)]">
+    <div className="flex h-full min-h-[25rem] flex-col items-center justify-center min-[1120px]:min-h-[25rem] 2xl:min-h-[calc(100vh-24rem)]">
       {icon}
       <p className="mt-2 text-center">{text}</p>
     </div>
@@ -546,7 +546,7 @@ export const ScheduleSection: React.FC = () => {
   };
 
   return (
-    <section className="z-10 row-span-2 grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background/95 px-4 py-3 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <section className="z-10 row-span-2 grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background/60 px-4 py-3 shadow">
       <header className="flex items-center gap-2 pb-3">
         <BiCalendar className="text-xl" />
         <h4 className="flex-grow text-lg font-medium">Расписание</h4>
@@ -613,7 +613,7 @@ export const ScheduleSection: React.FC = () => {
                       "text-primary-foreground": isCurrentDate,
                     })}
                   >
-                    {date.format("ddd")}
+                    {date.format("dd")}
                   </span>
                   <p className="text-lg font-medium">{date.format("DD")}</p>
                 </Button>
@@ -651,7 +651,7 @@ export const ScheduleSection: React.FC = () => {
             <TabsContent
               key={key}
               value={value}
-              className="custom-scrollbar h-full max-h-[30rem] space-y-2 overflow-auto min-[1120px]:max-h-[25rem] 2xl:max-h-[calc(100vh-24rem)]"
+              className="custom-scrollbar h-full max-h-[25rem] space-y-2 overflow-auto min-[1120px]:max-h-[25rem] 2xl:max-h-[calc(100vh-24rem)]"
             >
               {!isLoading ? (
                 DataMap[key as TabsMapKeys].length > 0 ? (
