@@ -20,7 +20,6 @@ import {
   BiSolidFlask,
   BiSolidWidget,
 } from "react-icons/bi";
-import { useMediaQuery } from "usehooks-ts";
 import { capitalizeFirstLetter, cn, getPersonInitials } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { Button } from "./ui/button";
@@ -494,7 +493,6 @@ export const ScheduleSection: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [data, setData] = useState<typeof MOK_DATA>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const isMobileL = useMediaQuery("(max-width: 425px)");
 
   useEffect(() => {
     setIsLoading(true);
@@ -522,7 +520,6 @@ export const ScheduleSection: React.FC = () => {
 
   const comingDays = useMemo(() => {
     const days: dayjs.Dayjs[] = [];
-    // const max = isMobileL ? 1 : 2;
 
     for (let i = -2; i <= 2; i++) {
       days.push(currentDate.add(i, "d"));
@@ -590,10 +587,7 @@ export const ScheduleSection: React.FC = () => {
             <BiChevronLeft className="text-xl" />
           </Button>
           <div className="grid grid-cols-3 items-center gap-1 xs:grid-cols-5">
-            {comingDays.map((date, index) => {
-              const isFirst = index === 0;
-              const isLast = index === comingDays.length - 1;
-
+            {comingDays.map((date) => {
               const isCurrentDate = date.isSame(currentDate);
               const isRealDate = date.isSame(dayjs(), "d");
 
@@ -602,10 +596,12 @@ export const ScheduleSection: React.FC = () => {
                   key={date.valueOf()}
                   type="button"
                   variant={isCurrentDate ? "default" : "ghost"}
-                  className={cn("h-auto flex-col transition-none", {
-                    "outline outline-input": isRealDate,
-                    "max-xs:hidden": isFirst || isLast,
-                  })}
+                  className={cn(
+                    "h-auto flex-col transition-none first:max-xs:hidden last:max-xs:hidden",
+                    {
+                      "outline outline-input": isRealDate,
+                    },
+                  )}
                   onClick={() => setCurrentDate(date)}
                 >
                   <span

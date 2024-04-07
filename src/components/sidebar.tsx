@@ -109,7 +109,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
             <Button
               asChild
               variant="ghost"
-              className="w-full justify-between gap-2"
+              className="w-full cursor-pointer justify-between gap-2"
               onClick={() =>
                 setTheme(resolvedTheme === "dark" ? "light" : "dark")
               }
