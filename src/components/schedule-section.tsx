@@ -465,25 +465,25 @@ const TabsTriggerMap: Record<
 > = {
   All: {
     icon: (
-      <BiSolidDetail className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
+      <BiSolidDetail className="shrink-0 text-xl group-data-[state=active]:text-primary" />
     ),
     text: "Все",
   },
   Lec: {
     icon: (
-      <BiSolidBookBookmark className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
+      <BiSolidBookBookmark className="shrink-0 text-xl group-data-[state=active]:text-primary" />
     ),
     text: "Лекции",
   },
   Lab: {
     icon: (
-      <BiSolidFlask className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
+      <BiSolidFlask className="shrink-0 text-xl group-data-[state=active]:text-primary" />
     ),
     text: "Лаб",
   },
   Pract: {
     icon: (
-      <BiSolidWidget className="flex-shrink-0 text-xl group-data-[state=active]:text-primary" />
+      <BiSolidWidget className="shrink-0 text-xl group-data-[state=active]:text-primary" />
     ),
     text: "Практ",
   },
