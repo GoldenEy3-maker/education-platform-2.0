@@ -116,7 +116,7 @@ export const NotificationPopover = () => {
           </Badge>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="xs:w-[26rem] w-screen overflow-hidden bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
+      <PopoverContent className="w-screen overflow-hidden bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90 xs:w-[26rem]">
         <header className="flex items-center justify-between gap-2">
           <p className="font-medium">Уведомления</p>
           <Button
@@ -130,7 +130,7 @@ export const NotificationPopover = () => {
         </header>
         {session?.user ? (
           <Tabs defaultValue={TabsMap.Inbox}>
-            <div className="mt-3 flex items-center justify-between gap-2 border-b">
+            <div className="mb-2 mt-3 flex items-center justify-between gap-2 border-b">
               <TabsList className="h-auto bg-transparent p-0">
                 <TabsTrigger
                   className="group h-auto gap-2 rounded-none border-b border-primary/0 py-3 data-[state='active']:border-primary data-[state='active']:!bg-background/0 data-[state='active']:!shadow-none data-[state='active']:hover:!bg-accent"

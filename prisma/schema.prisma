@@ -10,19 +10,22 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  surname       String
-  fathername    String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  login         String    @unique
-  password      String
-  tokenVersion  Int       @default(0)
-  role          Role
-  status        String?
-  lessions      Lession[]
+  id             String         @id @default(cuid())
+  name           String
+  surname        String
+  fathername     String?
+  email          String?        @unique
+  emailVerified  DateTime?
+  image          String?
+  login          String         @unique
+  password       String
+  tokenVersion   Int            @default(0)
+  role           Role
+  status         String?
+  lessions       Lession[]
+  createdCourses Course[]       @relation("author")
+  subscriptions  Subscription[]
+  favorites      Favorite[]
 }
 
 model Pavilion {
@@ -46,6 +49,42 @@ model Lession {
   teacher    User          @relation(fields: [teacherId], references: [id])
   teacherId  String
   status     LessionStatus
+}
+
+model Course {
+  id          String         @id @default(cuid())
+  title       String
+  description String
+  author      User           @relation("author", fields: [authorId], references: [id])
+  authorId    String
+  subscribers Subscription[]
+  favoritedBy Favorite[]
+  isArchived  Boolean        @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subscription {
+  id String @id @default(cuid())
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
+
+  progress Int
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model Favorite {
+  id String @id @default(cuid())
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 }
 
 enum Role {

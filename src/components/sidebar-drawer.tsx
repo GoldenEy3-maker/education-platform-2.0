@@ -15,6 +15,7 @@ import {
   BiMoon,
 } from "react-icons/bi";
 import { PagePathMap, TranslateRoleMap } from "~/libs/enums";
+import { getFirstLettersUserCredentials } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { SignOutAlertDrawer } from "./sign-out-alert-drawer";
 import { Button } from "./ui/button";
@@ -28,18 +29,6 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
   const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
   const { data: session } = useSession();
-
-  const getFirstLettersUserCredentials = (surname: string, name: string) => {
-    const surnameLetter = surname.at(0);
-    const nameLetter = name.at(0);
-
-    if (!surnameLetter && !nameLetter) return "";
-
-    if (!surnameLetter) return nameLetter;
-    if (!nameLetter) return surnameLetter;
-
-    return surnameLetter + nameLetter;
-  };
 
   useEffect(() => {
     if (router.isReady) setIsOpen(false);

@@ -23,3 +23,18 @@ export const getPersonInitials = (
 
   return fathername ? main + " " + fathername?.at(0) + "." : main;
 };
+
+export const getFirstLettersUserCredentials = (
+  surname: string,
+  name: string,
+) => {
+  const surnameLetter = surname.at(0);
+  const nameLetter = name.at(0);
+
+  if (!surnameLetter && !nameLetter) return "";
+
+  if (!surnameLetter) return nameLetter;
+  if (!nameLetter) return surnameLetter;
+
+  return surnameLetter + nameLetter;
+};
