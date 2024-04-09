@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import { TranslateRoleMap } from "~/libs/enums";
-import { cn } from "~/libs/utils";
+import { cn, getFirstLettersUserCredentials } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { NotificationPopover } from "./notification-popover";
 import { SearchCommandDialog } from "./search-command-dialog";
@@ -30,7 +30,10 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
             <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] justify-normal px-2 py-1 text-left text-sm sm:gap-x-3">
               <Avatar
                 className="row-span-2 h-10 w-10"
-                fallback={session.user.name?.at(0)}
+                fallback={getFirstLettersUserCredentials(
+                  session.user.surname,
+                  session.user.name,
+                )}
                 src={session.user.image}
               />
               <p className="max-sm:hidden">

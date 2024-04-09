@@ -36,6 +36,7 @@ import { Separator } from "~/components/ui/separator";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Switch } from "~/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { usePersistedQueryState } from "~/hooks/persistedQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import {
@@ -85,13 +86,13 @@ const TabsTriggerMap: Record<TabsMap, { text: string; icon: React.ReactNode }> =
 
 const SortValueMap = {
   Recent: "Recent",
-  New: "New",
+  Alphabet: "Alphabet",
   Progress: "Progress",
 } as const;
 
 const TranslateSortValueMap: Record<SortValueMap, string> = {
   Recent: "Недавним",
-  New: "Новым",
+  Alphabet: "Алфавиту",
   Progress: "Прогрессу",
 } as const;
 
@@ -473,7 +474,10 @@ const MOK_DATA: Prisma.CourseGetPayload<{
 const CoursesPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
   const isLoading = !session?.user;
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = usePersistedQueryState<string>(
+    "search",
+    "",
+  );
   const [filters, setFilters] = useState<Record<FiltersMap, boolean>>({
     HideArchived: false,
     HideCompleted: false,
@@ -481,7 +485,7 @@ const CoursesPage: NextPageWithLayout = () => {
     HidePublished: false,
   });
   const [sortValue, setSortValue] = useState<SortValueMap>("Recent");
-  const [tabs, setTabs] = useState<TabsMap>("All");
+  const [tabs, setTabs] = usePersistedQueryState<TabsMap>("tab", "All");
 
   const activeFilters = Object.values(filters).filter((val) => val === true);
 
@@ -534,7 +538,17 @@ const CoursesPage: NextPageWithLayout = () => {
               Попробуйте вернуться позже. Мы вас всегда ждем!
             </p>
           ),
-          Teacher: "",
+          Teacher: (
+            <p className="mt-2 text-center">
+              Похоже, что вы все еще не опубликовали ни одного курса.{" "}
+              <Link href="#" className="text-primary">
+                Скорее перейдите к созданию нового.
+              </Link>{" "}
+              В случае, если у вас уже есть опубликованные курсы, но тут они не
+              появляются, тогда проблема остается на нашей стороне. Попробуйте
+              вернуться позже. Мы вас всегда ждем!
+            </p>
+          ),
         }}
         textBasedOnRole
       />
@@ -578,6 +592,7 @@ const CoursesPage: NextPageWithLayout = () => {
       <span className="text-muted-foreground">
         Все курсы разрабатываются квалифицированными преподавателями АГУ.
       </span>
+
       <div
         className={cn(
           "mt-4 grid grid-cols-[1fr_repeat(2,minmax(0,auto))] items-center gap-2",

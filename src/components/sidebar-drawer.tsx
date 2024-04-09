@@ -22,6 +22,7 @@ import { Button } from "./ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { Label } from "./ui/label";
 import { Separator } from "./ui/separator";
+import { Skeleton } from "./ui/skeleton";
 import { Switch } from "./ui/switch";
 
 export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
@@ -45,7 +46,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
         className="inset-y-0 left-0 mt-0 grid max-h-svh grid-rows-[auto_auto_1fr] p-4"
         isNotchDisabled
       >
-        <header className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-4">
+        <header className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4">
           {session?.user ? (
             <>
               <Avatar
@@ -65,7 +66,11 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
               </span>
             </>
           ) : (
-            <></>
+            <>
+              <Skeleton className="row-span-2 h-14 w-14 rounded-full" />
+              <Skeleton className="h-4 w-44" />
+              <Skeleton className="h-4 w-28" />
+            </>
           )}
         </header>
         <Separator className="my-4" />
