@@ -14,7 +14,7 @@ import {
   BiMenu,
   BiMoon,
 } from "react-icons/bi";
-import { PagePathMap, TranslateRoleMap } from "~/libs/enums";
+import { PagePathMap, TranslatedRoleMap } from "~/libs/enums";
 import { getFirstLettersUserCredentials } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { SignOutAlertDrawer } from "./sign-out-alert-drawer";
@@ -62,7 +62,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
                 {session.user.fathername}
               </p>
               <span className="text-muted-foreground">
-                {TranslateRoleMap[session.user.role]}
+                {TranslatedRoleMap[session.user.role]}
               </span>
             </>
           ) : (

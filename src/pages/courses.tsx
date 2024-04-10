@@ -40,6 +40,11 @@ import { usePersistedQueryState } from "~/hooks/persistedQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import {
+  PagePathMap,
+  type StatusCourseMap,
+  TranslatedStatusCourseMap,
+} from "~/libs/enums";
+import {
   cn,
   getFirstLettersUserCredentials,
   getPersonInitials,
@@ -90,20 +95,13 @@ const SortValueMap = {
   Progress: "Progress",
 } as const;
 
-const TranslateSortValueMap: Record<SortValueMap, string> = {
+const TranslatedSortValueMap: Record<SortValueMap, string> = {
   Recent: "Недавним",
   Alphabet: "Алфавиту",
   Progress: "Прогрессу",
 } as const;
 
 type SortValueMap = ValueOf<typeof SortValueMap>;
-
-const StatusCourseMap = {
-  Published: "Published",
-  Archived: "Archived",
-} as const;
-
-type StatusCourseMap = ValueOf<typeof StatusCourseMap>;
 
 const FiltersMap = {
   HideCompleted: "HideCompleted",
@@ -121,12 +119,8 @@ const FiltersContentMap: Record<FiltersMap, string> = {
   HidePublished: "Скрыть публикации",
 };
 
-const TranslateStatusCourseMap: Record<StatusCourseMap, string> = {
-  Archived: "Архивирован",
-  Published: "Опубликован",
-};
-
 type CourseItemProps = {
+  id: string;
   title: string;
   image?: string;
   description: string;
@@ -143,6 +137,7 @@ type CourseItemProps = {
 } & React.ComponentProps<"div">;
 
 const CourseItem: React.FC<CourseItemProps> = ({
+  id,
   title,
   image,
   description,
@@ -155,7 +150,7 @@ const CourseItem: React.FC<CourseItemProps> = ({
 }) => {
   return (
     <div className={cn("flex flex-col", className)} {...props}>
-      <Link href="#">
+      <Link href={PagePathMap.Course + id}>
         <Skeleton className="mb-3 h-48 w-full rounded-lg" />
       </Link>
       <div className="mb-1 flex items-center justify-between gap-2">
@@ -187,7 +182,7 @@ const CourseItem: React.FC<CourseItemProps> = ({
               ></span>
             </span>
           </div>
-          <span>{TranslateStatusCourseMap[status]}</span>
+          <span>{TranslatedStatusCourseMap[status]}</span>
         </div>
         <Button
           type="button"
@@ -249,7 +244,7 @@ const CourseItem: React.FC<CourseItemProps> = ({
           </Link>
         </Button>
         <Button variant="link" asChild className="gap-2">
-          <Link href="#">
+          <Link href={PagePathMap.Course + id}>
             <span>Перейти</span>
             <BiRightArrowAlt className="text-lg" />
           </Link>
@@ -607,7 +602,7 @@ const CoursesPage: NextPageWithLayout = () => {
           placeholder="Поиск курсов..."
           value={searchValue}
           onChange={(event) => setSearchValue(event.target.value)}
-          className="max-w-80 placeholder-shown:truncate"
+          className="max-w-80 "
         />
         <Popover>
           <PopoverTrigger asChild>
@@ -680,7 +675,7 @@ const CoursesPage: NextPageWithLayout = () => {
             </SelectTrigger>
           </Button>
           <SelectContent>
-            {Object.entries(TranslateSortValueMap).map(([key, value]) => (
+            {Object.entries(TranslatedSortValueMap).map(([key, value]) => (
               <SelectItem key={key} value={key}>
                 {value}
               </SelectItem>
@@ -730,6 +725,7 @@ const CoursesPage: NextPageWithLayout = () => {
                 data.map((course) => (
                   <CourseItem
                     key={course.id}
+                    id={course.id}
                     description={course.description}
                     title={course.title}
                     status={course.isArchived ? "Archived" : "Published"}

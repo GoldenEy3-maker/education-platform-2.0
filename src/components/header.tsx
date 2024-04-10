@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import { TranslateRoleMap } from "~/libs/enums";
+import { TranslatedRoleMap } from "~/libs/enums";
 import { cn, getFirstLettersUserCredentials } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { NotificationPopover } from "./notification-popover";
@@ -40,7 +40,7 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
                 {session.user.surname} {session.user.name}
               </p>
               <span className="text-xs text-muted-foreground max-sm:hidden">
-                {TranslateRoleMap[session.user.role]}
+                {TranslatedRoleMap[session.user.role]}
               </span>
             </div>
           </>

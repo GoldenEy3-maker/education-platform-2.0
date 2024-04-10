@@ -29,12 +29,7 @@ export const usePersistedQueryState = <T extends string>(
               [key]: typeof arg === "function" ? arg(state) : arg,
             },
           },
-          {
-            query: {
-              ...router.query,
-              [key]: typeof arg === "function" ? arg(state) : arg,
-            },
-          },
+          undefined,
           {
             scroll: false,
           },
