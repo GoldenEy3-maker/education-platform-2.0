@@ -20,7 +20,7 @@ import {
   BiSolidFlask,
   BiSolidWidget,
 } from "react-icons/bi";
-import { capitalizeFirstLetter, cn, getPersonInitials } from "~/libs/utils";
+import { cn, getPersonInitials } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { Button } from "./ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
@@ -563,8 +563,8 @@ export const ScheduleSection: React.FC = () => {
           >
             <BiChevronLeft className="text-xl" />
           </Button>
-          <span className="font-medium">
-            {capitalizeFirstLetter(currentDate.format("MMMM, YYYY"))}
+          <span className="font-medium capitalize">
+            {currentDate.format("MMMM, YYYY")}
           </span>
           <Button
             type="button"

@@ -1,22 +1,24 @@
 import { type Prisma } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { type CSSProperties } from "react";
+import { useState } from "react";
 import {
   BiBookmarkMinus,
-  BiBookmarkPlus,
   BiDotsVerticalRounded,
-  BiPlus,
-  BiShareAlt,
-  BiSliderAlt,
+  BiMessageAlt,
+  BiRightArrowAlt,
+  BiSearch,
   BiSolidConversation,
   BiSolidGroup,
   BiSolidNotepad,
   BiSolidWidget,
-  BiStar,
-  BiUserPlus,
+  BiSortAlt2,
 } from "react-icons/bi";
+
 import { Avatar } from "~/components/avatar";
+import { CourseHead } from "~/components/course-head";
+import { CourseOverviewTab } from "~/components/course-overview-tab";
+import { ProgressCircle } from "~/components/progress-circle";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,30 +31,30 @@ import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Progress } from "~/components/ui/progress";
+import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { Skeleton } from "~/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { usePersistedQueryState } from "~/hooks/persistedQueryState";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
-import {
-  PagePathMap,
-  type StatusCourseMap,
-  TranslatedStatusCourseMap,
-} from "~/libs/enums";
-import { cn, getFirstLettersUserCredentials, type ValueOf } from "~/libs/utils";
+import { PagePathMap } from "~/libs/enums";
+import { type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "../_app";
 
 const TabsMap = {
   Overview: "Overview",
   Tasks: "Tasks",
-  Members: "Members",
+  Subscribers: "Subscribers",
   Discussions: "Discussion",
 } as const;
 
@@ -72,7 +74,7 @@ const TabsTriggerMap: Record<TabsMap, { icon: React.ReactNode; text: string }> =
       ),
       text: "Задания",
     },
-    Members: {
+    Subscribers: {
       icon: (
         <BiSolidGroup className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
@@ -124,7 +126,8 @@ const MOK_DATA: Prisma.CourseGetPayload<{
   },
   authorId: "user_1",
   createdAt: new Date(),
-  description: "",
+  description:
+    "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam, quisquam? Accusamus dicta eum nesciunt ut, cumque corporis nulla explicabo reiciendis quisquam, pariatur odio id unde sapiente repudiandae. Nihil, hic dicta. Aliquid illo dignissimos quod odio. Omnis repellendus saepe cupiditate aliquam ratione, nemo vel repellat sapiente illum fuga labore cum suscipit iusto, reiciendis voluptas totam beatae repudiandae, reprehenderit et quod porro! Expedita blanditiis ea dolor itaque, hic reiciendis optio mollitia obcaecati recusandae neque vero soluta. Odit consequuntur soluta, sed voluptatibus ipsa itaque enim quas qui blanditiis modi, accusantium quod temporibus ullam.",
   isArchived: false,
   title: "Иностранный язык в профессиональной деятельности",
   updatedAt: new Date(),
@@ -210,16 +213,30 @@ const MOK_DATA: Prisma.CourseGetPayload<{
   ],
 };
 
+const SortValueSubscribersMap = {
+  Recent: "Recent",
+  Alphabet: "Alphabet",
+  Progress: "Progress",
+} as const;
+
+const TranslatedSortValueSubscribersMap: Record<
+  SortValueSubscribersMap,
+  string
+> = {
+  Recent: "Недавним",
+  Alphabet: "Алфавиту",
+  Progress: "Прогрессу",
+} as const;
+
+type SortValueSubscribersMap = ValueOf<typeof SortValueSubscribersMap>;
+
 const CoursePage: NextPageWithLayout = () => {
   const { data: session } = useSession();
-  const [tabs, setTabs] = usePersistedQueryState<TabsMap>("tab", "Overview");
+  const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "Overview");
+  const [sortValueSubscribers, setSortValueSubscribers] =
+    useState<SortValueSubscribersMap>("Recent");
 
-  const status: StatusCourseMap = MOK_DATA.isArchived
-    ? "Archived"
-    : "Published";
-
-  const isAuthor = false;
-  const isStudent = true;
+  const isAuthor = true;
   const isSubStudent = false;
   const isTeacher = false;
   const isLoading = false;
@@ -241,293 +258,20 @@ const CoursePage: NextPageWithLayout = () => {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      {!isLoading ? (
-        <>
-          <div
-            className={cn(
-              "mb-2 flex w-fit items-center gap-2 rounded-full bg-useful/10 px-3 py-1 text-sm text-useful",
-              {
-                "bg-destructive/10 text-destructive": status === "Archived",
-              },
-            )}
-          >
-            <div className="flex items-center justify-center">
-              <span className="relative flex h-2 w-2">
-                <span
-                  className={cn(
-                    "absolute inline-flex h-full w-full animate-ping rounded-full bg-useful opacity-75",
-                    {
-                      "bg-destructive": status === "Archived",
-                    },
-                  )}
-                ></span>
-                <span
-                  className={cn(
-                    "relative inline-flex h-2 w-2 rounded-full bg-useful",
-                    {
-                      "bg-destructive": status === "Archived",
-                    },
-                  )}
-                ></span>
-              </span>
-            </div>
-            <span>{TranslatedStatusCourseMap[status]}</span>
-          </div>
-          <h1 className="mb-2 text-3xl font-medium [text-wrap:balance]">
-            {MOK_DATA.title}
-          </h1>
-          {(() => {
-            if (isAuthor)
-              return (
-                <span className="text-muted-foreground">
-                  Вы являетесь создателем этого курса.
-                </span>
-              );
-
-            if (isTeacher && !isAuthor)
-              return (
-                <span className="text-muted-foreground">
-                  Вы являетесь преподавателем, поэтому не сможете подписаться на
-                  этот курс.
-                </span>
-              );
-
-            if (isStudent && !isSubStudent)
-              return (
-                <span className="text-muted-foreground">
-                  Вы не подписаны на этот курс.
-                </span>
-              );
-
-            return (
-              <div className="flex max-w-96 items-center gap-4">
-                <Progress value={40} />
-                <span className="whitespace-nowrap text-muted-foreground">
-                  40% завершено
-                </span>
-              </div>
-            );
-          })()}
-          <div
-            className={cn(
-              "mt-4 grid items-center gap-2 max-lg:grid-cols-[1fr_repeat(3,minmax(0,auto))] max-[570px]:grid-cols-[1fr_auto] lg:grid-cols-[1fr_repeat(4,minmax(0,auto))]",
-              {
-                "max-lg:grid-cols-[1fr_repeat(4,minmax(0,auto))]": isAuthor,
-                "grid-cols-[1fr_auto] min-[570px]:grid-cols-[1fr_repeat(3,minmax(0,auto))]":
-                  MOK_DATA.subscribers.length < 3 && !isAuthor,
-              },
-            )}
-          >
-            <div>
-              <Button
-                asChild
-                variant="ghost"
-                className="grid h-auto max-w-fit grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3"
-              >
-                <Link href="#">
-                  <Avatar fallback="ДЛ" className="row-span-2 h-10 w-10" />
-                  <p className="truncate font-medium">
-                    {MOK_DATA.author.surname} {MOK_DATA.author.name}{" "}
-                    {MOK_DATA.author.fathername}
-                  </p>
-                  <span className="truncate text-sm text-muted-foreground">
-                    {MOK_DATA.author.status}
-                  </span>
-                </Link>
-              </Button>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              className="rounded-full max-[570px]:hidden"
-              size="icon"
-            >
-              <BiStar className="text-xl text-warning" />
-              <span className="sr-only">Добавь в избранное</span>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="rounded-full max-[570px]:hidden"
-              size="icon"
-            >
-              <BiShareAlt className="text-xl" />
-              <span className="sr-only">Поделиться</span>
-            </Button>
-            <div
-              style={
-                {
-                  "--subscribers-length": MOK_DATA.subscribers.length,
-                } as CSSProperties
-              }
-              className={cn(
-                "grid grid-cols-[repeat(var(--subscribers-length),minmax(0,2.4rem))] items-center pr-2 max-lg:hidden",
-                {
-                  "grid-cols-1 pr-0 max-lg:block max-[570px]:hidden lg:grid-cols-[repeat(var(--subscribers-length),minmax(0,2.4rem))_auto]":
-                    isAuthor,
-                  "grid-cols-[repeat(5,minmax(0,2.4rem))]":
-                    MOK_DATA.subscribers.length > 4,
-                  "grid-cols-1 lg:grid-cols-[repeat(5,minmax(0,2.4rem))_auto]":
-                    MOK_DATA.subscribers.length > 4 && isAuthor,
-                  hidden: MOK_DATA.subscribers.length < 3 && !isAuthor,
-                  "grid-cols-1": MOK_DATA.subscribers.length < 3 && isAuthor,
-                },
-              )}
-            >
-              {MOK_DATA.subscribers.length > 2 &&
-                MOK_DATA.subscribers
-                  .slice(0, 4)
-                  .map((sub) => (
-                    <Avatar
-                      key={sub.user.id}
-                      fallback={getFirstLettersUserCredentials(
-                        sub.user.surname,
-                        sub.user.name,
-                      )}
-                      src={sub.user.image}
-                      className="rounded-full border-[4px] border-[hsla(213,39%,95%)] dark:border-[hsl(220,67%,13%)] max-lg:hidden"
-                    />
-                  ))}
-              {MOK_DATA.subscribers.length > 4 ? (
-                <div className="z-20 hidden h-12 w-12 items-center justify-center rounded-full bg-[hsla(213,39%,95%)] dark:bg-[hsl(220,67%,13%)] lg:flex">
-                  +{MOK_DATA.subscribers.length - 4}
-                </div>
-              ) : null}
-              {isAuthor ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className={cn(
-                    "rounded-full border-dashed border-primary bg-primary/5 text-primary hover:border-transparent hover:bg-primary hover:text-primary-foreground hover:[--ripple-clr:theme('colors.primary.foreground')] lg:ml-3",
-                    {
-                      "ml-0": MOK_DATA.subscribers.length < 3,
-                    },
-                  )}
-                >
-                  <BiPlus className="text-xl" />
-                  <span className="sr-only">Пригласить</span>
-                </Button>
-              ) : null}
-            </div>
-
-            {(() => {
-              if (isAuthor)
-                return (
-                  <Button
-                    asChild
-                    variant="default"
-                    className="gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full max-[570px]:hidden"
-                  >
-                    <Link href="#">
-                      <BiSliderAlt className="shrink-0 text-xl" />
-                      <span className="max-lg:hidden">Редактировать</span>
-                      <span className="sr-only">Редактировать</span>
-                    </Link>
-                  </Button>
-                );
-
-              if (isSubStudent)
-                return (
-                  <Button
-                    variant="destructive"
-                    className="gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full max-[570px]:hidden"
-                  >
-                    <BiBookmarkMinus className="shrink-0 text-xl" />
-                    <span className="max-lg:hidden">Отписаться</span>
-                    <span className="sr-only">Отписаться</span>
-                  </Button>
-                );
-
-              return (
-                <Button
-                  variant="default"
-                  className="gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full max-[570px]:hidden"
-                  disabled={isTeacher && !isAuthor}
-                >
-                  <BiBookmarkPlus className="shrink-0 text-xl" />
-                  <span className="max-lg:hidden">Подписаться</span>
-                  <span className="sr-only">Подписаться</span>
-                </Button>
-              );
-            })()}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full data-[state=open]:bg-accent min-[570px]:hidden"
-                >
-                  <BiDotsVerticalRounded className="text-xl" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-60">
-                <DropdownMenuLabel>Действия</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <BiStar className="mr-2 text-xl text-warning" />
-                    <span>Добавить в избранное</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <BiShareAlt className="mr-2 text-xl" />
-                    <span>Поделиться</span>
-                  </DropdownMenuItem>
-                  {isAuthor ? (
-                    <DropdownMenuItem>
-                      <BiUserPlus className="mr-2 text-xl" />
-                      <span>Пригласить</span>
-                    </DropdownMenuItem>
-                  ) : null}
-                  {(() => {
-                    if (isAuthor)
-                      return (
-                        <DropdownMenuItem>
-                          <BiSliderAlt className="mr-2 text-xl" />
-                          <span>Редактировать</span>
-                        </DropdownMenuItem>
-                      );
-
-                    if (isSubStudent)
-                      return (
-                        <DropdownMenuItem>
-                          <BiBookmarkMinus className="mr-2 text-xl" />
-                          <span>Отписаться</span>
-                        </DropdownMenuItem>
-                      );
-
-                    return (
-                      <DropdownMenuItem disabled={!isAuthor && isTeacher}>
-                        <BiBookmarkPlus className="mr-2 text-xl" />
-                        <span>Подписаться</span>
-                      </DropdownMenuItem>
-                    );
-                  })()}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </>
-      ) : (
-        <>
-          <Skeleton className="mb-2 h-7 w-32 rounded-full" />
-          <Skeleton className="mb-2 h-9 w-full rounded-full" />
-          <Skeleton className="h-6 w-60 rounded-full sm:w-80" />
-          <div className="flex items-center justify-between gap-2">
-            <div className="mt-4 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 px-4 py-2">
-              <Skeleton className="row-span-2 h-10 w-10 rounded-full" />
-              <Skeleton className="h-4 w-44 rounded-full sm:w-60" />
-              <Skeleton className="h-3 w-36 rounded-full sm:w-48" />
-            </div>
-            <Skeleton className="h-4 w-40 rounded-full max-lg:hidden" />
-          </div>
-        </>
-      )}
-
+      <CourseHead
+        isAuthor={isAuthor}
+        isSubStudent={isSubStudent}
+        isTeacher={isTeacher}
+        isLoading={isLoading}
+        author={MOK_DATA.author}
+        isArchived={MOK_DATA.isArchived}
+        subscribers={MOK_DATA.subscribers}
+        title={MOK_DATA.title}
+      />
       <Tabs
         value={tabs}
         onValueChange={(value) => setTabs(value as TabsMap)}
-        className="mt-4 overflow-hidden"
+        className="mt-4"
       >
         <TabsList className="hidden-scrollbar mb-4 flex h-auto max-w-[calc(100vw-2rem)] justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
           {Object.entries(TabsTriggerMap).map(([key, value]) => (
@@ -544,6 +288,289 @@ const CoursePage: NextPageWithLayout = () => {
             </TabsTrigger>
           ))}
         </TabsList>
+        <TabsContent value={TabsMap.Overview} className="space-y-4">
+          <CourseOverviewTab description={MOK_DATA.description} />
+        </TabsContent>
+        <TabsContent value={TabsMap.Subscribers}>
+          <div className="flex items-center justify-between gap-2">
+            <Input
+              leadingIcon={<BiSearch className="text-xl" />}
+              placeholder="Поиск участников..."
+              className="max-w-80"
+            />
+            <Select
+              defaultValue={SortValueSubscribersMap.Recent}
+              value={sortValueSubscribers}
+              onValueChange={(value: SortValueSubscribersMap) =>
+                setSortValueSubscribers(value)
+              }
+            >
+              <Button
+                asChild
+                variant="outline"
+                className="w-auto justify-between gap-2 max-[1100px]:border-none max-[1100px]:bg-transparent max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
+              >
+                <SelectTrigger>
+                  <BiSortAlt2 className="shrink-0 text-xl min-[1100px]:hidden" />
+                  <p className="max-[1100px]:hidden">
+                    <span className="text-muted-foreground">
+                      Сортировать по
+                    </span>
+                    &nbsp;
+                    <SelectValue />
+                  </p>
+                </SelectTrigger>
+              </Button>
+              <SelectContent>
+                {Object.entries(TranslatedSortValueSubscribersMap).map(
+                  ([key, value]) => (
+                    <SelectItem key={key} value={key}>
+                      {value}
+                    </SelectItem>
+                  ),
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] gap-4">
+            <div className="relative rounded-md border bg-background p-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-2 rounded-full data-[state=open]:bg-accent"
+                  >
+                    <BiDotsVerticalRounded className="text-xl" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem>
+                    <BiMessageAlt className="mr-2 text-xl" />
+                    <span>Перейти в чат</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <BiBookmarkMinus className="mr-2 text-xl" />
+                    <span>Отписать</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <div className="flex flex-col items-center ">
+                <Avatar fallback="КД" className="h-16 w-16" />
+                <p className="font-medium">Королев Данил</p>
+                <span className="text-sm text-muted-foreground">
+                  danil-danil-korolev@bk.ru
+                </span>
+              </div>
+              <div className="my-4 flex items-center justify-center gap-4">
+                <div className="flex flex-col items-center">
+                  <p className="font-medium">3</p>
+                  <span className="text-sm text-muted-foreground">
+                    Завершено
+                  </span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <ProgressCircle
+                    className="text-2xl text-primary"
+                    strokeWidth={8}
+                    value={30}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Прогресс (30%)
+                  </span>
+                </div>
+              </div>
+              <footer className="mt-2 flex items-center justify-between gap-2">
+                <span className="text-sm text-muted-foreground">
+                  К.105с11-5
+                </span>
+                <Button variant="link" asChild className="gap-2">
+                  <Link href="#">
+                    <span>Профиль</span>
+                    <BiRightArrowAlt className="text-xl" />
+                  </Link>
+                </Button>
+              </footer>
+            </div>
+            <div className="relative rounded-md border bg-background p-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-2 rounded-full data-[state=open]:bg-accent"
+                  >
+                    <BiDotsVerticalRounded className="text-xl" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem>
+                    <BiMessageAlt className="mr-2 text-xl" />
+                    <span>Перейти в чат</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <BiBookmarkMinus className="mr-2 text-xl" />
+                    <span>Отписать</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <div className="flex flex-col items-center ">
+                <Avatar fallback="КД" className="h-16 w-16" />
+                <p className="font-medium">Королев Данил</p>
+                <span className="text-sm text-muted-foreground">
+                  danil-danil-korolev@bk.ru
+                </span>
+              </div>
+              <div className="my-4 flex items-center justify-center gap-4">
+                <div className="flex flex-col items-center">
+                  <p className="font-medium">3</p>
+                  <span className="text-sm text-muted-foreground">
+                    Завершено
+                  </span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <ProgressCircle
+                    className="text-2xl text-primary"
+                    strokeWidth={8}
+                    value={30}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Прогресс (30%)
+                  </span>
+                </div>
+              </div>
+              <footer className="mt-2 flex items-center justify-between gap-2">
+                <span className="text-sm text-muted-foreground">
+                  К.105с11-5
+                </span>
+                <Button variant="link" asChild className="gap-2">
+                  <Link href="#">
+                    <span>Профиль</span>
+                    <BiRightArrowAlt className="text-xl" />
+                  </Link>
+                </Button>
+              </footer>
+            </div>
+            <div className="relative rounded-md border bg-background p-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-2 rounded-full data-[state=open]:bg-accent"
+                  >
+                    <BiDotsVerticalRounded className="text-xl" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem>
+                    <BiMessageAlt className="mr-2 text-xl" />
+                    <span>Перейти в чат</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <BiBookmarkMinus className="mr-2 text-xl" />
+                    <span>Отписать</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <div className="flex flex-col items-center ">
+                <Avatar fallback="КД" className="h-16 w-16" />
+                <p className="font-medium">Королев Данил</p>
+                <span className="text-sm text-muted-foreground">
+                  danil-danil-korolev@bk.ru
+                </span>
+              </div>
+              <div className="my-4 flex items-center justify-center gap-4">
+                <div className="flex flex-col items-center">
+                  <p className="font-medium">3</p>
+                  <span className="text-sm text-muted-foreground">
+                    Завершено
+                  </span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <ProgressCircle
+                    className="text-2xl text-primary"
+                    strokeWidth={8}
+                    value={30}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Прогресс (30%)
+                  </span>
+                </div>
+              </div>
+              <footer className="mt-2 flex items-center justify-between gap-2">
+                <span className="text-sm text-muted-foreground">
+                  К.105с11-5
+                </span>
+                <Button variant="link" asChild className="gap-2">
+                  <Link href="#">
+                    <span>Профиль</span>
+                    <BiRightArrowAlt className="text-xl" />
+                  </Link>
+                </Button>
+              </footer>
+            </div>
+            <div className="relative rounded-md border bg-background p-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-2 rounded-full data-[state=open]:bg-accent"
+                  >
+                    <BiDotsVerticalRounded className="text-xl" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem>
+                    <BiMessageAlt className="mr-2 text-xl" />
+                    <span>Перейти в чат</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <BiBookmarkMinus className="mr-2 text-xl" />
+                    <span>Отписать</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <div className="flex flex-col items-center ">
+                <Avatar fallback="КД" className="h-16 w-16" />
+                <p className="font-medium">Королев Данил</p>
+                <span className="text-sm text-muted-foreground">
+                  danil-danil-korolev@bk.ru
+                </span>
+              </div>
+              <div className="my-4 flex items-center justify-center gap-4">
+                <div className="flex flex-col items-center">
+                  <p className="font-medium">3</p>
+                  <span className="text-sm text-muted-foreground">
+                    Завершено
+                  </span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <ProgressCircle
+                    className="text-2xl text-primary"
+                    strokeWidth={8}
+                    value={30}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Прогресс (30%)
+                  </span>
+                </div>
+              </div>
+              <footer className="mt-2 flex items-center justify-between gap-2">
+                <span className="text-sm text-muted-foreground">
+                  К.105с11-5
+                </span>
+                <Button variant="link" asChild className="gap-2">
+                  <Link href="#">
+                    <span>Профиль</span>
+                    <BiRightArrowAlt className="text-xl" />
+                  </Link>
+                </Button>
+              </footer>
+            </div>
+          </div>
+        </TabsContent>
       </Tabs>
     </main>
   );

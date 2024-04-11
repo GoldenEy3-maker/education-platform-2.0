@@ -36,7 +36,7 @@ import { Separator } from "~/components/ui/separator";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Switch } from "~/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { usePersistedQueryState } from "~/hooks/persistedQueryState";
+import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import {
@@ -469,7 +469,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
 const CoursesPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
   const isLoading = !session?.user;
-  const [searchValue, setSearchValue] = usePersistedQueryState<string>(
+  const [searchValue, setSearchValue] = useRouterQueryState<string>(
     "search",
     "",
   );
@@ -480,7 +480,7 @@ const CoursesPage: NextPageWithLayout = () => {
     HidePublished: false,
   });
   const [sortValue, setSortValue] = useState<SortValueMap>("Recent");
-  const [tabs, setTabs] = usePersistedQueryState<TabsMap>("tab", "All");
+  const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "All");
 
   const activeFilters = Object.values(filters).filter((val) => val === true);
 
