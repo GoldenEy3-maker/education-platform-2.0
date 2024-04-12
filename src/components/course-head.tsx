@@ -42,6 +42,7 @@ type CourseHeadProps = {
           surname: true;
           fathername: true;
           image: true;
+          email: true;
         };
       };
     };

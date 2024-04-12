@@ -1,24 +1,18 @@
 import { type Prisma } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useState } from "react";
 import {
-  BiBookmarkMinus,
-  BiDotsVerticalRounded,
-  BiMessageAlt,
-  BiRightArrowAlt,
-  BiSearch,
   BiSolidConversation,
   BiSolidGroup,
   BiSolidNotepad,
   BiSolidWidget,
-  BiSortAlt2,
 } from "react-icons/bi";
-
-import { Avatar } from "~/components/avatar";
 import { CourseHead } from "~/components/course-head";
 import { CourseOverviewTab } from "~/components/course-overview-tab";
-import { ProgressCircle } from "~/components/progress-circle";
+import {
+  CourseSubscribersTab,
+  type SortValueSubscribersMap,
+} from "~/components/course-subscribers-tab";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -28,20 +22,6 @@ import {
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
 import { Button } from "~/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import { Input } from "~/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useRouterQueryState } from "~/hooks/routerQueryState";
@@ -99,6 +79,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
             name: true;
             surname: true;
             image: true;
+            email: true;
           };
         };
       };
@@ -142,6 +123,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         name: "Данил",
         surname: "Королев",
         image: null,
+        email: "danil-danil-korolev@bk.ru",
       },
       userId: crypto.randomUUID(),
     },
@@ -155,6 +137,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         name: "Данил",
         surname: "Королев",
         image: null,
+        email: "danil-danil-korolev@bk.ru",
       },
       userId: crypto.randomUUID(),
     },
@@ -168,6 +151,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         name: "Данил",
         surname: "Королев",
         image: null,
+        email: "danil-danil-korolev@bk.ru",
       },
       userId: crypto.randomUUID(),
     },
@@ -181,6 +165,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         name: "Данил",
         surname: "Королев",
         image: null,
+        email: "danil-danil-korolev@bk.ru",
       },
       userId: crypto.randomUUID(),
     },
@@ -194,6 +179,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         name: "Данил",
         surname: "Королев",
         image: null,
+        email: "danil-danil-korolev@bk.ru",
       },
       userId: crypto.randomUUID(),
     },
@@ -207,32 +193,17 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         name: "Данил",
         surname: "Королев",
         image: null,
+        email: "danil-danil-korolev@bk.ru",
       },
       userId: crypto.randomUUID(),
     },
   ],
 };
 
-const SortValueSubscribersMap = {
-  Recent: "Recent",
-  Alphabet: "Alphabet",
-  Progress: "Progress",
-} as const;
-
-const TranslatedSortValueSubscribersMap: Record<
-  SortValueSubscribersMap,
-  string
-> = {
-  Recent: "Недавним",
-  Alphabet: "Алфавиту",
-  Progress: "Прогрессу",
-} as const;
-
-type SortValueSubscribersMap = ValueOf<typeof SortValueSubscribersMap>;
-
 const CoursePage: NextPageWithLayout = () => {
   const { data: session } = useSession();
   const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "Overview");
+  const [searchValueSubscribers, setSearchValueSubscribers] = useState("");
   const [sortValueSubscribers, setSortValueSubscribers] =
     useState<SortValueSubscribersMap>("Recent");
 
@@ -288,288 +259,22 @@ const CoursePage: NextPageWithLayout = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        <TabsContent value={TabsMap.Overview} className="space-y-4">
-          <CourseOverviewTab description={MOK_DATA.description} />
+        <TabsContent value={TabsMap.Overview}>
+          <CourseOverviewTab
+            isLoading={isLoading}
+            description={MOK_DATA.description}
+          />
         </TabsContent>
         <TabsContent value={TabsMap.Subscribers}>
-          <div className="flex items-center justify-between gap-2">
-            <Input
-              leadingIcon={<BiSearch className="text-xl" />}
-              placeholder="Поиск участников..."
-              className="max-w-80"
-            />
-            <Select
-              defaultValue={SortValueSubscribersMap.Recent}
-              value={sortValueSubscribers}
-              onValueChange={(value: SortValueSubscribersMap) =>
-                setSortValueSubscribers(value)
-              }
-            >
-              <Button
-                asChild
-                variant="outline"
-                className="w-auto justify-between gap-2 max-[1100px]:border-none max-[1100px]:bg-transparent max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
-              >
-                <SelectTrigger>
-                  <BiSortAlt2 className="shrink-0 text-xl min-[1100px]:hidden" />
-                  <p className="max-[1100px]:hidden">
-                    <span className="text-muted-foreground">
-                      Сортировать по
-                    </span>
-                    &nbsp;
-                    <SelectValue />
-                  </p>
-                </SelectTrigger>
-              </Button>
-              <SelectContent>
-                {Object.entries(TranslatedSortValueSubscribersMap).map(
-                  ([key, value]) => (
-                    <SelectItem key={key} value={key}>
-                      {value}
-                    </SelectItem>
-                  ),
-                )}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] gap-4">
-            <div className="relative rounded-md border bg-background p-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-2 top-2 rounded-full data-[state=open]:bg-accent"
-                  >
-                    <BiDotsVerticalRounded className="text-xl" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem>
-                    <BiMessageAlt className="mr-2 text-xl" />
-                    <span>Перейти в чат</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <BiBookmarkMinus className="mr-2 text-xl" />
-                    <span>Отписать</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <div className="flex flex-col items-center ">
-                <Avatar fallback="КД" className="h-16 w-16" />
-                <p className="font-medium">Королев Данил</p>
-                <span className="text-sm text-muted-foreground">
-                  danil-danil-korolev@bk.ru
-                </span>
-              </div>
-              <div className="my-4 flex items-center justify-center gap-4">
-                <div className="flex flex-col items-center">
-                  <p className="font-medium">3</p>
-                  <span className="text-sm text-muted-foreground">
-                    Завершено
-                  </span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <ProgressCircle
-                    className="text-2xl text-primary"
-                    strokeWidth={8}
-                    value={30}
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    Прогресс (30%)
-                  </span>
-                </div>
-              </div>
-              <footer className="mt-2 flex items-center justify-between gap-2">
-                <span className="text-sm text-muted-foreground">
-                  К.105с11-5
-                </span>
-                <Button variant="link" asChild className="gap-2">
-                  <Link href="#">
-                    <span>Профиль</span>
-                    <BiRightArrowAlt className="text-xl" />
-                  </Link>
-                </Button>
-              </footer>
-            </div>
-            <div className="relative rounded-md border bg-background p-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-2 top-2 rounded-full data-[state=open]:bg-accent"
-                  >
-                    <BiDotsVerticalRounded className="text-xl" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem>
-                    <BiMessageAlt className="mr-2 text-xl" />
-                    <span>Перейти в чат</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <BiBookmarkMinus className="mr-2 text-xl" />
-                    <span>Отписать</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <div className="flex flex-col items-center ">
-                <Avatar fallback="КД" className="h-16 w-16" />
-                <p className="font-medium">Королев Данил</p>
-                <span className="text-sm text-muted-foreground">
-                  danil-danil-korolev@bk.ru
-                </span>
-              </div>
-              <div className="my-4 flex items-center justify-center gap-4">
-                <div className="flex flex-col items-center">
-                  <p className="font-medium">3</p>
-                  <span className="text-sm text-muted-foreground">
-                    Завершено
-                  </span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <ProgressCircle
-                    className="text-2xl text-primary"
-                    strokeWidth={8}
-                    value={30}
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    Прогресс (30%)
-                  </span>
-                </div>
-              </div>
-              <footer className="mt-2 flex items-center justify-between gap-2">
-                <span className="text-sm text-muted-foreground">
-                  К.105с11-5
-                </span>
-                <Button variant="link" asChild className="gap-2">
-                  <Link href="#">
-                    <span>Профиль</span>
-                    <BiRightArrowAlt className="text-xl" />
-                  </Link>
-                </Button>
-              </footer>
-            </div>
-            <div className="relative rounded-md border bg-background p-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-2 top-2 rounded-full data-[state=open]:bg-accent"
-                  >
-                    <BiDotsVerticalRounded className="text-xl" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem>
-                    <BiMessageAlt className="mr-2 text-xl" />
-                    <span>Перейти в чат</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <BiBookmarkMinus className="mr-2 text-xl" />
-                    <span>Отписать</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <div className="flex flex-col items-center ">
-                <Avatar fallback="КД" className="h-16 w-16" />
-                <p className="font-medium">Королев Данил</p>
-                <span className="text-sm text-muted-foreground">
-                  danil-danil-korolev@bk.ru
-                </span>
-              </div>
-              <div className="my-4 flex items-center justify-center gap-4">
-                <div className="flex flex-col items-center">
-                  <p className="font-medium">3</p>
-                  <span className="text-sm text-muted-foreground">
-                    Завершено
-                  </span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <ProgressCircle
-                    className="text-2xl text-primary"
-                    strokeWidth={8}
-                    value={30}
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    Прогресс (30%)
-                  </span>
-                </div>
-              </div>
-              <footer className="mt-2 flex items-center justify-between gap-2">
-                <span className="text-sm text-muted-foreground">
-                  К.105с11-5
-                </span>
-                <Button variant="link" asChild className="gap-2">
-                  <Link href="#">
-                    <span>Профиль</span>
-                    <BiRightArrowAlt className="text-xl" />
-                  </Link>
-                </Button>
-              </footer>
-            </div>
-            <div className="relative rounded-md border bg-background p-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-2 top-2 rounded-full data-[state=open]:bg-accent"
-                  >
-                    <BiDotsVerticalRounded className="text-xl" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem>
-                    <BiMessageAlt className="mr-2 text-xl" />
-                    <span>Перейти в чат</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <BiBookmarkMinus className="mr-2 text-xl" />
-                    <span>Отписать</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <div className="flex flex-col items-center ">
-                <Avatar fallback="КД" className="h-16 w-16" />
-                <p className="font-medium">Королев Данил</p>
-                <span className="text-sm text-muted-foreground">
-                  danil-danil-korolev@bk.ru
-                </span>
-              </div>
-              <div className="my-4 flex items-center justify-center gap-4">
-                <div className="flex flex-col items-center">
-                  <p className="font-medium">3</p>
-                  <span className="text-sm text-muted-foreground">
-                    Завершено
-                  </span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <ProgressCircle
-                    className="text-2xl text-primary"
-                    strokeWidth={8}
-                    value={30}
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    Прогресс (30%)
-                  </span>
-                </div>
-              </div>
-              <footer className="mt-2 flex items-center justify-between gap-2">
-                <span className="text-sm text-muted-foreground">
-                  К.105с11-5
-                </span>
-                <Button variant="link" asChild className="gap-2">
-                  <Link href="#">
-                    <span>Профиль</span>
-                    <BiRightArrowAlt className="text-xl" />
-                  </Link>
-                </Button>
-              </footer>
-            </div>
-          </div>
+          <CourseSubscribersTab
+            sortValue={sortValueSubscribers}
+            onSortValueChange={setSortValueSubscribers}
+            searchValue={searchValueSubscribers}
+            onSearchValueChange={setSearchValueSubscribers}
+            subscribers={MOK_DATA.subscribers}
+            isAuthor={isAuthor}
+            isLoading={isLoading}
+          />
         </TabsContent>
       </Tabs>
     </main>

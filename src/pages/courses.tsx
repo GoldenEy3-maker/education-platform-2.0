@@ -1,20 +1,20 @@
-import { type Prisma, type Role } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import {
   BiFilterAlt,
   BiPlus,
-  BiRightArrowAlt,
   BiSearch,
   BiSolidBookmark,
   BiSolidDetail,
   BiSolidMeteor,
   BiSolidStar,
   BiSortAlt2,
-  BiStar,
 } from "react-icons/bi";
-import { Avatar } from "~/components/avatar";
+import { CourseItem } from "~/components/course-item";
+import { CourseItemSkeleton } from "~/components/course-item-skeleton";
+import { CoursesEmpty } from "~/components/courses-empty";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -24,7 +24,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { Progress } from "~/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -33,23 +32,12 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
-import { Skeleton } from "~/components/ui/skeleton";
 import { Switch } from "~/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
-import {
-  PagePathMap,
-  type StatusCourseMap,
-  TranslatedStatusCourseMap,
-} from "~/libs/enums";
-import {
-  cn,
-  getFirstLettersUserCredentials,
-  getPersonInitials,
-  type ValueOf,
-} from "~/libs/utils";
+import { cn, type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "./_app";
 
 const TabsMap = {
@@ -117,202 +105,6 @@ const FiltersContentMap: Record<FiltersMap, string> = {
   HideNew: "Скрыть новые",
   HideArchived: "Скрыть архивированные",
   HidePublished: "Скрыть публикации",
-};
-
-type CourseItemProps = {
-  id: string;
-  title: string;
-  image?: string;
-  description: string;
-  status: StatusCourseMap;
-  progress?: number;
-  isFavorited: boolean;
-  author: {
-    surname: string;
-    name: string;
-    id: string;
-    fathername: string | null;
-    image: string | null;
-  };
-} & React.ComponentProps<"div">;
-
-const CourseItem: React.FC<CourseItemProps> = ({
-  id,
-  title,
-  image,
-  description,
-  status,
-  progress,
-  isFavorited,
-  author,
-  className,
-  ...props
-}) => {
-  return (
-    <div className={cn("flex flex-col", className)} {...props}>
-      <Link href={PagePathMap.Course + id}>
-        <Skeleton className="mb-3 h-48 w-full rounded-lg" />
-      </Link>
-      <div className="mb-1 flex items-center justify-between gap-2">
-        <div
-          className={cn(
-            "flex w-fit items-center gap-2 rounded-full bg-useful/10 px-3 py-1 text-sm text-useful",
-            {
-              "bg-destructive/10 text-destructive": status === "Archived",
-            },
-          )}
-        >
-          <div className="flex items-center justify-center">
-            <span className="relative flex h-2 w-2">
-              <span
-                className={cn(
-                  "absolute inline-flex h-full w-full animate-ping rounded-full bg-useful opacity-75",
-                  {
-                    "bg-destructive": status === "Archived",
-                  },
-                )}
-              ></span>
-              <span
-                className={cn(
-                  "relative inline-flex h-2 w-2 rounded-full bg-useful",
-                  {
-                    "bg-destructive": status === "Archived",
-                  },
-                )}
-              ></span>
-            </span>
-          </div>
-          <span>{TranslatedStatusCourseMap[status]}</span>
-        </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "shrink-0 rounded-full text-muted-foreground hover:text-warning",
-            {
-              "text-warning": isFavorited,
-            },
-          )}
-        >
-          {isFavorited ? (
-            <BiSolidStar className="text-xl" />
-          ) : (
-            <BiStar className="text-xl" />
-          )}
-        </Button>
-      </div>
-      <p className="mb-1 line-clamp-2 text-lg font-medium">{title}</p>
-      <p
-        className={cn("mb-auto line-clamp-2 text-muted-foreground", {
-          "line-clamp-4": !progress,
-        })}
-      >
-        {description}
-      </p>
-      {progress ? (
-        <div className="mt-2">
-          <header className="mb-2 flex items-center justify-between gap-2">
-            <span className="text-muted-foreground">Прогресс</span>
-            <span className="text-primary">{progress}%</span>
-          </header>
-          <Progress value={progress} />
-        </div>
-      ) : null}
-      <footer className="mt-3 flex items-center justify-between gap-2 overflow-hidden">
-        <Button
-          className="h-auto w-fit justify-normal gap-3 px-2 py-1"
-          variant="ghost"
-          asChild
-        >
-          <Link href="#">
-            <Avatar
-              fallback={getFirstLettersUserCredentials(
-                author.surname,
-                author.name,
-              )}
-              src={author.image}
-              className="h-10 w-10"
-            />
-            <p className="truncate">
-              {getPersonInitials(
-                author.surname,
-                author.name,
-                author.fathername,
-              )}
-            </p>
-          </Link>
-        </Button>
-        <Button variant="link" asChild className="gap-2">
-          <Link href={PagePathMap.Course + id}>
-            <span>Перейти</span>
-            <BiRightArrowAlt className="text-lg" />
-          </Link>
-        </Button>
-      </footer>
-    </div>
-  );
-};
-
-const CourseItemSkeleton: React.FC = () => {
-  return (
-    <div>
-      <Skeleton className="mb-4 h-48 w-full rounded-lg" />
-      <Skeleton className="mb-4 h-6 w-32 rounded-full" />
-      <Skeleton className="mb-3 h-6 w-full rounded-full" />
-      <Skeleton className="mb-1 h-4 w-full rounded-full" />
-      <Skeleton className="mb-1 h-4 w-full rounded-full" />
-      <div className="mt-4">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <Skeleton className="h-4 w-20" />
-          <Skeleton className="h-4 w-20" />
-        </div>
-        <Skeleton className="h-4 w-full rounded-full" />
-      </div>
-      <div className="mt-3 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-10 w-10 rounded-full" />
-          <Skeleton className="h-4 w-24 rounded-full" />
-        </div>
-        <Skeleton className="h-4 w-24 rounded-full" />
-      </div>
-    </div>
-  );
-};
-
-type CoursesEmptyProps =
-  | {
-      icon: React.ReactNode;
-      text: React.ReactNode;
-      textBasedOnRole: false;
-    }
-  | {
-      icon: React.ReactNode;
-      text: Record<Exclude<Role, "Admin">, React.ReactNode>;
-      textBasedOnRole: true;
-    };
-
-const CoursesEmpty: React.FC<CoursesEmptyProps> = ({
-  icon,
-  text,
-  textBasedOnRole,
-}) => {
-  const { data: session } = useSession();
-
-  const excludeUserRole = (role: Role | undefined) => {
-    if (role === "Teacher") return "Teacher";
-
-    return "Student";
-  };
-
-  const role = excludeUserRole(session?.user.role);
-
-  return (
-    <div className="col-span-4 mx-auto flex max-w-[40rem] flex-col items-center justify-center p-6">
-      {icon}
-      {textBasedOnRole ? text[role] : text}
-    </div>
-  );
 };
 
 const MOK_DATA: Prisma.CourseGetPayload<{
