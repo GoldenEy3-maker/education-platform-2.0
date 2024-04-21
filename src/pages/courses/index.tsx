@@ -38,7 +38,7 @@ import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { cn, type ValueOf } from "~/libs/utils";
-import { type NextPageWithLayout } from "./_app";
+import { type NextPageWithLayout } from "../_app";
 
 const TabsMap = {
   All: "All",
@@ -83,7 +83,7 @@ const SortValueMap = {
   Progress: "Progress",
 } as const;
 
-const TranslatedSortValueMap: Record<SortValueMap, string> = {
+const SortValueContentMap: Record<SortValueMap, string> = {
   Recent: "Недавним",
   Alphabet: "Алфавиту",
   Progress: "Прогрессу",
@@ -95,14 +95,12 @@ const FiltersMap = {
   HideCompleted: "HideCompleted",
   HideArchived: "HideArchived",
   HidePublished: "HidePublished",
-  HideNew: "HideNew",
 } as const;
 
 type FiltersMap = ValueOf<typeof FiltersMap>;
 
 const FiltersContentMap: Record<FiltersMap, string> = {
   HideCompleted: "Скрыть завершенные",
-  HideNew: "Скрыть новые",
   HideArchived: "Скрыть архивированные",
   HidePublished: "Скрыть публикации",
 };
@@ -268,7 +266,6 @@ const CoursesPage: NextPageWithLayout = () => {
   const [filters, setFilters] = useState<Record<FiltersMap, boolean>>({
     HideArchived: false,
     HideCompleted: false,
-    HideNew: false,
     HidePublished: false,
   });
   const [sortValue, setSortValue] = useState<SortValueMap>("Recent");
@@ -467,7 +464,7 @@ const CoursesPage: NextPageWithLayout = () => {
             </SelectTrigger>
           </Button>
           <SelectContent>
-            {Object.entries(TranslatedSortValueMap).map(([key, value]) => (
+            {Object.entries(SortValueContentMap).map(([key, value]) => (
               <SelectItem key={key} value={key}>
                 {value}
               </SelectItem>

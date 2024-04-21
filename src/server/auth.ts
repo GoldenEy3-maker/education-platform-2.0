@@ -13,12 +13,11 @@ import { db } from "~/server/db";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] &
-      Omit<PrismaUser, "password" | "tokenVersion">;
+    user: DefaultSession["user"] & Omit<PrismaUser, "password">;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface User extends Omit<PrismaUser, "password" | "tokenVersion"> {}
+  interface User extends Omit<PrismaUser, "password"> {}
 }
 
 export const authOptions: NextAuthOptions = {

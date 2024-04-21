@@ -72,21 +72,7 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        "rotate-spinner-circle": {
-          from: {
-            "stroke-dasharray": "1px, 200px",
-            "stroke-dashoffset": "0",
-          },
-          "50%": {
-            "stroke-dasharray": "100px, 200px",
-            "stroke-dashoffset": "-15px",
-          },
-          to: {
-            "stroke-dasharray": "100px, 200px",
-            "stroke-dashoffset": "-125px",
-          },
-        },
-        "rotate-spinner": {
+        rotate: {
           from: { rotate: "0deg" },
           to: { rotate: "360deg" },
         },
@@ -104,9 +90,7 @@ const config = {
         },
       },
       animation: {
-        "rotate-spinner-circle":
-          "rotate-spinner-circle 1.4s ease-in-out infinite",
-        "rotate-spinner": "rotate-spinner 1.4s linear infinite",
+        rotate: "rotate 1.4s linear infinite",
         ripple: "ripple 500ms linear forwards",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",

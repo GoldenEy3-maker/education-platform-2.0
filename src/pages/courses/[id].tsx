@@ -14,6 +14,11 @@ import {
   type SortValueSubscribersMap,
 } from "~/components/course-subscribers-tab";
 import {
+  CourseTasksTab,
+  type FiltersTasksMap,
+  type SortValueTasksMap,
+} from "~/components/course-tasks-tab";
+import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -35,7 +40,7 @@ const TabsMap = {
   Overview: "Overview",
   Tasks: "Tasks",
   Subscribers: "Subscribers",
-  Discussions: "Discussion",
+  Discussions: "Discussions",
 } as const;
 
 type TabsMap = ValueOf<typeof TabsMap>;
@@ -60,7 +65,7 @@ const TabsTriggerMap: Record<TabsMap, { icon: React.ReactNode; text: string }> =
       ),
       text: "Участники",
     },
-    Discussion: {
+    Discussions: {
       icon: (
         <BiSolidConversation className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
@@ -206,6 +211,17 @@ const CoursePage: NextPageWithLayout = () => {
   const [searchValueSubscribers, setSearchValueSubscribers] = useState("");
   const [sortValueSubscribers, setSortValueSubscribers] =
     useState<SortValueSubscribersMap>("Recent");
+  const [searchValueTasks, setSearchValueTasks] = useState("");
+  const [sortValueTasks, setSortValueTasks] =
+    useState<SortValueTasksMap>("Recent");
+  const [filtersTasks, setFiltersTasks] = useState<
+    Record<FiltersTasksMap, boolean>
+  >({
+    HideLabs: false,
+    HideCompleted: false,
+    HideLectures: false,
+    HideTests: false,
+  });
 
   const isAuthor = true;
   const isSubStudent = false;
@@ -263,6 +279,22 @@ const CoursePage: NextPageWithLayout = () => {
           <CourseOverviewTab
             isLoading={isLoading}
             description={MOK_DATA.description}
+          />
+        </TabsContent>
+        <TabsContent value={TabsMap.Tasks}>
+          <CourseTasksTab
+            searchValue={searchValueTasks}
+            onSearchValueChange={setSearchValueTasks}
+            sortValue={sortValueTasks}
+            onSortValueChange={setSortValueTasks}
+            filters={filtersTasks}
+            onFiltersChange={(key) =>
+              setFiltersTasks((prev) => ({ ...prev, [key]: !prev[key] }))
+            }
+            isAuthor={isAuthor}
+            isSubStudent={isSubStudent}
+            isTeacher={isTeacher}
+            isLoading={isLoading}
           />
         </TabsContent>
         <TabsContent value={TabsMap.Subscribers}>

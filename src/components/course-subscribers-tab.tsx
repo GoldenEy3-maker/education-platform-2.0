@@ -12,7 +12,7 @@ import {
 } from "react-icons/bi";
 import { type ValueOf } from "~/libs/utils";
 import { Avatar } from "./avatar";
-import { ProgressCircle } from "./progress-circle";
+import { CircularProgress } from "./circular-progress";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -35,14 +35,12 @@ const SortValueSubscribersMap = {
   Progress: "Progress",
 } as const;
 
-const TranslatedSortValueSubscribersMap: Record<
-  SortValueSubscribersMap,
-  string
-> = {
-  Recent: "Недавним",
-  Alphabet: "Алфавиту",
-  Progress: "Прогрессу",
-} as const;
+const SortValueSubscribersContentMap: Record<SortValueSubscribersMap, string> =
+  {
+    Recent: "Недавним",
+    Alphabet: "Алфавиту",
+    Progress: "Прогрессу",
+  } as const;
 
 export type SortValueSubscribersMap = ValueOf<typeof SortValueSubscribersMap>;
 
@@ -79,7 +77,7 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
 }) => {
   return (
     <div>
-      <div className="flex items-center justify-between gap-2">
+      <div className="grid grid-cols-[1fr_auto] items-center gap-2">
         <Input
           leadingIcon={<BiSearch className="text-xl" />}
           placeholder="Поиск участников..."
@@ -107,7 +105,7 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
             </SelectTrigger>
           </Button>
           <SelectContent>
-            {Object.entries(TranslatedSortValueSubscribersMap).map(
+            {Object.entries(SortValueSubscribersContentMap).map(
               ([key, value]) => (
                 <SelectItem key={key} value={key}>
                   {value}
@@ -164,7 +162,7 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <ProgressCircle
+                  <CircularProgress
                     className="text-2xl text-primary"
                     strokeWidth={8}
                     value={sub.progress}

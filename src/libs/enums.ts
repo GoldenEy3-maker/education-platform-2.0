@@ -6,9 +6,11 @@ export const PagePathMap = {
   Auth: "/auth",
   Courses: "/courses",
   Course: "/courses/",
+  HomeChat: "/chat",
+  Chat: "/chat/",
 } as const;
 
-export const TranslatedRoleMap: Record<Role, string> = {
+export const RoleContentMap: Record<Role, string> = {
   Student: "Студент",
   Admin: "Админ",
   Teacher: "Преподаватель",
@@ -19,11 +21,11 @@ export const StatusCourseMap = {
   Archived: "Archived",
 } as const;
 
-export const TranslatedStatusCourseMap: Record<StatusCourseMap, string> = {
+export const StatusCourseContentMap: Record<StatusCourseMap, string> = {
   Archived: "Архивирован",
   Published: "Опубликован",
 };
 
 export type PagePathMap = ValueOf<typeof PagePathMap>;
-export type TranslateRoleMap = ValueOf<typeof TranslatedRoleMap>;
+export type RoleContentMap = ValueOf<typeof RoleContentMap>;
 export type StatusCourseMap = ValueOf<typeof StatusCourseMap>;

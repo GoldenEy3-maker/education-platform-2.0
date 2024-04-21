@@ -9,6 +9,8 @@ import {
   BiHelpCircle,
   BiHome,
   BiLogOutCircle,
+  BiMessageRounded,
+  BiMessageRoundedDetail,
   BiMoon,
 } from "react-icons/bi";
 import { PagePathMap } from "~/libs/enums";
@@ -84,8 +86,9 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
           </Link>
         </Button>
         <Button asChild className="w-full justify-normal gap-2" variant="ghost">
-          <Link href={PagePathMap.Home}>
-            <BiGroup className="text-xl" /> <span>Пользователи</span>
+          <Link href={PagePathMap.HomeChat}>
+            <BiMessageRoundedDetail className="text-xl" />{" "}
+            <span>Сообщения</span>
           </Link>
         </Button>
         <div className="relative mt-auto rounded-lg p-4">

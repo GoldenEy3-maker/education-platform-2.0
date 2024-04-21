@@ -3,7 +3,7 @@ import { BiRightArrowAlt, BiSolidStar, BiStar } from "react-icons/bi";
 import {
   type StatusCourseMap,
   PagePathMap,
-  TranslatedStatusCourseMap,
+  StatusCourseContentMap,
 } from "~/libs/enums";
 import {
   cn,
@@ -78,7 +78,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
               ></span>
             </span>
           </div>
-          <span>{TranslatedStatusCourseMap[status]}</span>
+          <span>{StatusCourseContentMap[status]}</span>
         </div>
         <Button
           type="button"

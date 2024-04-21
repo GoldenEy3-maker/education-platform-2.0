@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BiBook, BiSolidFileFind } from "react-icons/bi";
 import { cn } from "~/libs/utils";
 import { Avatar } from "./avatar";
-import { ProgressCircle } from "./progress-circle";
+import { CircularProgress } from "./circular-progress";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { Skeleton } from "./ui/skeleton";
@@ -49,7 +49,7 @@ const CourseItem: React.FC<CourseItemProps> = ({ href = "#", ...props }) => {
             <TooltipProvider>
               <Tooltip delayDuration={100}>
                 <TooltipTrigger>
-                  <ProgressCircle
+                  <CircularProgress
                     value={props.progressValue}
                     strokeWidth={7}
                     className="text-xl text-primary"

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Avatar } from "~/components/avatar";
-import { Spinner } from "~/components/spinner";
+import { CircularProgress } from "~/components/circular-progress";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -46,7 +46,7 @@ const AuthPage: NextPageWithLayout = () => {
 
     const res = await signIn("credentials", {
       ...values,
-      callbackUrl: (router.query.callbackUrl as string) ?? PagePathMap.Home,
+      redirect: false,
     });
 
     if (res?.error) {
@@ -58,6 +58,7 @@ const AuthPage: NextPageWithLayout = () => {
     setIsLoading(false);
     toast.success("Вы успешно авторизовались!");
     form.reset();
+    void router.push((router.query.callbackUrl as string) ?? PagePathMap.Home);
   };
 
   return (
@@ -150,9 +151,11 @@ const AuthPage: NextPageWithLayout = () => {
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      <span className="inline-block text-lg">
-                        <Spinner strokeWidth={5} />
-                      </span>
+                      <CircularProgress
+                        variant="indeterminate"
+                        className="text-xl"
+                        strokeWidth={5}
+                      />
                     ) : null}
                     Войти
                   </Button>

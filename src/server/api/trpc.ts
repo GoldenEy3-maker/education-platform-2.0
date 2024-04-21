@@ -115,13 +115,32 @@ export const publicProcedure = t.procedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.session?.user) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Пользователь не авторизован!",
     });
   }
+
+  const user = await ctx.db.user.findUnique({
+    where: {
+      login: ctx.session.user.login,
+    },
+  });
+
+  if (!user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Такого пользователя не существует!",
+    });
+  }
+
+  if (user.tokenVersion !== ctx.session.user.tokenVersion)
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Невалидный авториованный пользователь!",
+    });
 
   return next({
     ctx: {

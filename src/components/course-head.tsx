@@ -10,9 +10,10 @@ import {
   BiStar,
   BiUserPlus,
 } from "react-icons/bi";
-import { type StatusCourseMap, TranslatedStatusCourseMap } from "~/libs/enums";
+import { StatusCourseContentMap, type StatusCourseMap } from "~/libs/enums";
 import { cn, getFirstLettersUserCredentials } from "~/libs/utils";
 import { Avatar } from "./avatar";
+import { ShareDialogDrawer } from "./share-dialog-drawer";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -96,7 +97,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
             ></span>
           </span>
         </div>
-        <span>{TranslatedStatusCourseMap[status]}</span>
+        <span>{StatusCourseContentMap[status]}</span>
       </div>
       <h1 className="mb-2 text-3xl font-medium [text-wrap:balance]">{title}</h1>
       {(() => {
@@ -167,15 +168,17 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
           <BiStar className="text-xl text-warning" />
           <span className="sr-only">Добавь в избранное</span>
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          className="rounded-full max-[570px]:hidden"
-          size="icon"
-        >
-          <BiShareAlt className="text-xl" />
-          <span className="sr-only">Поделиться</span>
-        </Button>
+        <ShareDialogDrawer>
+          <Button
+            type="button"
+            variant="ghost"
+            className="rounded-full max-[570px]:hidden"
+            size="icon"
+          >
+            <BiShareAlt className="text-xl" />
+            <span className="sr-only">Поделиться</span>
+          </Button>
+        </ShareDialogDrawer>
         <div
           style={
             {
@@ -286,9 +289,13 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
               <BiStar className="mr-2 text-xl text-warning" />
               <span>Добавить в избранное</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <BiShareAlt className="mr-2 text-xl" />
-              <span>Поделиться</span>
+            <DropdownMenuItem asChild>
+              <ShareDialogDrawer>
+                <Button variant="ghost" className="w-full justify-start">
+                  <BiShareAlt className="mr-2 text-xl" />
+                  <span>Поделиться</span>
+                </Button>
+              </ShareDialogDrawer>
             </DropdownMenuItem>
             {isAuthor ? (
               <DropdownMenuItem>

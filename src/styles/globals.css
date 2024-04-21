@@ -20,7 +20,7 @@
     --accent-foreground: 222.2 47.4% 11.2%;
     --useful: 138 98% 38%;
     --useful-foreground: 138 90% 8%;
-    --warning: 40 100% 56%;
+    --warning: 40 100% 45%;
     --warning-foreground: 40 100% 8%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -50,7 +50,7 @@
     --useful-foreground: 138 98% 98%;
     --warning: 40 100% 56%;
     --warning-foreground: 40 100% 98%;
-    --destructive: 0 82% 50%;
+    --destructive: 0 82% 60%;
     --destructive-foreground: 210 40% 98%;
     --destructive-foreground-variant: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
@@ -107,8 +107,10 @@
 
   .container-grid {
     --padding-inline: 1rem;
-    --container-max-widht: 140ch;
-    --breakout-max-width: 160ch;
+    --container-max-widht: 1400px;
+    --breakout-max-width: calc(
+      var(--container-max-widht) * 0.15 + var(--container-max-widht)
+    );
 
     --breakout-size: calc(
       (var(--breakout-max-width) - var(--container-max-widht)) / 2

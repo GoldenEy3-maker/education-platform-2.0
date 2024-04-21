@@ -1,4 +1,5 @@
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { PagePathMap } from "~/libs/enums";
@@ -29,6 +30,7 @@ type SignOutAlertDrawerProps = React.PropsWithChildren;
 export const SignOutAlertDrawer: React.FC<SignOutAlertDrawerProps> = ({
   children,
 }) => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -56,9 +58,15 @@ export const SignOutAlertDrawer: React.FC<SignOutAlertDrawerProps> = ({
               onClick={async () => {
                 setIsLoading(true);
                 await signOut({
-                  callbackUrl: PagePathMap.Auth,
+                  redirect: false,
                 });
                 setIsLoading(false);
+                void router.push({
+                  pathname: PagePathMap.Auth,
+                  query: {
+                    callbackUrl: router.asPath,
+                  },
+                });
               }}
             >
               Выйти
@@ -86,9 +94,15 @@ export const SignOutAlertDrawer: React.FC<SignOutAlertDrawerProps> = ({
             onClick={async () => {
               setIsLoading(true);
               await signOut({
-                callbackUrl: PagePathMap.Auth,
+                redirect: false,
               });
               setIsLoading(false);
+              void router.push({
+                pathname: PagePathMap.Auth,
+                query: {
+                  callbackUrl: router.asPath,
+                },
+              });
             }}
           >
             Выйти

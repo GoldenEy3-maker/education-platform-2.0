@@ -12,9 +12,11 @@ import {
   BiHome,
   BiLogOutCircle,
   BiMenu,
+  BiMessageRounded,
+  BiMessageRoundedDetail,
   BiMoon,
 } from "react-icons/bi";
-import { PagePathMap, TranslatedRoleMap } from "~/libs/enums";
+import { PagePathMap, RoleContentMap } from "~/libs/enums";
 import { getFirstLettersUserCredentials } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { SignOutAlertDrawer } from "./sign-out-alert-drawer";
@@ -62,7 +64,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
                 {session.user.fathername}
               </p>
               <span className="text-muted-foreground">
-                {TranslatedRoleMap[session.user.role]}
+                {RoleContentMap[session.user.role]}
               </span>
             </>
           ) : (
@@ -107,8 +109,9 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
             className="w-full shrink-0 justify-normal gap-2"
             variant="ghost"
           >
-            <Link href={PagePathMap.Home}>
-              <BiGroup className="text-xl" /> <span>Пользователи</span>
+            <Link href={PagePathMap.HomeChat}>
+              <BiMessageRoundedDetail className="text-xl" />{" "}
+              <span>Сообщения</span>
             </Link>
           </Button>
           <div className="relative mt-auto rounded-lg p-4">

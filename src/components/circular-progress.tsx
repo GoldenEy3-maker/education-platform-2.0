@@ -1,16 +1,22 @@
-type ProgressCircleProps = {
+import { cn } from "~/libs/utils";
+
+type CircularProgressProps = {
   className?: string;
   value?: number;
   strokeWidth?: number;
+  variant?: "determinate" | "indeterminate";
 };
 
 const SIZE = 44;
 
-export const ProgressCircle: React.FC<ProgressCircleProps> = ({
+export const CircularProgress: React.FC<CircularProgressProps> = ({
   className,
-  value = 20,
+  value = 1,
   strokeWidth = 3.6,
+  variant,
 }) => {
+  if (variant === "indeterminate") value = 20;
+
   const radius = (SIZE - strokeWidth) / 2;
   const dashArray = 2 * Math.PI * radius;
   const dashOffset = ((100 - value) / 100) * (Math.PI * (radius * 2));
@@ -24,7 +30,9 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
       aria-valuemin={0}
     >
       <svg
-        className="-rotate-90"
+        className={cn("-rotate-90", {
+          "animate-rotate": variant === "indeterminate",
+        })}
         width="1em"
         height="1em"
         viewBox={`${SIZE / 2} ${SIZE / 2} ${SIZE} ${SIZE}`}
@@ -35,7 +43,7 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
           cy={SIZE}
           r={(SIZE - strokeWidth) / 2}
           strokeWidth={strokeWidth}
-          className="stroke-muted"
+          className="stroke-muted/40"
         ></circle>
         <circle
           fill="none"
@@ -47,9 +55,12 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
           stroke="currentColor"
           r={(SIZE - strokeWidth) / 2}
           strokeWidth={strokeWidth}
+          className="transition-all"
         ></circle>
       </svg>
-      <span className="sr-only">{value}%</span>
+      <span className="sr-only">
+        {variant === "determinate" ? `${value}%` : "Загрузка..."}
+      </span>
     </div>
   );
 };

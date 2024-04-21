@@ -5,6 +5,7 @@ import {
   DotFilledIcon,
 } from "@radix-ui/react-icons";
 import * as React from "react";
+import { useRippleEffect } from "~/hooks/rippleEffect.hook";
 
 import { cn } from "~/libs/utils";
 
@@ -86,7 +87,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm px-2 py-2 outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-default select-none items-center overflow-hidden rounded-sm px-2 py-2 outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       inset && "pl-8",
       className,
     )}

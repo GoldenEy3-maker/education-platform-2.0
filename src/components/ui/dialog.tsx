@@ -51,7 +51,7 @@ const DialogContent = React.forwardRef<
             variant={closeButton === "icon" ? "ghost" : "outline"}
             size={closeButton === "icon" ? "icon" : "sm"}
             type="button"
-            className={cn("absolute right-2 top-2 bg-background", {
+            className={cn("absolute right-2 top-2 rounded-full bg-background", {
               "top-3 bg-secondary text-muted-foreground":
                 closeButton === "shortcut",
             })}
