@@ -36,7 +36,7 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
                 )}
                 src={session.user.image}
               />
-              <p className="max-sm:hidden">
+              <p className="font-medium max-sm:hidden">
                 {session.user.surname} {session.user.name}
               </p>
               <span className="text-xs text-muted-foreground max-sm:hidden">

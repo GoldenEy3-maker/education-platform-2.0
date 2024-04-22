@@ -7,7 +7,7 @@ import {
 } from "@prisma/client";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useMemo, useState } from "react";
 import {
   BiBook,
   BiCalendar,
@@ -256,14 +256,16 @@ type ScheduleItemProps = {
   teacher: Prisma.UserGetPayload<{
     select: { fathername: true; surname: true; name: true; status: true };
   }>;
+  teacherId: string;
   classRoom?: number | null;
   pavilion?: Pavilion | null;
+  pavilionId?: string | null;
   type: LessionType;
   status: LessionStatus;
   index: number;
 } & React.ComponentProps<"div">;
 
-const ScheduleItemsBgClrHMap: Record<number, string> = {
+const ScheduleItemsMainClrHMap: Record<number, string> = {
   0: "24",
   1: "220",
   2: "248",
@@ -282,8 +284,10 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
   start,
   end,
   teacher,
+  teacherId,
   classRoom,
   pavilion,
+  pavilionId,
   type,
   status,
   index,
@@ -292,22 +296,26 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
 }) => {
   return (
     <div
-      style={{ "--bg-clr-h": ScheduleItemsBgClrHMap[index] } as CSSProperties}
+      style={
+        { "--main-clr-h": ScheduleItemsMainClrHMap[index] } as CSSProperties
+      }
       className={cn(
-        `rounded-lg bg-[linear-gradient(180deg,hsla(var(--bg-clr-h),70%,93%,1)_0%,transparent_100%)] p-4 dark:bg-[linear-gradient(180deg,hsla(var(--bg-clr-h),70%,10%,1)_0%,transparent_100%)]`,
+        `rounded-lg bg-[linear-gradient(180deg,hsla(var(--main-clr-h),70%,93%,1)_60%,hsla(var(--main-clr-h),70%,93%,.4)_100%)] p-4 dark:bg-[linear-gradient(180deg,hsla(var(--main-clr-h),70%,10%,1)_60%,hsla(var(--main-clr-h),70%,10%,.4)_100%)]`,
         className,
       )}
       {...props}
     >
       <header>
-        <h4>{title}</h4>
-        <span className="mt-1 block text-muted-foreground">
+        <h4 className="font-medium text-[hsla(var(--main-clr-h),60%,15%)] dark:text-[hsla(var(--main-clr-h),70%,93%)]">
+          {title}
+        </h4>
+        <span className="mt-1 block text-[hsla(var(--main-clr-h),60%,15%,.8)] dark:text-[hsla(var(--main-clr-h),70%,93%,.8)]">
           {dayjs(start).format("HH:mm")} - {dayjs(end).format("HH:mm")},{" "}
           <HoverCard openDelay={200} closeDelay={200}>
             <HoverCardTrigger asChild>
               <Link
                 href="#"
-                className="cursor-pointer text-muted-foreground underline-offset-4 hover:text-foreground hover:underline data-[state=open]:text-foreground data-[state=open]:underline"
+                className="cursor-pointer text-[hsla(var(--main-clr-h),60%,15%,.8)] underline-offset-4 hover:text-foreground hover:underline data-[state=open]:text-foreground data-[state=open]:underline dark:text-[hsla(var(--main-clr-h),70%,93%,.8)]"
               >
                 {getPersonInitials(
                   teacher.surname,
@@ -342,7 +350,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
             <HoverCardTrigger asChild>
               <Link
                 href={pavilion.infoLink}
-                className="cursor-pointer text-muted-foreground underline-offset-4 hover:text-foreground hover:underline data-[state=open]:text-foreground data-[state=open]:underline"
+                className="cursor-pointer text-[hsla(var(--main-clr-h),60%,15%,.8)] underline-offset-4 hover:text-foreground hover:underline data-[state=open]:text-foreground data-[state=open]:underline dark:text-[hsla(var(--main-clr-h),70%,93%,.8)]"
                 target="_blank"
               >
                 {pavilion.name}, {classRoom}
@@ -366,7 +374,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
           </HoverCard>
         ) : (
           <p>
-            <span className="text-muted-foreground">
+            <span className="text-[hsla(var(--main-clr-h),60%,15%,.8)] dark:text-[hsla(var(--main-clr-h),70%,93%,.8)]">
               {status === "Async" ? "Асинхронно" : "Синхронно"}
             </span>{" "}
             <TooltipProvider>
@@ -385,7 +393,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
             </TooltipProvider>
           </p>
         )}
-        <span className="rounded-full border px-4 py-1 text-sm">
+        <span className="rounded-full border border-[hsla(var(--main-clr-h),60%,45%)] px-4 py-1 text-sm text-[hsla(var(--main-clr-h),60%,45%)] dark:border-[hsla(var(--main-clr-h),70%,60%)] dark:text-[hsla(var(--main-clr-h),70%,60%)]">
           {TranslateLessionTypeMap[type]}
         </span>
       </footer>
@@ -403,18 +411,6 @@ const ScheduleItemSkeleton: React.FC = () => {
         <Skeleton className="h-6 w-24 rounded-full" />
       </div>
     </div>
-  );
-};
-
-const getLessionsPromise = (date: Date) => {
-  return new Promise<typeof MOK_DATA>((res) =>
-    setTimeout(
-      () =>
-        res(
-          MOK_DATA.filter((lession) => dayjs(date).isSame(lession.start, "d")),
-        ),
-      1000,
-    ),
   );
 };
 
@@ -491,16 +487,16 @@ const TabsTriggerMap: Record<
 
 export const ScheduleSection: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const [data, setData] = useState<typeof MOK_DATA>([]);
+  const [data, setData] = useState<typeof MOK_DATA>(MOK_DATA);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    setIsLoading(true);
-    getLessionsPromise(currentDate.toDate())
-      .then((data) => setData(data))
-      .catch((err) => console.error(err))
-      .finally(() => setIsLoading(false));
-  }, [currentDate]);
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   getLessionsPromise(currentDate.toDate())
+  //     .then((data) => setData(data))
+  //     .catch((err) => console.error(err))
+  //     .finally(() => setIsLoading(false));
+  // }, [currentDate]);
 
   const incrementMonth = () => {
     setCurrentDate((date) => date.add(1, "M"));
@@ -543,12 +539,15 @@ export const ScheduleSection: React.FC = () => {
   };
 
   return (
-    <section className="z-10 row-span-2 grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background/60 px-4 py-3 shadow">
+    <section className="z-10 row-span-2 grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background px-4 py-3 shadow">
       <header className="flex items-center gap-2 overflow-hidden pb-3">
         <BiCalendar className="text-xl" />
-        <h4 className="flex-grow truncate text-lg font-medium">Расписание</h4>
-        <Button variant="outline" type="button" asChild>
-          <Link href="#">Смотреть все</Link>
+        <h4 className="flex-grow truncate text-lg font-semibold">Расписание</h4>
+        <Button variant="outline" type="button" asChild className="gap-2">
+          <Link href="#">
+            <span>Смотреть все</span>
+            <BiChevronRight className="text-xl" />
+          </Link>
         </Button>
       </header>
       <Separator />

@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { BiBook, BiSolidFileFind } from "react-icons/bi";
+import { BiBook, BiChevronRight, BiSolidFileFind } from "react-icons/bi";
 import { cn } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { CircularProgress } from "./circular-progress";
@@ -92,12 +92,15 @@ export const CoursesSection: React.FC = () => {
   const isEmpty = false;
 
   return (
-    <section className="row-span-2 overflow-hidden rounded-lg border bg-background/60 px-4 py-3 shadow">
+    <section className="row-span-2 overflow-hidden rounded-lg border bg-background px-4 py-3 shadow">
       <header className="flex items-center gap-2 pb-3">
         <BiBook className="text-xl" />
-        <h4 className="flex-grow text-lg font-medium">Курсы</h4>
-        <Button variant="outline" type="button" asChild>
-          <Link href="#">Смотреть все</Link>
+        <h4 className="flex-grow text-lg font-semibold">Курсы</h4>
+        <Button variant="outline" type="button" asChild className="gap-2">
+          <Link href="#">
+            <span>Смотреть все</span>
+            <BiChevronRight className="text-xl" />
+          </Link>
         </Button>
       </header>
       <Separator />

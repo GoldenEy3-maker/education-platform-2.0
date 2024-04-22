@@ -32,11 +32,13 @@ export const CourseOverviewTab: React.FC<CourseOverviewTabProps> = ({
       {!isLoading ? (
         <>
           <section>
-            <h3 className="mb-2 text-xl font-medium">Описание</h3>
-            <p className="pl-4">{description}</p>
+            <h3 className="mb-2 border-b py-2 text-xl font-medium">Описание</h3>
+            <p>{description}</p>
           </section>
           <section>
-            <h3 className="mb-2 text-xl font-medium">Ссылки и документы</h3>
+            <h3 className="mb-2 border-b py-2 text-xl font-medium">
+              Ссылки и документы
+            </h3>
             <div className="flex flex-col gap-2">
               <Button
                 asChild

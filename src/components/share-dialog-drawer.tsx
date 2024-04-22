@@ -35,6 +35,8 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
   const [isOpen, setIsOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+
   if (isDesktop)
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -43,47 +45,45 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
           <DialogHeader>
             <DialogTitle>Поделиться</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="flex items-center justify-center gap-2">
             <Button asChild variant="ghost" className="h-auto flex-col gap-2">
-              <Link href="#" target="_blank">
-                <div className="flex items-center justify-center rounded-full bg-muted/50 p-4">
-                  <BiLogoTelegram className="text-2xl" />
+              <Link
+                href={`https://t.me/share/url?url=${origin + router.asPath}&text=Иностранный язык в профессиональной деятельности`}
+                target="_blank"
+              >
+                <div className="flex items-center justify-center rounded-full bg-[hsl(200_100%_40%_/_.1)] p-4">
+                  <BiLogoTelegram className="text-2xl text-[hsl(200_100%_40%)]" />
                 </div>
                 <span>Telegram</span>
               </Link>
             </Button>
             <Button asChild variant="ghost" className="h-auto flex-col gap-2">
-              <Link href="#" target="_blank">
-                <div className="flex items-center justify-center rounded-full bg-muted/50 p-4">
-                  <BiLogoWhatsapp className="text-2xl" />
+              <Link
+                href={`https://wa.me/?text=${origin + router.asPath}`}
+                target="_blank"
+              >
+                <div className="flex items-center justify-center rounded-full bg-[hsl(142_70%_40%_/_.1)] p-4">
+                  <BiLogoWhatsapp className="text-2xl text-[hsl(142_70%_40%)]" />
                 </div>
                 <span>WhatsApp</span>
               </Link>
             </Button>
             <Button asChild variant="ghost" className="h-auto flex-col gap-2">
-              <Link href="#" target="_blank">
-                <div className="flex items-center justify-center rounded-full bg-muted/50 p-4">
-                  <BiLogoVk className="text-2xl" />
+              <Link
+                href={`http://vk.com/share.php?url=${origin + router.asPath}&title=Иностранный язык в профессиональной деятельности`}
+                target="_blank"
+              >
+                <div className="flex items-center justify-center rounded-full bg-[hsl(209_100%_50%_/_.1)] p-4">
+                  <BiLogoVk className="text-2xl text-[hsl(209_100%_50%)]" />
                 </div>
                 <span>Vk</span>
-              </Link>
-            </Button>
-            <Button asChild variant="ghost" className="h-auto flex-col gap-2">
-              <Link href="#" target="_blank">
-                <div className="flex items-center justify-center rounded-full bg-muted/50 p-4">
-                  <BiLogoDiscord className="text-2xl" />
-                </div>
-                <span>Discord</span>
               </Link>
             </Button>
           </div>
           <div>
             <h3 className="mb-2 font-medium">Ссылка</h3>
             <Input
-              value={
-                (typeof window !== "undefined" ? window.location.origin : "") +
-                router.asPath
-              }
+              value={origin + router.asPath}
               readOnly
               trailingIcon={
                 copiedText ? (
@@ -114,47 +114,45 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
         <DrawerHeader>
           <DrawerTitle>Поделиться</DrawerTitle>
         </DrawerHeader>
-        <div className="mb-4 grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-2">
+        <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
           <Button asChild variant="ghost" className="h-auto flex-col gap-2">
-            <Link href="#" target="_blank">
-              <div className="flex items-center justify-center rounded-full bg-muted/50 p-4">
-                <BiLogoTelegram className="text-2xl" />
+            <Link
+              href={`https://t.me/share/url?url=${origin + router.asPath}&text=Иностранный язык в профессиональной деятельности`}
+              target="_blank"
+            >
+              <div className="flex items-center justify-center rounded-full bg-[hsl(200_100%_40%_/_.1)] p-4">
+                <BiLogoTelegram className="text-2xl text-[hsl(200_100%_40%)]" />
               </div>
               <span>Telegram</span>
             </Link>
           </Button>
           <Button asChild variant="ghost" className="h-auto flex-col gap-2">
-            <Link href="#" target="_blank">
-              <div className="flex items-center justify-center rounded-full bg-muted/50 p-4">
-                <BiLogoWhatsapp className="text-2xl" />
+            <Link
+              href={`https://wa.me/?text=${origin + router.asPath}`}
+              target="_blank"
+            >
+              <div className="flex items-center justify-center rounded-full bg-[hsl(142_70%_40%_/_.1)] p-4">
+                <BiLogoWhatsapp className="text-2xl text-[hsl(142_70%_40%)]" />
               </div>
               <span>WhatsApp</span>
             </Link>
           </Button>
           <Button asChild variant="ghost" className="h-auto flex-col gap-2">
-            <Link href="#" target="_blank">
-              <div className="flex items-center justify-center rounded-full bg-muted/50 p-4">
-                <BiLogoVk className="text-2xl" />
+            <Link
+              href={`http://vk.com/share.php?url=${origin + router.asPath}&title=Иностранный язык в профессиональной деятельности`}
+              target="_blank"
+            >
+              <div className="flex items-center justify-center rounded-full bg-[hsl(209_100%_50%_/_.1)] p-4">
+                <BiLogoVk className="text-2xl text-[hsl(209_100%_50%)]" />
               </div>
               <span>Vk</span>
-            </Link>
-          </Button>
-          <Button asChild variant="ghost" className="h-auto flex-col gap-2">
-            <Link href="#" target="_blank">
-              <div className="flex items-center justify-center rounded-full bg-muted/50 p-4">
-                <BiLogoDiscord className="text-2xl" />
-              </div>
-              <span>Discord</span>
             </Link>
           </Button>
         </div>
         <div>
           <h3 className="mb-2 font-medium">Ссылка</h3>
           <Input
-            value={
-              (typeof window !== "undefined" ? window.location.origin : "") +
-              router.asPath
-            }
+            value={origin + router.asPath}
             readOnly
             trailingIcon={
               copiedText ? (
@@ -164,10 +162,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
               )
             }
             onClickTrailingIcon={() => {
-              copy(
-                (typeof window !== "undefined" ? window.location.origin : "") +
-                  router.asPath,
-              )
+              copy(origin + router.asPath)
                 .then((text) => text)
                 .catch((error) => console.error(error));
             }}

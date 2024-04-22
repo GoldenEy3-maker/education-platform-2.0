@@ -7,13 +7,11 @@ import {
   BiBook,
   BiCalendar,
   BiCog,
-  BiGroup,
   BiHelpCircle,
   BiHome,
   BiLogOutCircle,
   BiMenu,
-  BiMessageRounded,
-  BiMessageRoundedDetail,
+  BiMessage,
   BiMoon,
 } from "react-icons/bi";
 import { PagePathMap, RoleContentMap } from "~/libs/enums";
@@ -45,7 +43,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
         </Button>
       </DrawerTrigger>
       <DrawerContent
-        className="inset-y-0 left-0 mt-0 grid max-h-svh grid-rows-[auto_auto_1fr] p-4"
+        className="inset-y-0 left-0 mt-0 grid max-h-dvh grid-rows-[auto_auto_1fr] p-4"
         isNotchDisabled
       >
         <header className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4">
@@ -110,8 +108,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
             variant="ghost"
           >
             <Link href={PagePathMap.HomeChat}>
-              <BiMessageRoundedDetail className="text-xl" />{" "}
-              <span>Сообщения</span>
+              <BiMessage className="text-xl" /> <span>Сообщения</span>
             </Link>
           </Button>
           <div className="relative mt-auto rounded-lg p-4">

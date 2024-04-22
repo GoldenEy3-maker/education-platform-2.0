@@ -133,14 +133,21 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem>
-                    <BiMessageAlt className="mr-2 text-xl" />
-                    <span>Перейти в чат</span>
+                  <DropdownMenuItem asChild>
+                    <Button variant="ghost" className="w-full justify-start">
+                      <BiMessageAlt className="mr-2 text-xl" />
+                      <span>Перейти в чат</span>
+                    </Button>
                   </DropdownMenuItem>
                   {isAuthor ? (
-                    <DropdownMenuItem>
-                      <BiBookmarkMinus className="mr-2 text-xl" />
-                      <span>Отписать</span>
+                    <DropdownMenuItem asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-destructive [--ripple-clr:theme('colors.destructive.DEFAULT')] hover:!bg-destructive/15 hover:!text-destructive"
+                      >
+                        <BiBookmarkMinus className="mr-2 text-xl" />
+                        <span>Отписать</span>
+                      </Button>
                     </DropdownMenuItem>
                   ) : null}
                 </DropdownMenuContent>

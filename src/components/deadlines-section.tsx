@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 import {
+  BiChevronRight,
   BiSolidCheckCircle,
   BiSolidTimeFive,
   BiSolidWatch,
@@ -180,12 +181,15 @@ export const DeadlinesSection: React.FC = () => {
   const isEmpty = false;
 
   return (
-    <section className="grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background/60 px-4 py-3 shadow">
+    <section className="grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background px-4 py-3 shadow">
       <header className="flex items-center gap-2 pb-3">
         <BiTimer className="text-xl" />
-        <h4 className="flex-grow text-lg font-medium">Дедлайны</h4>
-        <Button variant="outline" type="button" asChild>
-          <Link href="#">Смотреть все</Link>
+        <h4 className="flex-grow text-lg font-semibold">Дедлайны</h4>
+        <Button variant="outline" type="button" asChild className="gap-2">
+          <Link href="#">
+            <span>Смотреть все</span>
+            <BiChevronRight className="text-xl" />
+          </Link>
         </Button>
       </header>
       <Separator />

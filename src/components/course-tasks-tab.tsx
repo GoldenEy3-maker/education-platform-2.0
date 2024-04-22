@@ -412,11 +412,19 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
             >
               <BiFilterAlt className="shrink-0 text-xl" />
               <span className="max-[1100px]:hidden">Фильтры</span>
-              <span className="w-7 rounded-full border py-0.5 text-sm text-muted-foreground max-[1100px]:hidden">
+              <span
+                className={cn(
+                  "flex h-6 min-w-6 items-center justify-center rounded-full border px-1.5 text-sm text-muted-foreground max-[1100px]:hidden",
+                  {
+                    "border-primary bg-primary text-primary-foreground":
+                      activeFilters.length > 0,
+                  },
+                )}
+              >
                 {activeFilters.length}
               </span>
               {activeFilters.length > 0 ? (
-                <Badge className="absolute right-0 top-0 h-5 w-5 justify-center rounded-full text-xs min-[1100px]:hidden">
+                <Badge className="absolute right-0 top-0 h-5 min-w-5 justify-center rounded-full px-1.5 py-0 text-xs min-[1100px]:hidden">
                   {activeFilters.length}
                 </Badge>
               ) : null}

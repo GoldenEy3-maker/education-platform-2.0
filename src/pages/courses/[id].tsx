@@ -7,6 +7,7 @@ import {
   BiSolidNotepad,
   BiSolidWidget,
 } from "react-icons/bi";
+import { CourseAnnouncementsTab } from "~/components/course-announcements-tab";
 import { CourseHead } from "~/components/course-head";
 import { CourseOverviewTab } from "~/components/course-overview-tab";
 import {
@@ -40,7 +41,7 @@ const TabsMap = {
   Overview: "Overview",
   Tasks: "Tasks",
   Subscribers: "Subscribers",
-  Discussions: "Discussions",
+  Announcements: "Announcements",
 } as const;
 
 type TabsMap = ValueOf<typeof TabsMap>;
@@ -65,11 +66,11 @@ const TabsTriggerMap: Record<TabsMap, { icon: React.ReactNode; text: string }> =
       ),
       text: "Участники",
     },
-    Discussions: {
+    Announcements: {
       icon: (
         <BiSolidConversation className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
-      text: "Обсуждения",
+      text: "Объявления",
     },
   };
 
@@ -212,6 +213,7 @@ const CoursePage: NextPageWithLayout = () => {
   const [sortValueSubscribers, setSortValueSubscribers] =
     useState<SortValueSubscribersMap>("Recent");
   const [searchValueTasks, setSearchValueTasks] = useState("");
+  const [searchValueAnnouncements, setSearchValueAnnouncements] = useState("");
   const [sortValueTasks, setSortValueTasks] =
     useState<SortValueTasksMap>("Recent");
   const [filtersTasks, setFiltersTasks] = useState<
@@ -306,6 +308,16 @@ const CoursePage: NextPageWithLayout = () => {
             subscribers={MOK_DATA.subscribers}
             isAuthor={isAuthor}
             isLoading={isLoading}
+          />
+        </TabsContent>
+        <TabsContent value={TabsMap.Announcements}>
+          <CourseAnnouncementsTab
+            searchValue={searchValueAnnouncements}
+            onSearchValueChange={setSearchValueAnnouncements}
+            isAuthor={isAuthor}
+            isLoading={isLoading}
+            isSubStudent={isSubStudent}
+            isTeacher={isTeacher}
           />
         </TabsContent>
       </Tabs>

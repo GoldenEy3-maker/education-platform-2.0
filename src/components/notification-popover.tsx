@@ -2,7 +2,12 @@ import { type User } from "@prisma/client";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { BiBell, BiCog } from "react-icons/bi";
+import {
+  BiBell,
+  BiChevronLeftSquare,
+  BiChevronRight,
+  BiCog,
+} from "react-icons/bi";
 import { TbBellZFilled } from "react-icons/tb";
 import { cn, type ValueOf } from "~/libs/utils";
 import { Avatar } from "./avatar";
@@ -111,14 +116,14 @@ export const NotificationPopover = () => {
           className="data-[state=open]:bg-accent"
         >
           <BiBell className="text-xl" />
-          <Badge className="absolute right-0 top-0 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs">
-            99
+          <Badge className="absolute right-0 top-0 flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1 py-0 text-xs">
+            10
           </Badge>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-screen overflow-hidden bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90 xs:w-[26rem]">
         <header className="flex items-center justify-between gap-2">
-          <p className="font-medium">Уведомления</p>
+          <p className="text-lg font-semibold">Уведомления</p>
           <Button
             size="sm"
             variant="ghost"
@@ -141,7 +146,7 @@ export const NotificationPopover = () => {
                   <Button type="button" variant="ghost">
                     Входящие
                     {!isLoading ? (
-                      <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border text-xs group-data-[state='active']:bg-primary group-data-[state='active']:text-primary-foreground">
+                      <div className="px-.1.5 flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-full border text-xs group-data-[state='active']:bg-primary group-data-[state='active']:text-primary-foreground">
                         1
                       </div>
                     ) : (
@@ -158,7 +163,7 @@ export const NotificationPopover = () => {
                   <Button type="button" variant="ghost">
                     Общие
                     {!isLoading ? (
-                      <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border text-xs group-data-[state='active']:bg-primary group-data-[state='active']:text-primary-foreground">
+                      <div className="flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-full border px-1.5 text-xs group-data-[state='active']:bg-primary group-data-[state='active']:text-primary-foreground">
                         99
                       </div>
                     ) : (
