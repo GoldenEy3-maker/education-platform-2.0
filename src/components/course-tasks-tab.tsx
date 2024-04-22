@@ -5,27 +5,21 @@ import { useState } from "react";
 import FlipNumbers from "react-flip-numbers";
 import {
   BiBarChart,
-  BiBookmarkMinus,
   BiCalendar,
   BiCog,
   BiDotsVerticalRounded,
   BiExpandVertical,
   BiFilterAlt,
-  BiHide,
-  BiMessageAlt,
   BiPaperclip,
   BiRevision,
   BiRightArrowAlt,
   BiSearch,
-  BiShowAlt,
   BiSortAlt2,
-  BiStop,
   BiStopwatch,
   BiTimeFive,
 } from "react-icons/bi";
 import { useInterval } from "usehooks-ts";
 import { cn, type ValueOf } from "~/libs/utils";
-import { Avatar } from "./avatar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import {
@@ -51,6 +45,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Separator } from "./ui/separator";
+import { Skeleton } from "./ui/skeleton";
 import { Switch } from "./ui/switch";
 
 const SortValueTasksMap = {
@@ -367,6 +362,21 @@ const TaskItem: React.FC<TasksItemProps> = (props) => {
   );
 };
 
+const TaskItemSkeleton: React.FC = () => {
+  return (
+    <div className="flex flex-col rounded-md border bg-background p-4 shadow-sm">
+      <Skeleton className="h-7 w-32 rounded-full" />
+      <Skeleton className="mb-4 mt-3 h-7 w-40 rounded-full" />
+      <Skeleton className="mb-5 h-5 w-36 rounded-full" />
+      <Skeleton className="mb-2 h-3 w-full rounded-full" />
+      <div className="mt-auto flex items-center justify-between gap-2">
+        <Skeleton className="h-5 w-28 rounded-full" />
+        <Skeleton className="h-5 w-20 rounded-full" />
+      </div>
+    </div>
+  );
+};
+
 type CourseTasksTabProps = {
   searchValue: string;
   onSearchValueChange: (value: string) => void;
@@ -490,137 +500,153 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
         </Select>
       </div>
       <div className="space-y-2">
-        <Collapsible defaultOpen>
-          <CollapsibleTrigger asChild>
-            <Button
-              className="h-auto w-full justify-between gap-2 whitespace-normal border-b"
-              variant="ghost"
-            >
-              <p className="text-left text-base font-medium">
-                Unit 1.1. The United Kingdom of Great Britain and Northern
-                Ireland
-              </p>
-              <BiExpandVertical className="shrink-0 text-sm" />
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-4">
-              <TaskItem
-                createdAt={new Date()}
-                id="1"
-                isAuthor={isAuthor}
-                isSubStudent={isSubStudent}
-                isTeacher={isTeacher}
-                title="The surface of the USA"
-                type="Test"
-                attempts={0}
-                availableAttempts={3}
-                attachments={3}
-                availableTime={1000 * 60 * 60 * 2}
-                startDateTime={new Date("04/13/2024 19:00:00")}
-                totalStep={5}
-                currentStep={2}
-              />
-              <TaskItem
-                createdAt={new Date()}
-                id="1"
-                isAuthor={isAuthor}
-                isSubStudent={isSubStudent}
-                isTeacher={isTeacher}
-                title="The surface of the USA"
-                type="Test"
-                attempts={0}
-                availableAttempts={3}
-                attachments={3}
-                availableTime={1000 * 60 * 30}
-                totalStep={5}
-              />
-              <TaskItem
-                createdAt={new Date()}
-                id="1"
-                isAuthor={isAuthor}
-                isSubStudent={isSubStudent}
-                isTeacher={isTeacher}
-                title="The surface of the USA"
-                type="Test"
-                attempts={0}
-                availableAttempts={3}
-                attachments={3}
-                isHidden
-                totalStep={5}
-                currentStep={4}
-              />
-              <TaskItem
-                createdAt={new Date()}
-                id="2"
-                isAuthor={isAuthor}
-                isSubStudent={isSubStudent}
-                isTeacher={isTeacher}
-                title="The surface of the USA"
-                type="Lecture"
-                attempts={0}
-                attachments={3}
-                isViewRestrictions
-                totalStep={5}
-                currentStep={5}
-              />
+        {!isLoading ? (
+          <>
+            <Collapsible defaultOpen>
+              <CollapsibleTrigger asChild>
+                <Button
+                  className="h-auto w-full justify-between gap-2 whitespace-normal border-b"
+                  variant="ghost"
+                >
+                  <p className="text-left text-base font-medium">
+                    Unit 1.1. The United Kingdom of Great Britain and Northern
+                    Ireland
+                  </p>
+                  <BiExpandVertical className="shrink-0 text-sm" />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-4">
+                  <TaskItem
+                    createdAt={new Date()}
+                    id="1"
+                    isAuthor={isAuthor}
+                    isSubStudent={isSubStudent}
+                    isTeacher={isTeacher}
+                    title="The surface of the USA"
+                    type="Test"
+                    attempts={0}
+                    availableAttempts={3}
+                    attachments={3}
+                    availableTime={1000 * 60 * 60 * 2}
+                    startDateTime={new Date("04/13/2024 19:00:00")}
+                    totalStep={5}
+                    currentStep={2}
+                  />
+                  <TaskItem
+                    createdAt={new Date()}
+                    id="1"
+                    isAuthor={isAuthor}
+                    isSubStudent={isSubStudent}
+                    isTeacher={isTeacher}
+                    title="The surface of the USA"
+                    type="Test"
+                    attempts={0}
+                    availableAttempts={3}
+                    attachments={3}
+                    availableTime={1000 * 60 * 30}
+                    totalStep={5}
+                  />
+                  <TaskItem
+                    createdAt={new Date()}
+                    id="1"
+                    isAuthor={isAuthor}
+                    isSubStudent={isSubStudent}
+                    isTeacher={isTeacher}
+                    title="The surface of the USA"
+                    type="Test"
+                    attempts={0}
+                    availableAttempts={3}
+                    attachments={3}
+                    isHidden
+                    totalStep={5}
+                    currentStep={4}
+                  />
+                  <TaskItem
+                    createdAt={new Date()}
+                    id="2"
+                    isAuthor={isAuthor}
+                    isSubStudent={isSubStudent}
+                    isTeacher={isTeacher}
+                    title="The surface of the USA"
+                    type="Lecture"
+                    attempts={0}
+                    attachments={3}
+                    isViewRestrictions
+                    totalStep={5}
+                    currentStep={5}
+                  />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+            <Collapsible defaultOpen>
+              <CollapsibleTrigger asChild>
+                <Button
+                  className="h-auto w-full justify-between gap-2 whitespace-normal border-b"
+                  variant="ghost"
+                >
+                  <p className="text-left text-base font-medium">
+                    Unit 1.2. The United States of America
+                  </p>
+                  <BiExpandVertical className="shrink-0 text-sm" />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-4">
+                  <TaskItem
+                    createdAt={new Date()}
+                    id="1"
+                    isAuthor={isAuthor}
+                    isSubStudent={isSubStudent}
+                    isTeacher={isTeacher}
+                    title="The surface of the USA"
+                    type="Test"
+                    attempts={0}
+                    availableAttempts={3}
+                    attachments={3}
+                    isHidden
+                    totalStep={5}
+                  />
+                  <TaskItem
+                    createdAt={new Date()}
+                    id="2"
+                    isAuthor={isAuthor}
+                    isSubStudent={isSubStudent}
+                    isTeacher={isTeacher}
+                    title="The surface of the USA"
+                    type="Lecture"
+                    attempts={0}
+                    attachments={3}
+                    totalStep={5}
+                  />
+                  <TaskItem
+                    createdAt={new Date()}
+                    id="3"
+                    isAuthor={isAuthor}
+                    isSubStudent={isSubStudent}
+                    isTeacher={isTeacher}
+                    title="The surface of the USA"
+                    type="Practical"
+                    attachments={3}
+                    lastDay={new Date("04/20/2024 23:59:59")}
+                  />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </>
+        ) : (
+          <div>
+            <div className="px-4 py-2">
+              <Skeleton className="h-6 w-64 rounded-full" />
             </div>
-          </CollapsibleContent>
-        </Collapsible>
-        <Collapsible defaultOpen>
-          <CollapsibleTrigger asChild>
-            <Button
-              className="h-auto w-full justify-between gap-2 whitespace-normal border-b"
-              variant="ghost"
-            >
-              <p className="text-left text-base font-medium">
-                Unit 1.2. The United States of America
-              </p>
-              <BiExpandVertical className="shrink-0 text-sm" />
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
             <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-4">
-              <TaskItem
-                createdAt={new Date()}
-                id="1"
-                isAuthor={isAuthor}
-                isSubStudent={isSubStudent}
-                isTeacher={isTeacher}
-                title="The surface of the USA"
-                type="Test"
-                attempts={0}
-                availableAttempts={3}
-                attachments={3}
-                isHidden
-                totalStep={5}
-              />
-              <TaskItem
-                createdAt={new Date()}
-                id="2"
-                isAuthor={isAuthor}
-                isSubStudent={isSubStudent}
-                isTeacher={isTeacher}
-                title="The surface of the USA"
-                type="Lecture"
-                attempts={0}
-                attachments={3}
-                totalStep={5}
-              />
-              <TaskItem
-                createdAt={new Date()}
-                id="3"
-                isAuthor={isAuthor}
-                isSubStudent={isSubStudent}
-                isTeacher={isTeacher}
-                title="The surface of the USA"
-                type="Practical"
-                attachments={3}
-                lastDay={new Date("04/20/2024 23:59:59")}
-              />
+              <TaskItemSkeleton />
+              <TaskItemSkeleton />
+              <TaskItemSkeleton />
+              <TaskItemSkeleton />
             </div>
-          </CollapsibleContent>
-        </Collapsible>
+          </div>
+        )}
       </div>
     </div>
   );

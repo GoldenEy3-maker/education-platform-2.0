@@ -225,8 +225,8 @@ const CoursePage: NextPageWithLayout = () => {
     HideTests: false,
   });
 
-  const isAuthor = true;
-  const isSubStudent = false;
+  const isAuthor = false;
+  const isSubStudent = true;
   const isTeacher = false;
   const isLoading = false;
 

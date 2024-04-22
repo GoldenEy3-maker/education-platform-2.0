@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { Skeleton } from "./ui/skeleton";
 
 const SortValueSubscribersMap = {
   Recent: "Recent",
@@ -43,6 +44,36 @@ const SortValueSubscribersContentMap: Record<SortValueSubscribersMap, string> =
   } as const;
 
 export type SortValueSubscribersMap = ValueOf<typeof SortValueSubscribersMap>;
+
+const SubscriberSkeleton: React.FC = () => {
+  return (
+    <div className="flex flex-col rounded-md border bg-background p-4">
+      <div className="flex flex-col items-center">
+        <Skeleton className="mb-1 h-16 w-16 rounded-full" />
+        <Skeleton className="mb-1 h-5 w-28 rounded-full" />
+        <Skeleton className="h-4 w-44 rounded-full" />
+      </div>
+      <div className="my-4 flex items-center justify-center gap-4">
+        <div className="flex flex-col items-center">
+          <Skeleton className="mb-1 h-6 w-6 rounded-full" />
+          <Skeleton className="h-4 w-20 rounded-full" />
+        </div>
+        <div className="flex flex-col items-center">
+          <CircularProgress
+            className="text-2xl text-primary"
+            strokeWidth={8}
+            value={0}
+          />
+          <Skeleton className="mt-1 h-4 w-20 rounded-full" />
+        </div>
+      </div>
+      <div className="mt-auto flex items-center justify-between gap-2">
+        <Skeleton className="h-5 w-20 rounded-full" />
+        <Skeleton className="h-5 w-24 rounded-full" />
+      </div>
+    </div>
+  );
+};
 
 type CourseSubscribersTabProps = {
   searchValue: string;
@@ -116,7 +147,8 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
         </Select>
       </div>
       <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] gap-4">
-        {subscribers.length > 0 &&
+        {!isLoading ? (
+          subscribers.length > 0 &&
           subscribers.map((sub) => (
             <div
               key={sub.id}
@@ -191,7 +223,15 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
                 </Button>
               </footer>
             </div>
-          ))}
+          ))
+        ) : (
+          <>
+            <SubscriberSkeleton />
+            <SubscriberSkeleton />
+            <SubscriberSkeleton />
+            <SubscriberSkeleton />
+          </>
+        )}
       </div>
     </div>
   );
