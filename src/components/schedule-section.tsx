@@ -82,6 +82,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "Высшая математика",
     type: "Lab",
     status: "Full",
+    groupId: "123",
   },
   {
     id: crypto.randomUUID(),
@@ -102,6 +103,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "Психология",
     type: "Pract",
     status: "Async",
+    groupId: "123",
   },
   {
     id: crypto.randomUUID(),
@@ -120,6 +122,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "История",
     type: "Pract",
     status: "Sync",
+    groupId: "123",
   },
   {
     id: crypto.randomUUID(),
@@ -138,6 +141,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "Иностранный язык в профессиональной деятельности",
     type: "Lab",
     status: "Full",
+    groupId: "123",
   },
   {
     id: crypto.randomUUID(),
@@ -156,6 +160,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "Иностранный язык в профессиональной деятельности",
     type: "Lab",
     status: "Full",
+    groupId: "123",
   },
   {
     id: crypto.randomUUID(),
@@ -174,6 +179,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "Иностранный язык в профессиональной деятельности",
     type: "Lab",
     status: "Full",
+    groupId: "123",
   },
   {
     id: crypto.randomUUID(),
@@ -192,6 +198,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "Иностранный язык в профессиональной деятельности",
     type: "Lab",
     status: "Full",
+    groupId: "123",
   },
   {
     id: crypto.randomUUID(),
@@ -210,6 +217,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "Иностранный язык в профессиональной деятельности",
     type: "Lab",
     status: "Full",
+    groupId: "123",
   },
   {
     id: crypto.randomUUID(),
@@ -228,6 +236,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "Иностранный язык в профессиональной деятельности",
     type: "Lab",
     status: "Full",
+    groupId: "123",
   },
   {
     id: crypto.randomUUID(),
@@ -246,6 +255,7 @@ const MOK_DATA: Prisma.LessionGetPayload<{
     title: "Иностранный язык в профессиональной деятельности",
     type: "Lab",
     status: "Full",
+    groupId: "123",
   },
 ];
 

@@ -6,17 +6,17 @@ export const useRippleEffect = () => {
 
   const rippleEffectEvent = (event: React.PointerEvent<HTMLElement>) => {
     const target = event.currentTarget;
-    const nestedInteractionNodes = target.querySelectorAll("button, input, a");
+    // const nestedInteractionNodes = target.querySelectorAll("button, input, a");
 
     if ((target as HTMLButtonElement | HTMLInputElement).disabled) return;
 
-    if (nestedInteractionNodes.length) {
-      const isClickedOnNestedInteractionNode = Array.from(
-        nestedInteractionNodes
-      ).some((node) => (event.target as HTMLElement).closest(node.tagName));
+    // if (nestedInteractionNodes.length) {
+    //   const isClickedOnNestedInteractionNode = Array.from(
+    //     nestedInteractionNodes
+    //   ).some((node) => (event.target as HTMLElement).closest(node.tagName));
 
-      if (isClickedOnNestedInteractionNode) return;
-    }
+    //   if (isClickedOnNestedInteractionNode) return;
+    // }
 
     const targetWidth = target.getBoundingClientRect().width;
     const targetHeight = target.getBoundingClientRect().height;
@@ -30,7 +30,7 @@ export const useRippleEffect = () => {
     const ripple = document.createElement("span");
 
     ripple.className = cn(
-      "absolute z-10 select-none pointer-events-none block rounded-full bg-[var(--ripple-clr,theme('colors.primary.DEFAULT'))] opacity-20 animate-ripple"
+      "absolute z-10 select-none pointer-events-none block rounded-full bg-[var(--ripple-clr,theme('colors.primary.DEFAULT'))] opacity-20 animate-ripple",
     );
 
     ripple.style.animationDuration = `${animationDuration}ms`;

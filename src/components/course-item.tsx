@@ -19,7 +19,6 @@ type CourseItemProps = {
   id: string;
   title: string;
   image?: string;
-  description: string;
   status: StatusCourseMap;
   progress?: number;
   isFavorited: boolean;
@@ -36,7 +35,6 @@ export const CourseItem: React.FC<CourseItemProps> = ({
   id,
   title,
   image,
-  description,
   status,
   progress,
   isFavorited,
@@ -99,23 +97,23 @@ export const CourseItem: React.FC<CourseItemProps> = ({
         </Button>
       </div>
       <p className="mb-1 line-clamp-2 text-lg font-medium">{title}</p>
-      <p
+      {/* <p
         className={cn("mb-auto line-clamp-2 text-muted-foreground", {
           "line-clamp-4": !progress,
         })}
       >
         {description}
-      </p>
+      </p> */}
       {progress ? (
-        <div className="mt-2">
-          <header className="mb-2 flex items-center justify-between gap-2">
+        <div className="mt-1">
+          <div className="mb-2 flex items-center justify-between gap-2">
             <span className="text-muted-foreground">Прогресс</span>
             <span className="text-primary">{progress}%</span>
-          </header>
+          </div>
           <Progress value={progress} />
         </div>
       ) : null}
-      <footer className="mt-3 flex items-center justify-between gap-2 overflow-hidden">
+      <footer className="mt-auto flex items-center justify-between gap-2 overflow-hidden pt-3">
         <Button
           className="h-auto w-fit justify-normal gap-3 px-2 py-1"
           variant="ghost"

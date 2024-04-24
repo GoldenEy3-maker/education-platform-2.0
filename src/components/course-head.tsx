@@ -223,7 +223,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
               variant="outline"
               size="icon"
               className={cn(
-                "rounded-full border-dashed border-primary bg-primary/5 text-primary hover:border-transparent lg:ml-3",
+                "rounded-full border-dashed border-primary bg-transparent text-primary hover:bg-primary/10 hover:text-primary lg:ml-3",
                 {
                   "ml-0": subscribers.length < 3,
                 },

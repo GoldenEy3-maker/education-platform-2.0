@@ -37,7 +37,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         {leadingIcon ? (
-          <span className="pointer-events-none absolute inset-y-0 left-0 ml-4 flex items-center justify-center">
+          <span
+            className={cn(
+              "pointer-events-none absolute inset-y-0 left-0 ml-4 flex items-center justify-center",
+              {
+                "opacity-50": disabled,
+              },
+            )}
+          >
             {leadingIcon}
           </span>
         ) : null}

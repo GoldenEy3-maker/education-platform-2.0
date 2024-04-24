@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { AttachmentsMap, type AttachmentExtensionsMap } from "./enums";
 
 export type ValueOf<T> = T[keyof T];
 
@@ -37,4 +38,22 @@ export const getFirstLettersUserCredentials = (
   if (!nameLetter) return surnameLetter;
 
   return surnameLetter + nameLetter;
+};
+
+const AttachmentKeys = Object.keys(AttachmentsMap);
+
+export const handleAttachment = (attachment: {
+  name: string;
+  href: string | null;
+}): [string, { icon: React.ReactNode; color: string }] => {
+  const lastIndex = attachment.name.lastIndexOf(".");
+  const name = attachment.name.substring(0, lastIndex);
+  const ext = attachment.name.substring(lastIndex + 1);
+  const template = attachment.href
+    ? AttachmentsMap.LINK
+    : AttachmentKeys.includes(ext.toLocaleUpperCase())
+      ? AttachmentsMap[ext.toUpperCase() as AttachmentExtensionsMap]
+      : AttachmentsMap.UNKNOWN;
+
+  return [name, template];
 };

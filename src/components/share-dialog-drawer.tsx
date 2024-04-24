@@ -52,7 +52,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
                 target="_blank"
               >
                 <div className="flex items-center justify-center rounded-full bg-[hsl(200_100%_40%_/_.1)] p-4">
-                  <BiLogoTelegram className="text-2xl text-[hsl(200_100%_40%)]" />
+                  <BiLogoTelegram className="text-3xl text-[hsl(200_100%_40%)]" />
                 </div>
                 <span>Telegram</span>
               </Link>
@@ -63,7 +63,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
                 target="_blank"
               >
                 <div className="flex items-center justify-center rounded-full bg-[hsl(142_70%_40%_/_.1)] p-4">
-                  <BiLogoWhatsapp className="text-2xl text-[hsl(142_70%_40%)]" />
+                  <BiLogoWhatsapp className="text-3xl text-[hsl(142_70%_40%)]" />
                 </div>
                 <span>WhatsApp</span>
               </Link>
@@ -74,7 +74,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
                 target="_blank"
               >
                 <div className="flex items-center justify-center rounded-full bg-[hsl(209_100%_50%_/_.1)] p-4">
-                  <BiLogoVk className="text-2xl text-[hsl(209_100%_50%)]" />
+                  <BiLogoVk className="text-3xl text-[hsl(209_100%_50%)]" />
                 </div>
                 <span>Vk</span>
               </Link>
@@ -121,7 +121,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
               target="_blank"
             >
               <div className="flex items-center justify-center rounded-full bg-[hsl(200_100%_40%_/_.1)] p-4">
-                <BiLogoTelegram className="text-2xl text-[hsl(200_100%_40%)]" />
+                <BiLogoTelegram className="text-3xl text-[hsl(200_100%_40%)]" />
               </div>
               <span>Telegram</span>
             </Link>
@@ -132,7 +132,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
               target="_blank"
             >
               <div className="flex items-center justify-center rounded-full bg-[hsl(142_70%_40%_/_.1)] p-4">
-                <BiLogoWhatsapp className="text-2xl text-[hsl(142_70%_40%)]" />
+                <BiLogoWhatsapp className="text-3xl text-[hsl(142_70%_40%)]" />
               </div>
               <span>WhatsApp</span>
             </Link>
@@ -143,7 +143,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
               target="_blank"
             >
               <div className="flex items-center justify-center rounded-full bg-[hsl(209_100%_50%_/_.1)] p-4">
-                <BiLogoVk className="text-2xl text-[hsl(209_100%_50%)]" />
+                <BiLogoVk className="text-3xl text-[hsl(209_100%_50%)]" />
               </div>
               <span>Vk</span>
             </Link>

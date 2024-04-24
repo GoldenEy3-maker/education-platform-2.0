@@ -52,7 +52,7 @@ const TabsTriggerMap: Record<TabsMap, { icon: React.ReactNode; text: string }> =
       icon: (
         <BiSolidWidget className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
-      text: "Обзор",
+      text: "Введение",
     },
     Tasks: {
       icon: (
@@ -100,6 +100,33 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         image: true;
       };
     };
+    attachments: true;
+    tasks: {
+      include: {
+        attachments: true;
+        restrictedGroups: true;
+        restrictedUsers: true;
+        attempts: {
+          include: {
+            user: {
+              select: {
+                id: true;
+                group: true;
+                image: true;
+                name: true;
+                surname: true;
+                fathername: true;
+              };
+            };
+          };
+        };
+      };
+    };
+    announcements: {
+      include: {
+        attachments: true;
+      };
+    };
   };
 }> = {
   id: crypto.randomUUID(),
@@ -113,8 +140,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
   },
   authorId: "user_1",
   createdAt: new Date(),
-  description:
-    "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam, quisquam? Accusamus dicta eum nesciunt ut, cumque corporis nulla explicabo reiciendis quisquam, pariatur odio id unde sapiente repudiandae. Nihil, hic dicta. Aliquid illo dignissimos quod odio. Omnis repellendus saepe cupiditate aliquam ratione, nemo vel repellat sapiente illum fuga labore cum suscipit iusto, reiciendis voluptas totam beatae repudiandae, reprehenderit et quod porro! Expedita blanditiis ea dolor itaque, hic reiciendis optio mollitia obcaecati recusandae neque vero soluta. Odit consequuntur soluta, sed voluptatibus ipsa itaque enim quas qui blanditiis modi, accusantium quod temporibus ullam.",
+  // description:
+  //   "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam, quisquam? Accusamus dicta eum nesciunt ut, cumque corporis nulla explicabo reiciendis quisquam, pariatur odio id unde sapiente repudiandae. Nihil, hic dicta. Aliquid illo dignissimos quod odio. Omnis repellendus saepe cupiditate aliquam ratione, nemo vel repellat sapiente illum fuga labore cum suscipit iusto, reiciendis voluptas totam beatae repudiandae, reprehenderit et quod porro! Expedita blanditiis ea dolor itaque, hic reiciendis optio mollitia obcaecati recusandae neque vero soluta. Odit consequuntur soluta, sed voluptatibus ipsa itaque enim quas qui blanditiis modi, accusantium quod temporibus ullam.",
+  description: null,
   isArchived: false,
   title: "Иностранный язык в профессиональной деятельности",
   updatedAt: new Date(),
@@ -204,11 +232,303 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       userId: crypto.randomUUID(),
     },
   ],
+  attachments: [
+    {
+      id: "1",
+      name: "Ссылка №1",
+      href: "#",
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "5",
+      name: "Таблица №1.csv",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "9",
+      name: "Таблица №2.xls",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "2",
+      name: "Документ №1.pdf",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "3",
+      name: "Документ №2.doc",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "4",
+      name: "Документ №3.docx",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "6",
+      name: "Архив №1.rar",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "11",
+      name: "Изображение №3.jpg",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "7",
+      name: "Изображение №1.png",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "10",
+      name: "Изображение №2.svg",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "12",
+      name: "Изображение №4.webp",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "13",
+      name: "Изображение №5.xcf",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "14",
+      name: "Изображение №6.gif",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "8",
+      name: "Файл №1.bat",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "15",
+      name: "Файл №2.ai",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "16",
+      name: "Файл №3.xml",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "17",
+      name: "Файл №4.html",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "18",
+      name: "Файл №5.css",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "19",
+      name: "Файл №6.js",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "20",
+      name: "Файл №7.jsx",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "21",
+      name: "Файл №8.ts",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "22",
+      name: "Файл №9.tsx",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "24",
+      name: "Файл №10.db",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "25",
+      name: "Файл №11.sql",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "26",
+      name: "Файл №12.php",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "27",
+      name: "Файл №13.txt",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+    {
+      id: "23",
+      name: "Презентация №1.ppt",
+      href: null,
+      courseId: crypto.randomUUID(),
+    },
+  ],
+  tasks: [
+    {
+      id: crypto.randomUUID(),
+      courseId: crypto.randomUUID(),
+      attachments: [
+        {
+          href: null,
+          id: "123",
+          name: "Презентация №1.ppt",
+          taskId: "123",
+        },
+      ],
+      attempts: [],
+      availableAttempts: null,
+      availableTime: null,
+      createdAt: new Date(),
+      restrictedGroups: [],
+      restrictedUsers: [],
+      deadline: null,
+      isHidden: false,
+      section:
+        "Unit 1.1. The United Kingdom of Great Britain and Northern Ireland",
+      title: "The surfce of the USA",
+      type: "Lec",
+      updatedAt: new Date(),
+    },
+    {
+      id: crypto.randomUUID(),
+      courseId: crypto.randomUUID(),
+      attachments: [],
+      attempts: [],
+      availableAttempts: 3,
+      availableTime: 1000 * 60 * 30,
+      createdAt: new Date(),
+      restrictedGroups: [],
+      restrictedUsers: [],
+      deadline: null,
+      isHidden: false,
+      section:
+        "Unit 1.1. The United Kingdom of Great Britain and Northern Ireland",
+      title: "The surfce of the USA",
+      type: "Test",
+      updatedAt: new Date(),
+    },
+    {
+      id: crypto.randomUUID(),
+      courseId: crypto.randomUUID(),
+      attachments: [],
+      attempts: [],
+      availableAttempts: null,
+      availableTime: null,
+      createdAt: new Date(),
+      restrictedGroups: [],
+      restrictedUsers: [],
+      deadline: new Date("04/24/2024 23:59:59"),
+      isHidden: false,
+      section:
+        "Unit 1.1. The United Kingdom of Great Britain and Northern Ireland",
+      title: "The surfce of the USA",
+      type: "Pract",
+      updatedAt: new Date(),
+    },
+    {
+      id: crypto.randomUUID(),
+      courseId: crypto.randomUUID(),
+      attachments: [],
+      attempts: [],
+      availableAttempts: null,
+      availableTime: null,
+      createdAt: new Date(),
+      restrictedGroups: [],
+      restrictedUsers: [],
+      deadline: null,
+      isHidden: false,
+      section:
+        "Unit 1.2. The United Kingdom of Great Britain and Northern Ireland",
+      title: "The surfce of the USA",
+      type: "Test",
+      updatedAt: new Date(),
+    },
+    {
+      id: crypto.randomUUID(),
+      courseId: crypto.randomUUID(),
+      attachments: [],
+      attempts: [],
+      availableAttempts: 3,
+      availableTime: 1000 * 60 * 30,
+      createdAt: new Date(),
+      restrictedGroups: [],
+      restrictedUsers: [],
+      deadline: null,
+      isHidden: false,
+      section:
+        "Unit 1.2. The United Kingdom of Great Britain and Northern Ireland",
+      title: "The surfce of the USA",
+      type: "Test",
+      updatedAt: new Date(),
+    },
+  ],
+  announcements: [
+    {
+      id: crypto.randomUUID(),
+      courseId: "course_1",
+      title: "Карьерная гостинная",
+      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit expedita voluptatibus temporibus quibusdam voluptates quae repellendus voluptate nobis hic, quam beatae esse fugiat vero, natus reiciendis minus odio eveniet alias.",
+      createdAt: new Date(),
+      attachments: [
+        {
+          id: crypto.randomUUID(),
+          name: "Таблица №1.csv",
+          href: null,
+          announcementId: crypto.randomUUID(),
+        },
+        {
+          id: crypto.randomUUID(),
+          name: "Документ №1.pdf",
+          href: null,
+          announcementId: crypto.randomUUID(),
+        },
+        {
+          id: crypto.randomUUID(),
+          name: "Документ №2.doc",
+          href: null,
+          announcementId: crypto.randomUUID(),
+        },
+      ],
+    },
+  ],
 };
 
 const CoursePage: NextPageWithLayout = () => {
   const { data: session } = useSession();
-  const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "Overview");
+  const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "Tasks");
   const [searchValueSubscribers, setSearchValueSubscribers] = useState("");
   const [sortValueSubscribers, setSortValueSubscribers] =
     useState<SortValueSubscribersMap>("Recent");
@@ -281,10 +601,12 @@ const CoursePage: NextPageWithLayout = () => {
           <CourseOverviewTab
             isLoading={isLoading}
             description={MOK_DATA.description}
+            attachments={MOK_DATA.attachments}
           />
         </TabsContent>
         <TabsContent value={TabsMap.Tasks}>
           <CourseTasksTab
+            tasks={MOK_DATA.tasks}
             searchValue={searchValueTasks}
             onSearchValueChange={setSearchValueTasks}
             sortValue={sortValueTasks}

@@ -1,7 +1,7 @@
-// TODO: handle isLoading prop
-import { type Prisma } from "@prisma/client";
-import Link from "next/link";
-import React from "react";
+import { type Prisma } from "@prisma/client"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import React from "react"
 import {
   BiBookmarkMinus,
   BiDotsVerticalRounded,
@@ -9,26 +9,26 @@ import {
   BiRightArrowAlt,
   BiSearch,
   BiSortAlt2,
-} from "react-icons/bi";
-import { type ValueOf } from "~/libs/utils";
-import { Avatar } from "./avatar";
-import { CircularProgress } from "./circular-progress";
-import { Button } from "./ui/button";
+} from "react-icons/bi"
+import { type ValueOf } from "~/libs/utils"
+import { Avatar } from "./avatar"
+import { CircularProgress } from "./circular-progress"
+import { Button } from "./ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Input } from "./ui/input";
+} from "./ui/dropdown-menu"
+import { Input } from "./ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { Skeleton } from "./ui/skeleton";
+} from "./ui/select"
+import { Skeleton } from "./ui/skeleton"
 
 const SortValueSubscribersMap = {
   Recent: "Recent",
@@ -106,15 +106,18 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
   isAuthor,
   isLoading,
 }) => {
+  const { data: session } = useSession();
+
   return (
     <div>
       <div className="grid grid-cols-[1fr_auto] items-center gap-2">
         <Input
           leadingIcon={<BiSearch className="text-xl" />}
           placeholder="Поиск участников..."
-          className="max-w-80"
+          className="max-w-64"
           value={searchValue}
           onChange={(event) => onSearchValueChange(event.target.value)}
+          disabled={!session?.user}
         />
         <Select
           defaultValue={SortValueSubscribersMap.Recent}
@@ -125,6 +128,7 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
             asChild
             variant="outline"
             className="w-auto justify-between gap-2 max-[1100px]:border-none max-[1100px]:bg-transparent max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
+            disabled={!session?.user}
           >
             <SelectTrigger>
               <BiSortAlt2 className="shrink-0 text-xl min-[1100px]:hidden" />
@@ -174,8 +178,8 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
                   {isAuthor ? (
                     <DropdownMenuItem asChild>
                       <Button
-                        variant="ghost"
-                        className="w-full justify-start text-destructive [--ripple-clr:theme('colors.destructive.DEFAULT')] hover:!bg-destructive/15 hover:!text-destructive"
+                        variant="ghost-destructive"
+                        className="w-full justify-start hover:!bg-destructive/15 hover:!text-destructive focus-visible:!text-destructive focus-visible:!bg-destructive/15"
                       >
                         <BiBookmarkMinus className="mr-2 text-xl" />
                         <span>Отписать</span>

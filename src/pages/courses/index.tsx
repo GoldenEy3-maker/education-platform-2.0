@@ -14,7 +14,6 @@ import {
 } from "react-icons/bi";
 import { CourseItem } from "~/components/course-item";
 import { CourseItemSkeleton } from "~/components/course-item-skeleton";
-import { CoursesEmpty } from "~/components/courses-empty";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -256,6 +255,20 @@ const MOK_DATA: Prisma.CourseGetPayload<{
   },
 ];
 
+type CoursesEmptyProps = {
+  icon: React.ReactNode;
+  text: React.ReactNode;
+};
+
+const CoursesEmpty: React.FC<CoursesEmptyProps> = ({ icon, text }) => {
+  return (
+    <div className="col-span-4 mx-auto flex max-w-[40rem] flex-col items-center justify-center p-6">
+      {icon}
+      <div className="mt-2 text-center">{text}</div>
+    </div>
+  );
+};
+
 const CoursesPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
   const isLoading = !session?.user;
@@ -292,7 +305,7 @@ const CoursesPage: NextPageWithLayout = () => {
       <CoursesEmpty
         icon={<BiSolidDetail className="text-7xl text-muted-foreground" />}
         text={
-          <p className="mt-2 text-center">
+          <p>
             Похоже, что на данный момент на портале нет курсов... Есть риск
             проблем с сервером на нашей стороне. Либо же преподаватели в скором
             времени подготовят для вас новый и интересный материал. В любом
@@ -300,15 +313,14 @@ const CoursesPage: NextPageWithLayout = () => {
             всегда ждем!
           </p>
         }
-        textBasedOnRole={false}
       />
     ),
     Owned: (
       <CoursesEmpty
         icon={<BiSolidBookmark className="text-7xl text-muted-foreground" />}
-        text={{
-          Student: (
-            <p className="mt-2 text-center">
+        text={
+          session?.user.role === "Student" ? (
+            <p>
               Похоже, что вы все еще не подписаны ни на один курс.{" "}
               <span
                 className="cursor-pointer text-primary"
@@ -321,9 +333,8 @@ const CoursesPage: NextPageWithLayout = () => {
               но тут его нет, тогда проблема остается на нашей стороне.
               Попробуйте вернуться позже. Мы вас всегда ждем!
             </p>
-          ),
-          Teacher: (
-            <p className="mt-2 text-center">
+          ) : session?.user.role === "Teacher" ? (
+            <p>
               Похоже, что вы все еще не опубликовали ни одного курса.{" "}
               <Link href="#" className="text-primary">
                 Скорее перейдите к созданию нового.
@@ -332,16 +343,15 @@ const CoursesPage: NextPageWithLayout = () => {
               появляются, тогда проблема остается на нашей стороне. Попробуйте
               вернуться позже. Мы вас всегда ждем!
             </p>
-          ),
-        }}
-        textBasedOnRole
+          ) : null
+        }
       />
     ),
     Favorited: (
       <CoursesEmpty
         icon={<BiSolidStar className="text-7xl text-muted-foreground" />}
         text={
-          <p className="mt-2 text-center">
+          <p>
             Похоже, что вы все еще ничего не добавляли в избранное. Это функция
             поможет вам быстрее ориентироваться на портале при поиске
             необходимых материалов. В случае, если вы все же добавляли уже в
@@ -350,14 +360,13 @@ const CoursesPage: NextPageWithLayout = () => {
             ждем!
           </p>
         }
-        textBasedOnRole={false}
       />
     ),
     Suggestions: (
       <CoursesEmpty
         icon={<BiSolidMeteor className="text-7xl text-muted-foreground" />}
         text={
-          <p className="mt-2 text-center">
+          <p>
             Похоже, что на данный момент нам нечего вам предложить... Есть риск
             проблем с сервером на нашей стороне. Либо же преподаватели в скором
             времени подготовят для вас новый и интересный материал. В любом
@@ -365,7 +374,6 @@ const CoursesPage: NextPageWithLayout = () => {
             всегда ждем!
           </p>
         }
-        textBasedOnRole={false}
       />
     ),
   };
@@ -523,20 +531,13 @@ const CoursesPage: NextPageWithLayout = () => {
                   <CourseItem
                     key={course.id}
                     id={course.id}
-                    description={course.description}
                     title={course.title}
                     status={course.isArchived ? "Archived" : "Published"}
                     isFavorited={MOK_FAVORITES.some(
                       (favCourse) => favCourse.id === course.id,
                     )}
                     author={course.author}
-                    progress={
-                      MOK_SUBSCRIPTIONS.some(
-                        (subCourse) => subCourse.id === course.id,
-                      )
-                        ? 40
-                        : undefined
-                    }
+                    progress={40}
                   />
                 ))
               ) : (

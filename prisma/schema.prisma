@@ -3,29 +3,40 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-
+  provider  = "postgresql"
   url       = env("POSTGRES_PRISMA_URL")
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model User {
-  id             String         @id @default(cuid())
-  name           String
-  surname        String
-  fathername     String?
-  email          String?        @unique
-  emailVerified  DateTime?
-  image          String?
-  login          String         @unique
-  password       String
-  tokenVersion   Int            @default(0)
-  role           Role
-  status         String?
-  lessions       Lession[]
-  createdCourses Course[]       @relation("author")
-  subscriptions  Subscription[]
-  favorites      Favorite[]
+  id              String         @id @default(cuid())
+  name            String
+  surname         String
+  fathername      String?
+  email           String         @unique
+  emailVerified   DateTime?
+  image           String?
+  login           String         @unique
+  password        String
+  group           Group?         @relation(fields: [groupId], references: [id])
+  groupId         String?
+  tokenVersion    Int            @default(0)
+  role            Role
+  status          String?
+  lessions        Lession[]
+  createdCourses  Course[]       @relation("author")
+  subscriptions   Subscription[]
+  favorites       Favorite[]
+  attempts        Attempt[]
+  restrictedTasks Task[]
+}
+
+model Group {
+  id              String    @id @default(cuid())
+  name            String
+  user            User[]
+  restrictedTasks Task[]
+  lessions        Lession[]
 }
 
 model Pavilion {
@@ -48,43 +59,105 @@ model Lession {
   type       LessionType
   teacher    User          @relation(fields: [teacherId], references: [id])
   teacherId  String
+  group      Group         @relation(fields: [groupId], references: [id])
+  groupId    String
   status     LessionStatus
 }
 
 model Course {
-  id          String         @id @default(cuid())
-  title       String
-  description String
-  author      User           @relation("author", fields: [authorId], references: [id])
-  authorId    String
-  subscribers Subscription[]
-  favoritedBy Favorite[]
-  isArchived  Boolean        @default(false)
+  id            String             @id @default(cuid())
+  title         String
+  description   String?
+  author        User               @relation("author", fields: [authorId], references: [id])
+  authorId      String
+  subscribers   Subscription[]
+  favoritedBy   Favorite[]
+  isArchived    Boolean            @default(false)
+  attachments   CourseAttachment[]
+  tasks         Task[]
+  announcements Announcement[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model CourseAttachment {
+  id       String  @id @default(cuid())
+  name     String
+  href     String?
+  course   Course  @relation(fields: [courseId], references: [id])
+  courseId String
+}
+
+model Task {
+  id                String           @id @default(cuid())
+  title             String
+  section           String
+  type              TaskType
+  availableAttempts Int?
+  attachments       TaskAttachment[]
+  availableTime     Int?
+  deadline          DateTime?
+  isHidden          Boolean          @default(false)
+  restrictedGroups  Group[]
+  restrictedUsers   User[]
+  attempts          Attempt[]
+  course            Course           @relation(fields: [courseId], references: [id])
+  courseId          String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
+model TaskAttachment {
+  id     String  @id @default(cuid())
+  name   String
+  href   String?
+  task   Task    @relation(fields: [taskId], references: [id])
+  taskId String
+}
+
+model Attempt {
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  task        Task      @relation(fields: [taskId], references: [id])
+  taskId      String
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+}
+
+model Announcement {
+  id          String                   @id @default(cuid())
+  title       String
+  text        String
+  attachments AnnouncementAttachment[]
+  course      Course                   @relation(fields: [courseId], references: [id])
+  courseId    String
+  createdAt   DateTime                 @default(now())
+}
+
+model AnnouncementAttachment {
+  id             String       @id @default(cuid())
+  name           String
+  href           String?
+  announcement   Announcement @relation(fields: [announcementId], references: [id])
+  announcementId String
 }
 
 model Subscription {
-  id String @id @default(cuid())
-
+  id       String @id @default(cuid())
   course   Course @relation(fields: [courseId], references: [id])
   courseId String
-
   progress Int
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
 }
 
 model Favorite {
-  id String @id @default(cuid())
-
+  id       String @id @default(cuid())
   course   Course @relation(fields: [courseId], references: [id])
   courseId String
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
 }
 
 enum Role {
@@ -102,5 +175,11 @@ enum LessionStatus {
 enum LessionType {
   Lec
   Lab
+  Pract
+}
+
+enum TaskType {
+  Lec
+  Test
   Pract
 }
