@@ -1,21 +1,11 @@
-import { cva } from "class-variance-authority";
-import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
-import {
-  BiChevronRight,
-  BiSolidCheckCircle,
-  BiSolidTimeFive,
-  BiSolidWatch,
-  BiSolidXCircle,
-  BiTimer,
-} from "react-icons/bi";
+import { BiChevronRight, BiSolidWatch, BiTimer } from "react-icons/bi";
 import { cn } from "~/libs/utils";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
-import { Skeleton } from "./ui/skeleton";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
+import { DeadlineItem, DeadlineItemSkeleton } from "./deadline-item";
 
 type ProgressIndicatorProps = {
   total: number;
@@ -69,97 +59,6 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
           <p className="text-muted-foreground">из {total}</p>
         </div>
       ) : null}
-    </div>
-  );
-};
-
-type DeadlineItemVariant = "warning" | "destructive" | "useful";
-
-type DeadlineItemProps = {
-  title: string;
-  date: Date;
-  course: string;
-  isCompleted?: boolean;
-};
-
-const DeadlineItemIconMap = {
-  warning: BiSolidTimeFive,
-  destructive: BiSolidXCircle,
-  useful: BiSolidCheckCircle,
-};
-
-const deadlineItemIconVariants = cva("row-span-2 text-xl", {
-  variants: {
-    variant: {
-      warning: "text-warning",
-      destructive: "text-destructive",
-      useful: "text-useful",
-    },
-  },
-});
-
-const DeadlineItemBadgeMap = {
-  warning: "В процессе",
-  useful: "Выполнено",
-  destructive: "Просрочено",
-};
-
-const deadlineItemBadgeVariants = cva("rounded-full", {
-  variants: {
-    variant: {
-      warning: "bg-warning/30 text-warning-foreground hover:bg-warning/60",
-      useful: "bg-useful/30 text-useful-foreground hover:bg-useful/60",
-      destructive:
-        "bg-destructive/30 text-destructive-foreground-variant hover:bg-destructive/60",
-    },
-  },
-});
-
-const DeadlineItem: React.FC<DeadlineItemProps> = ({
-  title,
-  date,
-  course,
-  isCompleted,
-}) => {
-  const dateDiff = dayjs(date).diff(new Date());
-  const variant: DeadlineItemVariant = isCompleted
-    ? "useful"
-    : dateDiff > 0
-      ? "warning"
-      : "destructive";
-
-  const Icon = DeadlineItemIconMap[variant];
-
-  return (
-    <Button
-      asChild
-      variant="ghost"
-      className="grid h-auto w-full grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] justify-normal gap-x-3 text-left"
-    >
-      <Link href="#">
-        <Icon className={cn(deadlineItemIconVariants({ variant }))} />
-        <p className="truncate text-base">
-          {`${title}${variant === "warning" ? " (" + dayjs(date).fromNow(true) + ")" : ""}`}
-        </p>
-        <span className="col-start-2 row-start-2 truncate text-muted-foreground">
-          {course}
-        </span>
-        <div className="row-span-2 hidden items-center justify-center xs:flex">
-          <Badge className={cn(deadlineItemBadgeVariants({ variant }))}>
-            {DeadlineItemBadgeMap[variant]}
-          </Badge>
-        </div>
-      </Link>
-    </Button>
-  );
-};
-
-const DeadlineItemSkeleton: React.FC = () => {
-  return (
-    <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 gap-y-2 px-4 py-2">
-      <Skeleton className="row-span-2 h-11 w-11 rounded-full" />
-      <Skeleton className="h-3 w-40 rounded-full" />
-      <Skeleton className="h-3 w-20 rounded-full" />
     </div>
   );
 };

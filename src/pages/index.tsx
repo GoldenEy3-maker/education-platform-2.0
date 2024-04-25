@@ -1,7 +1,7 @@
 import { BiHelpCircle } from "react-icons/bi";
-import { CoursesSection } from "~/components/courses-section";
-import { DeadlinesSection } from "~/components/deadlines-section";
-import { ScheduleSection } from "~/components/schedule-section";
+import { CoursesSection } from "~/components/home/courses-section";
+import { DeadlinesSection } from "~/components/home/deadlines-section";
+import { ScheduleSection } from "~/components/home/schedule-section";
 import { Separator } from "~/components/ui/separator";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";

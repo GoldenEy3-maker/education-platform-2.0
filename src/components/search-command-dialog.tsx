@@ -8,7 +8,6 @@ import {
   BiSmile,
   BiUser,
 } from "react-icons/bi";
-import { useMediaQuery } from "usehooks-ts";
 import { useNavigatorUserAgent } from "~/hooks/navigatorUserAgent";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";

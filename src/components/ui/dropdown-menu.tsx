@@ -5,7 +5,6 @@ import {
   DotFilledIcon,
 } from "@radix-ui/react-icons";
 import * as React from "react";
-import { useRippleEffect } from "~/hooks/rippleEffect.hook";
 
 import { cn } from "~/libs/utils";
 

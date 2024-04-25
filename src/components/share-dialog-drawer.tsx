@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   BiCheck,
   BiCopy,
-  BiLogoDiscord,
   BiLogoTelegram,
   BiLogoVk,
   BiLogoWhatsapp,

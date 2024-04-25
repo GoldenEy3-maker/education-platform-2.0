@@ -7,18 +7,18 @@ import {
   BiSolidNotepad,
   BiSolidWidget,
 } from "react-icons/bi";
-import { CourseAnnouncementsTab } from "~/components/course-announcements-tab";
-import { CourseHead } from "~/components/course-head";
-import { CourseOverviewTab } from "~/components/course-overview-tab";
+import { CourseAnnouncementsTab } from "~/components/course/announcements-tab";
+import { CourseHead } from "~/components/course/head";
+import { CourseOverviewTab } from "~/components/course/overview-tab";
 import {
   CourseSubscribersTab,
   type SortValueSubscribersMap,
-} from "~/components/course-subscribers-tab";
+} from "~/components/course/subscribers-tab";
 import {
   CourseTasksTab,
   type FiltersTasksMap,
   type SortValueTasksMap,
-} from "~/components/course-tasks-tab";
+} from "~/components/course/tasks-tab";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -86,6 +86,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
             surname: true;
             image: true;
             email: true;
+            group: true;
           };
         };
       };
@@ -140,9 +141,8 @@ const MOK_DATA: Prisma.CourseGetPayload<{
   },
   authorId: "user_1",
   createdAt: new Date(),
-  // description:
-  //   "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam, quisquam? Accusamus dicta eum nesciunt ut, cumque corporis nulla explicabo reiciendis quisquam, pariatur odio id unde sapiente repudiandae. Nihil, hic dicta. Aliquid illo dignissimos quod odio. Omnis repellendus saepe cupiditate aliquam ratione, nemo vel repellat sapiente illum fuga labore cum suscipit iusto, reiciendis voluptas totam beatae repudiandae, reprehenderit et quod porro! Expedita blanditiis ea dolor itaque, hic reiciendis optio mollitia obcaecati recusandae neque vero soluta. Odit consequuntur soluta, sed voluptatibus ipsa itaque enim quas qui blanditiis modi, accusantium quod temporibus ullam.",
-  description: null,
+  description:
+    "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam, quisquam? Accusamus dicta eum nesciunt ut, cumque corporis nulla explicabo reiciendis quisquam, pariatur odio id unde sapiente repudiandae. Nihil, hic dicta. Aliquid illo dignissimos quod odio. Omnis repellendus saepe cupiditate aliquam ratione, nemo vel repellat sapiente illum fuga labore cum suscipit iusto, reiciendis voluptas totam beatae repudiandae, reprehenderit et quod porro! Expedita blanditiis ea dolor itaque, hic reiciendis optio mollitia obcaecati recusandae neque vero soluta. Odit consequuntur soluta, sed voluptatibus ipsa itaque enim quas qui blanditiis modi, accusantium quod temporibus ullam.",
   isArchived: false,
   title: "Иностранный язык в профессиональной деятельности",
   updatedAt: new Date(),
@@ -158,6 +158,10 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         surname: "Королев",
         image: null,
         email: "danil-danil-korolev@bk.ru",
+        group: {
+          id: "123",
+          name: "К.105с11-5",
+        },
       },
       userId: crypto.randomUUID(),
     },
@@ -172,6 +176,10 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         surname: "Королев",
         image: null,
         email: "danil-danil-korolev@bk.ru",
+        group: {
+          id: "123",
+          name: "К.105с11-5",
+        },
       },
       userId: crypto.randomUUID(),
     },
@@ -186,6 +194,10 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         surname: "Королев",
         image: null,
         email: "danil-danil-korolev@bk.ru",
+        group: {
+          id: "123",
+          name: "К.105с11-5",
+        },
       },
       userId: crypto.randomUUID(),
     },
@@ -200,6 +212,10 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         surname: "Королев",
         image: null,
         email: "danil-danil-korolev@bk.ru",
+        group: {
+          id: "123",
+          name: "К.105с11-5",
+        },
       },
       userId: crypto.randomUUID(),
     },
@@ -214,6 +230,10 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         surname: "Королев",
         image: null,
         email: "danil-danil-korolev@bk.ru",
+        group: {
+          id: "123",
+          name: "К.105с11-5",
+        },
       },
       userId: crypto.randomUUID(),
     },
@@ -228,6 +248,10 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         surname: "Королев",
         image: null,
         email: "danil-danil-korolev@bk.ru",
+        group: {
+          id: "123",
+          name: "К.105с11-5",
+        },
       },
       userId: crypto.randomUUID(),
     },
@@ -450,7 +474,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       createdAt: new Date(),
       restrictedGroups: [],
       restrictedUsers: [],
-      deadline: new Date("04/24/2024 23:59:59"),
+      deadline: new Date("04/25/2024 23:59:59"),
       isHidden: false,
       section:
         "Unit 1.1. The United Kingdom of Great Britain and Northern Ireland",
@@ -539,14 +563,14 @@ const CoursePage: NextPageWithLayout = () => {
   const [filtersTasks, setFiltersTasks] = useState<
     Record<FiltersTasksMap, boolean>
   >({
-    HideLabs: false,
+    HidePract: false,
     HideCompleted: false,
-    HideLectures: false,
-    HideTests: false,
+    HideLec: false,
+    HideTest: false,
   });
 
-  const isAuthor = false;
-  const isSubStudent = true;
+  const isAuthor = true;
+  const isSubStudent = false;
   const isTeacher = false;
   const isLoading = false;
 
@@ -634,6 +658,7 @@ const CoursePage: NextPageWithLayout = () => {
         </TabsContent>
         <TabsContent value={TabsMap.Announcements}>
           <CourseAnnouncementsTab
+            announcements={MOK_DATA.announcements}
             searchValue={searchValueAnnouncements}
             onSearchValueChange={setSearchValueAnnouncements}
             isAuthor={isAuthor}

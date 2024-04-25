@@ -12,17 +12,17 @@ import {
 } from "react-icons/bi";
 import { StatusCourseContentMap, type StatusCourseMap } from "~/libs/enums";
 import { cn, getFirstLettersUserCredentials } from "~/libs/utils";
-import { Avatar } from "./avatar";
-import { ShareDialogDrawer } from "./share-dialog-drawer";
-import { Button } from "./ui/button";
+import { Avatar } from "../avatar";
+import { ShareDialogDrawer } from "../share-dialog-drawer";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Progress } from "./ui/progress";
-import { Skeleton } from "./ui/skeleton";
+} from "../ui/dropdown-menu";
+import { Progress } from "../ui/progress";
+import { Skeleton } from "../ui/skeleton";
 
 type CourseHeadProps = {
   title: string;

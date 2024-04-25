@@ -57,3 +57,7 @@ export const handleAttachment = (attachment: {
 
   return [name, template];
 };
+
+export const prepareSearchMatching = (str: string) => {
+  return str.toUpperCase().trim();
+};

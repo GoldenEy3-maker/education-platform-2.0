@@ -6,7 +6,7 @@ import { type NextPage } from "next";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppProps } from "next/app";
-import { Inter, Montserrat, Open_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import { useIsomorphicLayoutEffect } from "usehooks-ts";
 import { ThemeProvider } from "~/components/theme-provider";
 import { Toaster } from "~/components/ui/sonner";

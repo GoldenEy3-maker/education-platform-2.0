@@ -1,4 +1,4 @@
-import { type Role } from "@prisma/client";
+import { type Role, type TaskType } from "@prisma/client";
 import { BiImage, BiLink } from "react-icons/bi";
 import { SiGimp } from "react-icons/si";
 import {
@@ -53,6 +53,12 @@ export const StatusCourseMap = {
 export const StatusCourseContentMap: Record<StatusCourseMap, string> = {
   Archived: "Архивирован",
   Published: "Опубликован",
+};
+
+export const TaskTypeContentMap: Record<TaskType, string> = {
+  Lec: "Лекция",
+  Test: "Тест",
+  Pract: "Практическая",
 };
 
 export const AttachmentExtensionsMap = {

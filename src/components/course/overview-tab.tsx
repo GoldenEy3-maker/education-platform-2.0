@@ -2,8 +2,8 @@ import { type CourseAttachment } from "@prisma/client";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { handleAttachment } from "~/libs/utils";
-import { Button } from "./ui/button";
-import { Skeleton } from "./ui/skeleton";
+import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 
 type CourseOverviewTabProps = {
   description?: string | null;

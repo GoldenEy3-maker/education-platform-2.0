@@ -1,38 +1,26 @@
 import {
   type Lession,
-  type LessionStatus,
   LessionType,
   type Pavilion,
   type Prisma,
 } from "@prisma/client";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { type CSSProperties, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
-  BiBook,
   BiCalendar,
   BiChevronLeft,
   BiChevronRight,
-  BiHelpCircle,
-  BiMap,
   BiSolidBookBookmark,
   BiSolidDetail,
   BiSolidFlask,
   BiSolidWidget,
 } from "react-icons/bi";
-import { cn, getPersonInitials } from "~/libs/utils";
-import { Avatar } from "./avatar";
-import { Button } from "./ui/button";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
-import { Separator } from "./ui/separator";
-import { Skeleton } from "./ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
+import { cn } from "~/libs/utils";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { ScheduleItem, ScheduleItemSkeleton } from "./shedule-item";
 
 const TabsMap = {
   All: "All",
@@ -40,12 +28,6 @@ const TabsMap = {
 } as const;
 
 type TabsMapKeys = keyof typeof TabsMap;
-
-const TranslateLessionTypeMap = {
-  [LessionType.Lab]: "Лабораторная",
-  [LessionType.Lec]: "Лекция",
-  [LessionType.Pract]: "Практическая",
-} as const;
 
 const MOK_PAVILION_DATA: Pavilion[] = [
   {
@@ -259,171 +241,6 @@ const MOK_DATA: Prisma.LessionGetPayload<{
   },
 ];
 
-type ScheduleItemProps = {
-  title: string;
-  start: Date;
-  end: Date;
-  teacher: Prisma.UserGetPayload<{
-    select: { fathername: true; surname: true; name: true; status: true };
-  }>;
-  teacherId: string;
-  classRoom?: number | null;
-  pavilion?: Pavilion | null;
-  pavilionId?: string | null;
-  type: LessionType;
-  status: LessionStatus;
-  index: number;
-} & React.ComponentProps<"div">;
-
-const ScheduleItemsMainClrHMap: Record<number, string> = {
-  0: "24",
-  1: "220",
-  2: "248",
-  3: "107",
-  4: "178",
-  5: "300",
-  6: "340",
-  7: "63",
-  8: "132",
-  9: "206",
-  10: "276",
-};
-
-const ScheduleItem: React.FC<ScheduleItemProps> = ({
-  title,
-  start,
-  end,
-  teacher,
-  teacherId,
-  classRoom,
-  pavilion,
-  pavilionId,
-  type,
-  status,
-  index,
-  className,
-  ...props
-}) => {
-  return (
-    <div
-      style={
-        { "--main-clr-h": ScheduleItemsMainClrHMap[index] } as CSSProperties
-      }
-      className={cn(
-        `rounded-lg bg-[linear-gradient(180deg,hsla(var(--main-clr-h),70%,93%,1)_60%,hsla(var(--main-clr-h),70%,93%,.4)_100%)] p-4 dark:bg-[linear-gradient(180deg,hsla(var(--main-clr-h),70%,10%,1)_60%,hsla(var(--main-clr-h),70%,10%,.4)_100%)]`,
-        className,
-      )}
-      {...props}
-    >
-      <header>
-        <h4 className="font-medium text-[hsla(var(--main-clr-h),60%,15%)] dark:text-[hsla(var(--main-clr-h),70%,93%)]">
-          {title}
-        </h4>
-        <span className="mt-1 block text-[hsla(var(--main-clr-h),60%,15%,.8)] dark:text-[hsla(var(--main-clr-h),70%,93%,.8)]">
-          {dayjs(start).format("HH:mm")} - {dayjs(end).format("HH:mm")},{" "}
-          <HoverCard openDelay={200} closeDelay={200}>
-            <HoverCardTrigger asChild>
-              <Link
-                href="#"
-                className="cursor-pointer text-[hsla(var(--main-clr-h),60%,15%,.8)] underline-offset-4 hover:text-foreground hover:underline data-[state=open]:text-foreground data-[state=open]:underline dark:text-[hsla(var(--main-clr-h),70%,93%,.8)]"
-              >
-                {getPersonInitials(
-                  teacher.surname,
-                  teacher.name,
-                  teacher.fathername,
-                )}
-              </Link>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-auto bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
-              <div className="flex space-x-4">
-                <Avatar
-                  fallback={teacher.surname.at(0)! + teacher.name.at(0)!}
-                />
-                <div>
-                  <p className="font-semibold">
-                    {teacher.surname} {teacher.name} {teacher.fathername}
-                  </p>
-                  <p className="text-sm">{teacher.status}</p>
-                  <Link href="#" className="mt-2 flex items-center">
-                    <BiBook className="mr-1 opacity-70" />{" "}
-                    <span className="text-xs text-muted-foreground">Курс</span>
-                  </Link>
-                </div>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        </span>
-      </header>
-      <footer className="mt-1 flex items-center justify-between gap-2">
-        {pavilion ? (
-          <HoverCard openDelay={200} closeDelay={200}>
-            <HoverCardTrigger asChild>
-              <Link
-                href={pavilion.infoLink}
-                className="cursor-pointer text-[hsla(var(--main-clr-h),60%,15%,.8)] underline-offset-4 hover:text-foreground hover:underline data-[state=open]:text-foreground data-[state=open]:underline dark:text-[hsla(var(--main-clr-h),70%,93%,.8)]"
-                target="_blank"
-              >
-                {pavilion.name}, {classRoom}
-              </Link>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-auto bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
-              <div>
-                <h4 className="font-semibold">{pavilion.name}</h4>
-                <p className="text-sm">{pavilion.address}</p>
-                <Link
-                  href={pavilion.mapLink}
-                  className="mt-2 flex items-center"
-                >
-                  <BiMap className="mr-1 opacity-70" />{" "}
-                  <span className="text-xs text-muted-foreground">
-                    Найти на карте
-                  </span>
-                </Link>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        ) : (
-          <p>
-            <span className="text-[hsla(var(--main-clr-h),60%,15%,.8)] dark:text-[hsla(var(--main-clr-h),70%,93%,.8)]">
-              {status === "Async" ? "Асинхронно" : "Синхронно"}
-            </span>{" "}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <BiHelpCircle className="inline-block text-lg text-primary" />{" "}
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="whitespace-pre-wrap text-base">
-                    {status === "Async"
-                      ? "Асинхронный статус занятия - выполнение задания/изучение\n материала, используя инструментарий портала."
-                      : "Синхронный статус занятия - выполнение задания/изучение\n материала, находясь на связи (прямой трансляции) вместе c преподаватем."}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </p>
-        )}
-        <span className="rounded-full border border-[hsla(var(--main-clr-h),60%,45%)] px-4 py-1 text-sm text-[hsla(var(--main-clr-h),60%,45%)] dark:border-[hsla(var(--main-clr-h),70%,60%)] dark:text-[hsla(var(--main-clr-h),70%,60%)]">
-          {TranslateLessionTypeMap[type]}
-        </span>
-      </footer>
-    </div>
-  );
-};
-
-const ScheduleItemSkeleton: React.FC = () => {
-  return (
-    <div className="space-y-2 p-4">
-      <Skeleton className="h-6 w-60 rounded-full" />
-      <Skeleton className="h-6 w-40 rounded-full" />
-      <div className="flex items-center justify-between gap-2">
-        <Skeleton className="h-6 w-32 rounded-full" />
-        <Skeleton className="h-6 w-24 rounded-full" />
-      </div>
-    </div>
-  );
-};
-
 type LessionsEmptyProps = {
   icon: React.ReactNode;
   text: string;
@@ -497,8 +314,7 @@ const TabsTriggerMap: Record<
 
 export const ScheduleSection: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const [data, setData] = useState<typeof MOK_DATA>(MOK_DATA);
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = false;
 
   // useEffect(() => {
   //   setIsLoading(true);
@@ -537,12 +353,12 @@ export const ScheduleSection: React.FC = () => {
   const sortLessionsFn = (a: Lession, b: Lession) =>
     +a.start.getTime() - +b.start.getTime();
 
-  const lecLessions = data.filter((lession) => lession.type === "Lec");
-  const labLessions = data.filter((lession) => lession.type === "Lab");
-  const practLessions = data.filter((lession) => lession.type === "Pract");
+  const lecLessions = MOK_DATA.filter((lession) => lession.type === "Lec");
+  const labLessions = MOK_DATA.filter((lession) => lession.type === "Lab");
+  const practLessions = MOK_DATA.filter((lession) => lession.type === "Pract");
 
   const DataMap: Record<TabsMapKeys, typeof MOK_DATA> = {
-    All: data,
+    All: MOK_DATA,
     Lec: lecLessions,
     Lab: labLessions,
     Pract: practLessions,

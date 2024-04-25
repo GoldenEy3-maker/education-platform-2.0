@@ -2,12 +2,7 @@ import { type User } from "@prisma/client";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import {
-  BiBell,
-  BiChevronLeftSquare,
-  BiChevronRight,
-  BiCog,
-} from "react-icons/bi";
+import { BiBell, BiCog } from "react-icons/bi";
 import { TbBellZFilled } from "react-icons/tb";
 import { cn, type ValueOf } from "~/libs/utils";
 import { Avatar } from "./avatar";
@@ -177,6 +172,7 @@ export const NotificationPopover = () => {
                 variant="ghost"
                 size="icon"
                 disabled={isLoading}
+                className="rounded-full"
               >
                 <BiCog className="text-lg" />
               </Button>
