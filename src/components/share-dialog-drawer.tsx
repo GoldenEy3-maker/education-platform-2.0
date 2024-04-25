@@ -80,7 +80,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
             </Button>
           </div>
           <div>
-            <h3 className="mb-2 font-medium">Ссылка</h3>
+            <p className="mb-2 font-medium">Ссылка</p>
             <Input
               value={origin + router.asPath}
               readOnly
@@ -149,7 +149,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
           </Button>
         </div>
         <div>
-          <h3 className="mb-2 font-medium">Ссылка</h3>
+          <p className="mb-2 font-medium">Ссылка</p>
           <Input
             value={origin + router.asPath}
             readOnly

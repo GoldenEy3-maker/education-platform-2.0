@@ -68,11 +68,11 @@
   }
 
   html {
-    scrollbar-color: hsl(0, 0%, 38%) transparent;
+    scrollbar-color: hsl(0, 0%, 60%) transparent;
   }
 
   html.dark {
-    scrollbar-color: hsl(0, 0%, 67%) transparent;
+    scrollbar-color: hsl(0, 0%, 44%) transparent;
   }
 
   input::-ms-reveal,
@@ -98,7 +98,7 @@
   }
 
   .custom-scrollbar:hover {
-    scrollbar-color: hsl(0, 0%, 56%) transparent;
+    scrollbar-color: hsl(0, 0%, 60%) transparent;
   }
 
   .dark .custom-scrollbar:hover {

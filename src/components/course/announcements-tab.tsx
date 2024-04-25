@@ -142,9 +142,9 @@ export const CourseAnnouncementsTab: React.FC<CourseAnnouncementsTabProps> = ({
                     variant="ghost"
                     className="grid h-auto w-full grid-cols-[1fr_auto] gap-x-2 border-b text-left max-sm:grid-rows-[auto_auto] sm:grid-cols-[auto_1fr_auto]"
                   >
-                    <h3 className="truncate text-base font-medium">
+                    <p className="truncate text-base font-medium">
                       {announcement.title}
-                    </h3>
+                    </p>
                     <span className="truncate capitalize text-muted-foreground max-sm:row-start-2">
                       (
                       {dayjs(announcement.createdAt).format(

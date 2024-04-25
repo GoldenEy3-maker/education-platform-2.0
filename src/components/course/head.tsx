@@ -1,6 +1,6 @@
-import { type Prisma } from "@prisma/client";
-import Link from "next/link";
-import { type CSSProperties } from "react";
+import { type Prisma } from "@prisma/client"
+import Link from "next/link"
+import { type CSSProperties } from "react"
 import {
   BiBookmarkMinus,
   BiBookmarkPlus,
@@ -9,20 +9,21 @@ import {
   BiSliderAlt,
   BiStar,
   BiUserPlus,
-} from "react-icons/bi";
-import { StatusCourseContentMap, type StatusCourseMap } from "~/libs/enums";
-import { cn, getFirstLettersUserCredentials } from "~/libs/utils";
-import { Avatar } from "../avatar";
-import { ShareDialogDrawer } from "../share-dialog-drawer";
-import { Button } from "../ui/button";
+} from "react-icons/bi"
+import { StatusCourseContentMap, type StatusCourseMap } from "~/libs/enums"
+import { cn, getFirstLettersUserCredentials } from "~/libs/utils"
+import { Avatar } from "../avatar"
+import { InviteDialogDrawer } from "../invite-dialog-drawer"
+import { ShareDialogDrawer } from "../share-dialog-drawer"
+import { Button } from "../ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Progress } from "../ui/progress";
-import { Skeleton } from "../ui/skeleton";
+} from "../ui/dropdown-menu"
+import { Progress } from "../ui/progress"
+import { Skeleton } from "../ui/skeleton"
 
 type CourseHeadProps = {
   title: string;
@@ -218,20 +219,22 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
             </div>
           ) : null}
           {isAuthor ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className={cn(
-                "rounded-full border-dashed border-primary bg-transparent text-primary hover:bg-primary/10 hover:text-primary lg:ml-3",
-                {
-                  "ml-0": subscribers.length < 3,
-                },
-              )}
-            >
-              <BiUserPlus className="text-xl" />
-              <span className="sr-only">Пригласить</span>
-            </Button>
+            <InviteDialogDrawer>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className={cn(
+                  "rounded-full border-dashed border-primary bg-transparent text-primary hover:bg-primary/10 hover:text-primary lg:ml-3",
+                  {
+                    "ml-0": subscribers.length < 3,
+                  },
+                )}
+              >
+                <BiUserPlus className="text-xl" />
+                <span className="sr-only">Пригласить</span>
+              </Button>
+            </InviteDialogDrawer>
           ) : null}
         </div>
         {(() => {

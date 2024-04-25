@@ -10,9 +10,7 @@ import { Inter } from "next/font/google";
 import { useIsomorphicLayoutEffect } from "usehooks-ts";
 import { ThemeProvider } from "~/components/theme-provider";
 import { Toaster } from "~/components/ui/sonner";
-
 import { api } from "~/libs/api";
-
 import "~/styles/globals.css";
 
 dayjs.locale("ru");

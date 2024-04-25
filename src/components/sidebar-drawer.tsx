@@ -57,7 +57,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
                 src={session.user.image}
                 className="row-span-2 h-14 w-14"
               />
-              <p>
+              <p className="font-medium">
                 {session.user.surname} {session.user.name}{" "}
                 {session.user.fathername}
               </p>
