@@ -1,6 +1,6 @@
-import { type Prisma } from "@prisma/client"
-import Link from "next/link"
-import { type CSSProperties } from "react"
+import { type Prisma } from "@prisma/client";
+import Link from "next/link";
+import { type CSSProperties } from "react";
 import {
   BiBookmarkMinus,
   BiBookmarkPlus,
@@ -9,21 +9,21 @@ import {
   BiSliderAlt,
   BiStar,
   BiUserPlus,
-} from "react-icons/bi"
-import { StatusCourseContentMap, type StatusCourseMap } from "~/libs/enums"
-import { cn, getFirstLettersUserCredentials } from "~/libs/utils"
-import { Avatar } from "../avatar"
-import { InviteDialogDrawer } from "../invite-dialog-drawer"
-import { ShareDialogDrawer } from "../share-dialog-drawer"
-import { Button } from "../ui/button"
+} from "react-icons/bi";
+import { StatusCourseContentMap, type StatusCourseMap } from "~/libs/enums";
+import { cn, getFirstLettersUserCredentials } from "~/libs/utils";
+import { Avatar } from "../avatar";
+import { InviteDialogDrawer } from "../invite-dialog-drawer";
+import { ShareDialogDrawer } from "../share-dialog-drawer";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu"
-import { Progress } from "../ui/progress"
-import { Skeleton } from "../ui/skeleton"
+} from "../ui/dropdown-menu";
+import { Progress } from "../ui/progress";
+import { Skeleton } from "../ui/skeleton";
 
 type CourseHeadProps = {
   title: string;
@@ -288,45 +288,66 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-60">
-            <DropdownMenuItem>
-              <BiStar className="mr-2 text-xl text-warning" />
-              <span>Добавить в избранное</span>
-            </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <ShareDialogDrawer>
+              <Button variant="ghost" className="w-full justify-start">
+                <BiStar className="mr-2 text-xl text-warning" />
+                <span>Добавить в избранное</span>
+              </Button>
+            </DropdownMenuItem>
+            <ShareDialogDrawer>
+              <DropdownMenuItem
+                asChild
+                onSelect={(event) => event.preventDefault()}
+              >
                 <Button variant="ghost" className="w-full justify-start">
                   <BiShareAlt className="mr-2 text-xl" />
                   <span>Поделиться</span>
                 </Button>
-              </ShareDialogDrawer>
-            </DropdownMenuItem>
-            {isAuthor ? (
-              <DropdownMenuItem>
-                <BiUserPlus className="mr-2 text-xl" />
-                <span>Пригласить</span>
               </DropdownMenuItem>
+            </ShareDialogDrawer>
+            {isAuthor ? (
+              <InviteDialogDrawer>
+                <DropdownMenuItem
+                  asChild
+                  onSelect={(event) => event.preventDefault()}
+                >
+                  <Button className="w-full justify-start" variant="ghost">
+                    <BiUserPlus className="mr-2 text-xl" />
+                    <span>Пригласить</span>
+                  </Button>
+                </DropdownMenuItem>
+              </InviteDialogDrawer>
             ) : null}
             {(() => {
               if (isAuthor)
                 return (
-                  <DropdownMenuItem>
-                    <BiSliderAlt className="mr-2 text-xl" />
-                    <span>Редактировать</span>
+                  <DropdownMenuItem asChild>
+                    <Button variant="ghost" className="w-full justify-start">
+                      <BiSliderAlt className="mr-2 text-xl" />
+                      <span>Редактировать</span>
+                    </Button>
                   </DropdownMenuItem>
                 );
 
               if (isSubStudent)
                 return (
-                  <DropdownMenuItem>
-                    <BiBookmarkMinus className="mr-2 text-xl" />
-                    <span>Отписаться</span>
+                  <DropdownMenuItem asChild>
+                    <Button
+                      variant="ghost-destructive"
+                      className="w-full justify-start"
+                    >
+                      <BiBookmarkMinus className="mr-2 text-xl" />
+                      <span>Отписаться</span>
+                    </Button>
                   </DropdownMenuItem>
                 );
 
               return (
-                <DropdownMenuItem disabled={!isAuthor && isTeacher}>
-                  <BiBookmarkPlus className="mr-2 text-xl" />
-                  <span>Подписаться</span>
+                <DropdownMenuItem asChild disabled={!isAuthor && isTeacher}>
+                  <Button variant="ghost" className="w-full justify-start">
+                    <BiBookmarkPlus className="mr-2 text-xl" />
+                    <span>Подписаться</span>
+                  </Button>
                 </DropdownMenuItem>
               );
             })()}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   BiCheck,
   BiCopy,
+  BiLinkExternal,
   BiLogoTelegram,
   BiLogoVk,
   BiLogoWhatsapp,
@@ -84,6 +85,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
             <Input
               value={origin + router.asPath}
               readOnly
+              leadingIcon={<BiLinkExternal className="text-xl" />}
               trailingIcon={
                 copiedText ? (
                   <BiCheck className="text-xl" />
@@ -92,11 +94,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
                 )
               }
               onClickTrailingIcon={() => {
-                copy(
-                  (typeof window !== "undefined"
-                    ? window.location.origin
-                    : "") + router.asPath,
-                )
+                copy(origin + router.asPath)
                   .then((text) => text)
                   .catch((error) => console.error(error));
               }}
@@ -153,6 +151,7 @@ export const ShareDialogDrawer: React.FC<React.PropsWithChildren> = ({
           <Input
             value={origin + router.asPath}
             readOnly
+            leadingIcon={<BiLinkExternal className="text-xl" />}
             trailingIcon={
               copiedText ? (
                 <BiCheck className="text-xl" />
