@@ -5,7 +5,7 @@ import { type NextPageWithLayout } from "../_app";
 
 const HomeChatPage: NextPageWithLayout = () => {
   return (
-    <div className="grid place-items-center">
+    <div className="hidden place-items-center min-[1120px]:grid">
       <span className="rounded-full bg-muted-foreground/10 px-4 py-1">
         Выберите, с кем хотите начать диалог
       </span>

@@ -21,15 +21,15 @@ const ChatPage: NextPageWithLayout = () => {
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto]">
-      <header className="grid grid-cols-[auto_1fr_repeat(2,minmax(0,auto))] gap-2 border-b px-4 py-2">
+      <header className="grid grid-cols-[auto_1fr_repeat(2,minmax(0,auto))] gap-2 border-b pb-2 min-[1120px]:px-4 min-[1120px]:py-2">
         <Button asChild variant="ghost" size="icon" className="rounded-full">
           <Link href={PagePathMap.HomeChat}>
             <BiLeftArrowAlt className="text-xl" />
           </Link>
         </Button>
-        <div className="flex flex-col">
-          <p className="font-medium">Королев Данил</p>
-          <span className="text-sm text-primary">Онлайн</span>
+        <div className="flex flex-col overflow-hidden">
+          <p className="truncate font-medium">Королев Данил</p>
+          <span className="truncate text-sm text-primary">Онлайн</span>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="rounded-full">
@@ -40,7 +40,7 @@ const ChatPage: NextPageWithLayout = () => {
           </Button>
         </div>
       </header>
-      <div className="custom-scrollbar mt-auto flex max-h-[calc(100vh-13rem)] flex-col gap-2 overflow-auto p-4">
+      <div className="custom-scrollbar mt-auto flex max-h-[calc(100vh-13rem)] flex-col gap-2 overflow-auto py-4 min-[1120px]:p-4">
         <div className="sticky top-0 flex items-center justify-center">
           <span className="rounded-full bg-muted/40 px-4 py-1 text-sm capitalize">
             {dayjs(new Date()).format("MMMM DD")}
@@ -60,7 +60,7 @@ const ChatPage: NextPageWithLayout = () => {
           </div>
         </div>
       </div>
-      <footer className="grid grid-cols-[auto_1fr_auto] gap-2 border-t px-4 py-2">
+      <footer className="grid grid-cols-[auto_1fr_auto] gap-2 border-t pt-2 min-[1120px]:px-4 min-[1120px]:py-2">
         <Button variant="ghost" size="icon" className="rounded-full">
           <BiPaperclip className="text-xl" />
         </Button>
