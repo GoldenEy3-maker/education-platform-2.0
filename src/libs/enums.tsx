@@ -37,6 +37,7 @@ export const PagePathMap = {
   Course: "/courses/",
   HomeChat: "/chat",
   Chat: "/chat/",
+  Profile: "/profile/",
 } as const;
 
 export const RoleContentMap: Record<Role, string> = {
