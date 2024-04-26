@@ -43,8 +43,7 @@ function MyApp({
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="system"
-      enableSystem
+      defaultTheme="light"
       disableTransitionOnChange
     >
       <SessionProvider session={session}>

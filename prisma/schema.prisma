@@ -5,7 +5,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
@@ -14,13 +14,12 @@ model User {
   surname         String
   fathername      String?
   email           String         @unique
-  emailVerified   DateTime?
+  emailVerified   DateTime?      @map("email_verified")
   image           String?
   login           String         @unique
   password        String
   group           Group?         @relation(fields: [groupId], references: [id])
   groupId         String?
-  tokenVersion    Int            @default(0)
   role            Role
   status          String?
   lessions        Lession[]
@@ -29,6 +28,19 @@ model User {
   favorites       Favorite[]
   attempts        Attempt[]
   restrictedTasks Task[]
+  sessions        Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model Group {
@@ -37,15 +49,19 @@ model Group {
   user            User[]
   restrictedTasks Task[]
   lessions        Lession[]
+
+  @@map("groups")
 }
 
 model Pavilion {
   id       String    @id @default(cuid())
   name     String
   address  String
-  infoLink String
-  mapLink  String
+  infoLink String    @map("info_link")
+  mapLink  String    @map("map_link")
   lessions Lession[]
+
+  @@map("pavilions")
 }
 
 model Lession {
@@ -53,15 +69,17 @@ model Lession {
   title      String
   start      DateTime
   end        DateTime
-  classRoom  Int?
+  classRoom  Int?          @map("classroom")
   pavilion   Pavilion?     @relation(fields: [pavilionId], references: [id])
-  pavilionId String?
+  pavilionId String?       @map("pavilion_id")
   type       LessionType
   teacher    User          @relation(fields: [teacherId], references: [id])
-  teacherId  String
+  teacherId  String        @map("teacher_id")
   group      Group         @relation(fields: [groupId], references: [id])
-  groupId    String
+  groupId    String        @map("group_id")
   status     LessionStatus
+
+  @@map("lessions")
 }
 
 model Course {
@@ -69,15 +87,17 @@ model Course {
   title         String
   description   String?
   author        User               @relation("author", fields: [authorId], references: [id])
-  authorId      String
+  authorId      String             @map("author_id")
   subscribers   Subscription[]
   favoritedBy   Favorite[]
-  isArchived    Boolean            @default(false)
+  isArchived    Boolean            @default(false) @map("is_archived")
   attachments   CourseAttachment[]
   tasks         Task[]
   announcements Announcement[]
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+
+  @@map("courses")
 }
 
 model CourseAttachment {
@@ -85,7 +105,9 @@ model CourseAttachment {
   name     String
   href     String?
   course   Course  @relation(fields: [courseId], references: [id])
-  courseId String
+  courseId String  @map("course_id")
+
+  @@map("course_attachments")
 }
 
 model Task {
@@ -93,18 +115,20 @@ model Task {
   title             String
   section           String
   type              TaskType
-  availableAttempts Int?
+  availableAttempts Int?             @map("available_attempts")
   attachments       TaskAttachment[]
-  availableTime     Int?
+  availableTime     Int?             @map("available_time")
   deadline          DateTime?
-  isHidden          Boolean          @default(false)
+  isHidden          Boolean          @default(false) @map("is_hidden")
   restrictedGroups  Group[]
   restrictedUsers   User[]
   attempts          Attempt[]
   course            Course           @relation(fields: [courseId], references: [id])
-  courseId          String
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  courseId          String           @map("course_id")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+
+  @@map("tasks")
 }
 
 model TaskAttachment {
@@ -112,17 +136,21 @@ model TaskAttachment {
   name   String
   href   String?
   task   Task    @relation(fields: [taskId], references: [id])
-  taskId String
+  taskId String  @map("task_id")
+
+  @@map("task_attachments")
 }
 
 model Attempt {
   id          String    @id @default(cuid())
   user        User      @relation(fields: [userId], references: [id])
-  userId      String
+  userId      String    @map("user_id")
   task        Task      @relation(fields: [taskId], references: [id])
-  taskId      String
-  startedAt   DateTime  @default(now())
-  completedAt DateTime?
+  taskId      String    @map("task_id")
+  startedAt   DateTime  @default(now()) @map("started_at")
+  completedAt DateTime? @map("completed_at")
+
+  @@map("attempts")
 }
 
 model Announcement {
@@ -131,8 +159,10 @@ model Announcement {
   text        String
   attachments AnnouncementAttachment[]
   course      Course                   @relation(fields: [courseId], references: [id])
-  courseId    String
-  createdAt   DateTime                 @default(now())
+  courseId    String                   @map("course_id")
+  createdAt   DateTime                 @default(now()) @map("created_at")
+
+  @@map("announcements")
 }
 
 model AnnouncementAttachment {
@@ -140,24 +170,30 @@ model AnnouncementAttachment {
   name           String
   href           String?
   announcement   Announcement @relation(fields: [announcementId], references: [id])
-  announcementId String
+  announcementId String       @map("announcement_id")
+
+  @@map("announcement_attachments")
 }
 
 model Subscription {
   id       String @id @default(cuid())
   course   Course @relation(fields: [courseId], references: [id])
-  courseId String
+  courseId String @map("course_id")
   progress Int
   user     User   @relation(fields: [userId], references: [id])
-  userId   String
+  userId   String @map("user_id")
+
+  @@map("subscriptions")
 }
 
 model Favorite {
   id       String @id @default(cuid())
   course   Course @relation(fields: [courseId], references: [id])
-  courseId String
+  courseId String @map("course_id")
   user     User   @relation(fields: [userId], references: [id])
-  userId   String
+  userId   String @map("user_id")
+
+  @@map("favorites")
 }
 
 enum Role {

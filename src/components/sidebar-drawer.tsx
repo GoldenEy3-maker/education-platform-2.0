@@ -28,7 +28,7 @@ import { Switch } from "./ui/switch";
 export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const { resolvedTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -132,9 +132,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
               asChild
               variant="ghost"
               className="w-full justify-between gap-2"
-              onClick={() =>
-                setTheme(resolvedTheme === "dark" ? "light" : "dark")
-              }
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             >
               <div>
                 <Label
@@ -144,7 +142,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
                   <BiMoon className="text-xl" />
                   <span>Темная тема</span>
                 </Label>
-                <Switch id="dark-theme" checked={resolvedTheme === "dark"} />
+                <Switch id="dark-theme" checked={theme === "dark"} />
               </div>
             </Button>
             <Button

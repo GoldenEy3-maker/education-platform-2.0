@@ -24,7 +24,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
   ...props
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-  const { resolvedTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setIsMounted(true);
@@ -110,9 +110,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
               asChild
               variant="ghost"
               className="w-full cursor-pointer justify-between gap-2"
-              onClick={() =>
-                setTheme(resolvedTheme === "dark" ? "light" : "dark")
-              }
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             >
               <div>
                 <Label
@@ -122,7 +120,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
                   <BiMoon className="text-xl" />
                   <span>Темная тема</span>
                 </Label>
-                <Switch id="dark-theme" checked={resolvedTheme === "dark"} />
+                <Switch id="dark-theme" checked={theme === "dark"} />
               </div>
             </Button>
           ) : (

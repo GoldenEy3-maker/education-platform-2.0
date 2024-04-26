@@ -12,7 +12,6 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
 import superjson from "superjson";
 import { ZodError } from "zod";
-
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
 
@@ -122,25 +121,6 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
       message: "Пользователь не авторизован!",
     });
   }
-
-  const user = await ctx.db.user.findUnique({
-    where: {
-      login: ctx.session.user.login,
-    },
-  });
-
-  if (!user) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "Такого пользователя не существует!",
-    });
-  }
-
-  if (user.tokenVersion !== ctx.session.user.tokenVersion)
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "Невалидный авториованный пользователь!",
-    });
 
   return next({
     ctx: {
