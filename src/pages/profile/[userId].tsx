@@ -32,7 +32,7 @@ const ProfilePage: NextPageWithLayout = () => {
               <ShareDialogDrawer>
                 <Button
                   variant="outline"
-                  className="gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full max-lg:border-none max-lg:bg-transparent max-lg:shadow-none"
+                  className="gap-2 bg-transparent max-lg:h-10 max-lg:w-10 max-lg:rounded-full max-lg:border-none max-lg:shadow-none"
                 >
                   <BiShareAlt className="shrink-0 text-xl" />
                   <span className="max-lg:hidden">Поделиться</span>

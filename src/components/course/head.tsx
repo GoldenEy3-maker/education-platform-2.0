@@ -100,7 +100,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
         </div>
         <span>{StatusCourseContentMap[status]}</span>
       </div>
-      <h1 className="mb-2 text-3xl font-medium [text-wrap:balance]">{title}</h1>
+      <h1 className="mb-1 text-2xl font-medium [text-wrap:balance]">{title}</h1>
       {(() => {
         if (isAuthor)
           return (

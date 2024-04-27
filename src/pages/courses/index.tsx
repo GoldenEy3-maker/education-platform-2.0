@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import {
+  BiBook,
   BiFilterAlt,
   BiPlus,
   BiSearch,
@@ -379,10 +380,15 @@ const CoursesPage: NextPageWithLayout = () => {
 
   return (
     <main>
-      <h1 className="mb-1 text-3xl font-medium">Курсы</h1>
-      <span className="text-muted-foreground">
-        Все курсы разрабатываются квалифицированными преподавателями АГУ.
-      </span>
+      <div className="mb-1 grid grid-cols-1 grid-rows-[auto_auto] gap-x-3 sm:grid-cols-[auto_1fr]">
+        <span className="row-span-2 hidden h-14 w-14 items-center justify-center rounded-full border border-input sm:flex">
+          <BiBook className="text-2xl" />
+        </span>
+        <h1 className="text-2xl font-medium">Курсы</h1>
+        <span className="text-muted-foreground">
+          Все курсы разрабатываются квалифицированными преподавателями АГУ.
+        </span>
+      </div>
 
       <div
         className={cn(
@@ -404,7 +410,7 @@ const CoursesPage: NextPageWithLayout = () => {
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="gap-2 max-[1100px]:h-10 max-[1100px]:w-10 max-[1100px]:border-none max-[1100px]:bg-transparent max-[1100px]:shadow-none"
+              className="gap-2 bg-transparent max-[1100px]:h-10 max-[1100px]:w-10 max-[1100px]:border-none max-[1100px]:shadow-none"
             >
               <BiFilterAlt className="shrink-0 text-xl" />
               <span className="max-[1100px]:hidden">Фильтры</span>
@@ -467,7 +473,7 @@ const CoursesPage: NextPageWithLayout = () => {
           <Button
             asChild
             variant="outline"
-            className="w-auto justify-between gap-2 max-[1100px]:border-none max-[1100px]:bg-transparent max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
+            className="w-auto justify-between gap-2 bg-transparent max-[1100px]:border-none max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
           >
             <SelectTrigger>
               <BiSortAlt2 className="shrink-0 text-xl min-[1100px]:hidden" />

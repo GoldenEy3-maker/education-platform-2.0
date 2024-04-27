@@ -16,6 +16,7 @@ import {
   BiSolidFlask,
   BiSolidWidget,
 } from "react-icons/bi";
+import { PagePathMap } from "~/libs/enums";
 import { cn } from "~/libs/utils";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
@@ -370,7 +371,7 @@ export const ScheduleSection: React.FC = () => {
         <BiCalendar className="text-xl" />
         <h4 className="flex-grow truncate text-lg font-semibold">Расписание</h4>
         <Button variant="outline" type="button" asChild className="gap-2">
-          <Link href="#">
+          <Link href={PagePathMap.Schedule}>
             <span>Смотреть все</span>
             <BiChevronRight className="text-xl" />
           </Link>

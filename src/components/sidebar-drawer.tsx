@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import {
   BiBook,
   BiCalendar,
+  BiCalendarAlt,
   BiCog,
   BiHelpCircle,
   BiHome,
@@ -98,8 +99,8 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
             className="w-full shrink-0 justify-normal gap-2"
             variant="ghost"
           >
-            <Link href={PagePathMap.Home}>
-              <BiCalendar className="text-xl" /> <span>Расписание</span>
+            <Link href={PagePathMap.Schedule}>
+              <BiCalendarAlt className="text-xl" /> <span>Расписание</span>
             </Link>
           </Button>
           <Button

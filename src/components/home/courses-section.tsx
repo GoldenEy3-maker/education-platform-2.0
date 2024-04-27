@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { BiBook, BiChevronRight, BiSolidFileFind } from "react-icons/bi";
+import { PagePathMap } from "~/libs/enums";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { CourseItem, CourseItemSkeleton } from "./course-item";
@@ -27,7 +28,7 @@ export const CoursesSection: React.FC = () => {
         <BiBook className="text-xl" />
         <h4 className="flex-grow text-lg font-semibold">Курсы</h4>
         <Button variant="outline" type="button" asChild className="gap-2">
-          <Link href="#">
+          <Link href={PagePathMap.Courses}>
             <span>Смотреть все</span>
             <BiChevronRight className="text-xl" />
           </Link>
