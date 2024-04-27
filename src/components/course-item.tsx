@@ -19,9 +19,9 @@ type CourseItemProps = {
   id: string;
   title: string;
   image?: string;
-  status: StatusCourseMap;
+  status?: StatusCourseMap;
   progress?: number;
-  isFavorited: boolean;
+  isFavorited?: boolean;
   author: {
     surname: string;
     name: string;
@@ -47,56 +47,58 @@ export const CourseItem: React.FC<CourseItemProps> = ({
       <Link href={PagePathMap.Course + id}>
         <Skeleton className="mb-3 h-48 w-full rounded-lg" />
       </Link>
-      <div className="mb-1 flex items-center justify-between gap-2">
-        <div
-          className={cn(
-            "flex w-fit items-center gap-2 rounded-full bg-useful/10 px-3 py-1 text-sm text-useful",
-            {
-              "bg-destructive/10 text-destructive": status === "Archived",
-            },
-          )}
-        >
-          <div className="flex items-center justify-center">
-            <span className="relative flex h-2 w-2">
-              <span
-                className={cn(
-                  "absolute inline-flex h-full w-full animate-ping rounded-full bg-useful opacity-75",
-                  {
-                    "bg-destructive": status === "Archived",
-                  },
-                )}
-              ></span>
-              <span
-                className={cn(
-                  "relative inline-flex h-2 w-2 rounded-full bg-useful",
-                  {
-                    "bg-destructive": status === "Archived",
-                  },
-                )}
-              ></span>
-            </span>
+      {status ? (
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <div
+            className={cn(
+              "flex w-fit items-center gap-2 rounded-full bg-useful/10 px-3 py-1 text-sm text-useful",
+              {
+                "bg-destructive/10 text-destructive": status === "Archived",
+              },
+            )}
+          >
+            <div className="flex items-center justify-center">
+              <span className="relative flex h-2 w-2">
+                <span
+                  className={cn(
+                    "absolute inline-flex h-full w-full animate-ping rounded-full bg-useful opacity-75",
+                    {
+                      "bg-destructive": status === "Archived",
+                    },
+                  )}
+                ></span>
+                <span
+                  className={cn(
+                    "relative inline-flex h-2 w-2 rounded-full bg-useful",
+                    {
+                      "bg-destructive": status === "Archived",
+                    },
+                  )}
+                ></span>
+              </span>
+            </div>
+            <span>{StatusCourseContentMap[status]}</span>
           </div>
-          <span>{StatusCourseContentMap[status]}</span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "shrink-0 rounded-full text-muted-foreground hover:text-warning",
+              {
+                "text-warning": isFavorited,
+              },
+            )}
+          >
+            {isFavorited ? (
+              <BiSolidStar className="text-xl" />
+            ) : (
+              <BiStar className="text-xl" />
+            )}
+          </Button>
         </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "shrink-0 rounded-full text-muted-foreground hover:text-warning",
-            {
-              "text-warning": isFavorited,
-            },
-          )}
-        >
-          {isFavorited ? (
-            <BiSolidStar className="text-xl" />
-          ) : (
-            <BiStar className="text-xl" />
-          )}
-        </Button>
-      </div>
-      <p className="mb-1 line-clamp-2 text-lg font-medium">{title}</p>
+      ) : null}
+      <h4 className="mb-1 line-clamp-2 text-lg font-medium">{title}</h4>
       {/* <p
         className={cn("mb-auto line-clamp-2 text-muted-foreground", {
           "line-clamp-4": !progress,
