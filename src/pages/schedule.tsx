@@ -11,6 +11,7 @@ import {
   BiSolidNotepad,
   BiSolidWidget,
 } from "react-icons/bi";
+import { ScheduleItem } from "~/components/home/shedule-item";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import { Input } from "~/components/ui/input";
@@ -65,7 +66,6 @@ const TabsTriggerMap: Record<TabsMap, { icon: React.ReactNode; text: string }> =
 const SelectValueMap = {
   Today: "Today",
   LastWeek: "LastWeek",
-  LastMonth: "LastMonth",
 } as const;
 
 type SelectValueMap = ValueOf<typeof SelectValueMap>;
@@ -73,7 +73,6 @@ type SelectValueMap = ValueOf<typeof SelectValueMap>;
 const SelectValueContentMap: Record<SelectValueMap, string> = {
   Today: "Сегодня",
   LastWeek: "Неделя",
-  LastMonth: "Месяц",
 };
 
 const SchedulePage: NextPageWithLayout = () => {
@@ -150,7 +149,7 @@ const SchedulePage: NextPageWithLayout = () => {
             <Calendar
               initialFocus
               mode="range"
-              max={31}
+              max={7}
               defaultMonth={date?.from}
               selected={date}
               onSelect={setDate}
@@ -159,8 +158,8 @@ const SchedulePage: NextPageWithLayout = () => {
           </PopoverContent>
         </Popover>
       </div>
-      <Tabs defaultValue={TabsMap.All} className="mt-4 overflow-hidden">
-        <TabsList className="hidden-scrollbar mb-4 flex h-auto max-w-[calc(100vw-2rem)] justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
+      <Tabs defaultValue={TabsMap.All} className="mt-4">
+        <TabsList className="hidden-scrollbar mb-4 flex h-auto max-w-full justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
           {Object.entries(TabsTriggerMap).map(([key, value]) => (
             <TabsTrigger
               value={key}
@@ -176,49 +175,255 @@ const SchedulePage: NextPageWithLayout = () => {
           ))}
         </TabsList>
         <TabsContent value={TabsMap.All}>
-          <table className="inline-block border-spacing-0 overflow-hidden rounded-xl border border-border bg-clip-padding">
-            <tbody className="-m-[1px] inline-block">
-              <tr>
-                <th className="border border-border p-0">
-                  <Button
-                    variant="ghost"
-                    className="flex h-full w-full rounded-none"
+          <div className="custom-scrollbar max-w-full overflow-x-auto rounded-xl">
+            <table className="w-full border-separate border-spacing-0 bg-clip-padding [&_tr:first-child_th:first-child]:rounded-tl-xl [&_tr:first-child_th:last-child]:rounded-tr-xl [&_tr:last-child_td:first-child]:rounded-bl-xl [&_tr:last-child_td:last-child]:rounded-br-xl">
+              <thead>
+                <tr>
+                  <th className="sticky left-0 top-0 w-16 border border-border bg-background p-0">
+                    <Button
+                      variant="ghost"
+                      className="h-full w-full rounded-none rounded-tl-[calc(0.75rem-1px)]"
+                    >
+                      <BiChevronLeft className="text-xl" />
+                    </Button>
+                  </th>
+                  <th className="sticky left-[3.35rem] top-0 w-16 border border-border bg-background p-0">
+                    <Button
+                      variant="ghost"
+                      className="h-full w-full rounded-none"
+                    >
+                      <BiChevronRight className="text-xl" />
+                    </Button>
+                  </th>
+                  <th className="whitespace-nowrap border border-border bg-background px-4 font-medium">
+                    <span className="capitalize">
+                      {dayjs().format("dd, DD MMMM")}
+                    </span>
+                  </th>
+                  <th className="whitespace-nowrap border border-border bg-background px-4 font-medium">
+                    <span className="capitalize">
+                      {dayjs().format("dd, DD MMMM")}
+                    </span>
+                  </th>
+                  <th className="whitespace-nowrap border border-border bg-background px-4 font-medium">
+                    <span className="capitalize">
+                      {dayjs().format("dd, DD MMMM")}
+                    </span>
+                  </th>
+                  <th className="whitespace-nowrap border border-border bg-background px-4 font-medium">
+                    <span className="capitalize">
+                      {dayjs().format("dd, DD MMMM")}
+                    </span>
+                  </th>
+                  <th className="whitespace-nowrap border border-border bg-background px-4 font-medium">
+                    <span className="capitalize">
+                      {dayjs().format("dd, DD MMMM")}
+                    </span>
+                  </th>
+                  <th className="whitespace-nowrap border border-border bg-background px-4 font-medium">
+                    <span className="capitalize">
+                      {dayjs().format("dd, DD MMMM")}
+                    </span>
+                  </th>
+                  <th className="whitespace-nowrap border border-border bg-background px-4 font-medium">
+                    <span className="capitalize">
+                      {dayjs().format("dd, DD MMMM")}
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td
+                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    colSpan={2}
                   >
-                    <BiChevronLeft className="text-xl" />
-                  </Button>
-                </th>
-                <th className="border border-border p-0">
-                  <Button
-                    variant="ghost"
-                    className=" flex h-full w-full rounded-none"
+                    8:00
+                  </td>
+                  <td className="border border-border p-2">
+                    <div className="min-w-80">
+                      <ScheduleItem
+                        classRoom={203}
+                        end={new Date("04/28/2024 9:30")}
+                        start={new Date("04/28/2024 8:00")}
+                        groupId="123"
+                        id="123"
+                        index={0}
+                        pavilion={{
+                          id: "123",
+                          address: "пр-т Ленина, 61",
+                          infoLink: "",
+                          mapLink: "",
+                          name: "Корпус М",
+                        }}
+                        pavilionId="123"
+                        status="Full"
+                        teacher={{
+                          surname: "Демкина",
+                          name: "Любовь",
+                          fathername: "Михайловна",
+                          status: "Преподаватель английского языка",
+                        }}
+                        teacherId="123"
+                        title="Иностранный язык в профессиональной деятельности"
+                        type="Lec"
+                      />
+                    </div>
+                  </td>
+                  <td className="border border-border p-2">
+                    <div className="min-w-80">
+                      <ScheduleItem
+                        classRoom={203}
+                        end={new Date("04/28/2024 9:30")}
+                        start={new Date("04/28/2024 8:00")}
+                        groupId="123"
+                        id="123"
+                        index={0}
+                        pavilion={{
+                          id: "123",
+                          address: "пр-т Ленина, 61",
+                          infoLink: "",
+                          mapLink: "",
+                          name: "Корпус М",
+                        }}
+                        pavilionId="123"
+                        status="Full"
+                        teacher={{
+                          surname: "Демкина",
+                          name: "Любовь",
+                          fathername: "Михайловна",
+                          status: "Преподаватель английского языка",
+                        }}
+                        teacherId="123"
+                        title="Иностранный язык в профессиональной деятельности"
+                        type="Lec"
+                      />
+                    </div>
+                  </td>
+                  <td className="border border-border p-2">
+                    <div className="min-w-80"></div>
+                  </td>
+                  <td className="border border-border p-2">
+                    <div className="min-w-80"></div>
+                  </td>
+                  <td className="border border-border p-2">
+                    <div className="min-w-80"></div>
+                  </td>
+                  <td className="border border-border p-2">
+                    <div className="min-w-80"></div>
+                  </td>
+                  <td className="border border-border p-2">
+                    <div className="min-w-80"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    colSpan={2}
                   >
-                    <BiChevronRight className="text-xl" />
-                  </Button>
-                </th>
-                <th className="border border-border px-4 font-medium">
-                  {dayjs().format("DD MMM")}
-                </th>
-                <th className="border border-border px-4 font-medium">
-                  {dayjs().format("DD MMM")}
-                </th>
-                <th className="border border-border px-4 font-medium">
-                  {dayjs().format("DD MMM")}
-                </th>
-                <th className="border border-border px-4 font-medium">
-                  {dayjs().format("DD MMM")}
-                </th>
-                <th className="border border-border px-4 font-medium">
-                  {dayjs().format("DD MMM")}
-                </th>
-                <th className="border border-border px-4 font-medium">
-                  {dayjs().format("DD MMM")}
-                </th>
-                <th className="border border-border px-4 font-medium">
-                  {dayjs().format("DD MMM")}
-                </th>
-              </tr>
-            </tbody>
-          </table>
+                    9:40
+                  </td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                </tr>
+                <tr>
+                  <td
+                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    colSpan={2}
+                  >
+                    11:20
+                  </td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                </tr>
+                <tr>
+                  <td
+                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    colSpan={2}
+                  >
+                    13:20
+                  </td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                </tr>
+                <tr>
+                  <td
+                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    colSpan={2}
+                  >
+                    15:00
+                  </td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                </tr>
+                <tr>
+                  <td
+                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    colSpan={2}
+                  >
+                    16:40
+                  </td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                </tr>
+                <tr>
+                  <td
+                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    colSpan={2}
+                  >
+                    18:20
+                  </td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                </tr>
+                <tr>
+                  <td
+                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    colSpan={2}
+                  >
+                    20:00
+                  </td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </TabsContent>
       </Tabs>
     </main>

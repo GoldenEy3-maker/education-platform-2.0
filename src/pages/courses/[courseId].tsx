@@ -606,7 +606,7 @@ const CoursePage: NextPageWithLayout = () => {
         onValueChange={(value) => setTabs(value as TabsMap)}
         className="mt-4"
       >
-        <TabsList className="hidden-scrollbar mb-4 flex h-auto max-w-[calc(100vw-2rem)] justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
+        <TabsList className="hidden-scrollbar mb-4 flex h-auto max-w-full justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
           {Object.entries(TabsTriggerMap).map(([key, value]) => (
             <TabsTrigger
               value={key}

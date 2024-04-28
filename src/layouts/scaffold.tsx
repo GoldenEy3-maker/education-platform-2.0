@@ -19,7 +19,7 @@ export const ScaffoldLayout: React.FC<ScaffoldLayoutProps> = ({
         />
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <div className="flex min-h-svh flex-col ">{children}</div>
+      <div className="flex min-h-svh flex-col">{children}</div>
     </>
   );
 };

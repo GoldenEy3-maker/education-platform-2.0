@@ -452,7 +452,7 @@ export const ScheduleSection: React.FC = () => {
             <BiChevronRight className="text-xl" />
           </Button>
         </div>
-        <Tabs defaultValue={TabsMap.All} className="mt-4 overflow-hidden">
+        <Tabs defaultValue={TabsMap.All} className="mt-4">
           <TabsList className="hidden-scrollbar mb-2 flex h-auto justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
             {Object.entries(TabsMap).map(([key, value]) => (
               <TabsTrigger
