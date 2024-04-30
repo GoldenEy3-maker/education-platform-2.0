@@ -16,5 +16,14 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/:path*"],
+  matcher: [
+    "/",
+    // "/courses",
+    // "/course/:path*",
+    // "/schedule",
+    // "/profile/:path*",
+    // "/chat",
+    // "/chat/:path*",
+    "/((?!api|_next/static|_next/image|favicon.ico|reset-password).*)",
+  ],
 };

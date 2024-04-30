@@ -39,6 +39,7 @@ export const PagePathMap = {
   Chat: "/chat/",
   Profile: "/profile/",
   Schedule: "/schedule",
+  ResetPassword: "/reset-password",
 } as const;
 
 export const RoleContentMap: Record<Role, string> = {

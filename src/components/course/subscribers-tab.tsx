@@ -144,7 +144,7 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
           <Button
             asChild
             variant="outline"
-            className="w-auto justify-between gap-2 max-[1100px]:border-none max-[1100px]:bg-transparent max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
+            className="w-auto justify-between gap-2 bg-transparent max-[1100px]:border-none max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
             disabled={!session?.user}
           >
             <SelectTrigger>

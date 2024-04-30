@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import Link from "next/link";
 import { useState } from "react";
 import { type DateRange } from "react-day-picker";
 import {
@@ -11,7 +12,7 @@ import {
   BiSolidNotepad,
   BiSolidWidget,
 } from "react-icons/bi";
-import { ScheduleItem } from "~/components/home/shedule-item";
+import { ScheduleItem } from "~/components/home/schedule-item";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import { Input } from "~/components/ui/input";
@@ -30,6 +31,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
+import { PagePathMap } from "~/libs/enums";
 import { type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "./_app";
 
@@ -179,7 +181,7 @@ const SchedulePage: NextPageWithLayout = () => {
             <table className="w-full border-separate border-spacing-0 bg-clip-padding [&_tr:first-child_th:first-child]:rounded-tl-xl [&_tr:first-child_th:last-child]:rounded-tr-xl [&_tr:last-child_td:first-child]:rounded-bl-xl [&_tr:last-child_td:last-child]:rounded-br-xl">
               <thead>
                 <tr>
-                  <th className="sticky left-0 top-0 w-16 border border-border bg-background p-0">
+                  <th className="sticky left-0 top-0 z-10 w-16 border border-border bg-background p-0">
                     <Button
                       variant="ghost"
                       className="h-full w-full rounded-none rounded-tl-[calc(0.75rem-1px)]"
@@ -187,7 +189,7 @@ const SchedulePage: NextPageWithLayout = () => {
                       <BiChevronLeft className="text-xl" />
                     </Button>
                   </th>
-                  <th className="sticky left-[3.35rem] top-0 w-16 border border-border bg-background p-0">
+                  <th className="sticky left-[3.35rem] top-0 z-10 w-16 border border-border bg-background p-0">
                     <Button
                       variant="ghost"
                       className="h-full w-full rounded-none"
@@ -235,12 +237,12 @@ const SchedulePage: NextPageWithLayout = () => {
               <tbody>
                 <tr>
                   <td
-                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    className="sticky left-0 top-0 z-10 h-20 border border-border bg-background text-center align-top"
                     colSpan={2}
                   >
                     8:00
                   </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-2 align-baseline">
                     <div className="min-w-80">
                       <ScheduleItem
                         classRoom={203}
@@ -270,7 +272,7 @@ const SchedulePage: NextPageWithLayout = () => {
                       />
                     </div>
                   </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-2 align-baseline">
                     <div className="min-w-80">
                       <ScheduleItem
                         classRoom={203}
@@ -300,126 +302,253 @@ const SchedulePage: NextPageWithLayout = () => {
                       />
                     </div>
                   </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-2 align-baseline">
+                    <div className="flex min-w-80 flex-col gap-2">
+                      <Button
+                        variant="ghost"
+                        className="block h-auto whitespace-normal rounded-lg bg-muted/45 p-4 text-base"
+                        asChild
+                      >
+                        <Link href={PagePathMap.Course + "1"}>
+                          <p>Лабораторная работа №1</p>
+                          <span className="text-muted-foreground">
+                            Иностранный язык в профессиональной деятельности
+                          </span>
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="block h-auto whitespace-normal rounded-lg bg-muted/45 p-4 text-base"
+                        asChild
+                      >
+                        <Link href={PagePathMap.Course + "1"}>
+                          <p>Лабораторная работа №1</p>
+                          <span className="text-muted-foreground">
+                            Иностранный язык в профессиональной деятельности
+                          </span>
+                        </Link>
+                      </Button>
+                    </div>
+                  </td>
+                  <td className="border border-border p-2 align-baseline">
                     <div className="min-w-80"></div>
                   </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-2 align-baseline">
                     <div className="min-w-80"></div>
                   </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-2 align-baseline">
                     <div className="min-w-80"></div>
                   </td>
-                  <td className="border border-border p-2">
-                    <div className="min-w-80"></div>
-                  </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-2 align-baseline">
                     <div className="min-w-80"></div>
                   </td>
                 </tr>
                 <tr>
                   <td
-                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    className="sticky left-0 top-0 z-10 h-20 border border-border bg-background text-center align-top"
                     colSpan={2}
                   >
                     9:40
                   </td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline">
+                    <div className="min-w-80">
+                      <ScheduleItem
+                        classRoom={203}
+                        end={new Date("04/28/2024 9:30")}
+                        start={new Date("04/28/2024 8:00")}
+                        groupId="123"
+                        id="123"
+                        index={2}
+                        pavilion={{
+                          id: "123",
+                          address: "пр-т Ленина, 61",
+                          infoLink: "",
+                          mapLink: "",
+                          name: "Корпус М",
+                        }}
+                        pavilionId="123"
+                        status="Full"
+                        teacher={{
+                          surname: "Демкина",
+                          name: "Любовь",
+                          fathername: "Михайловна",
+                          status: "Преподаватель английского языка",
+                        }}
+                        teacherId="123"
+                        title="Иностранный язык в профессиональной деятельности"
+                        type="Lec"
+                      />
+                    </div>
+                  </td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline">
+                    <div className="min-w-80">
+                      <ScheduleItem
+                        classRoom={203}
+                        end={new Date("04/28/2024 9:30")}
+                        start={new Date("04/28/2024 8:00")}
+                        groupId="123"
+                        id="123"
+                        index={3}
+                        pavilion={{
+                          id: "123",
+                          address: "пр-т Ленина, 61",
+                          infoLink: "",
+                          mapLink: "",
+                          name: "Корпус М",
+                        }}
+                        pavilionId="123"
+                        status="Full"
+                        teacher={{
+                          surname: "Демкина",
+                          name: "Любовь",
+                          fathername: "Михайловна",
+                          status: "Преподаватель английского языка",
+                        }}
+                        teacherId="123"
+                        title="Иностранный язык в профессиональной деятельности"
+                        type="Lec"
+                      />
+                    </div>
+                  </td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
                 </tr>
                 <tr>
                   <td
-                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    className="sticky left-0 top-0 z-10 h-20 border border-border bg-background text-center align-top"
                     colSpan={2}
                   >
                     11:20
                   </td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2 align-baseline">
+                    <div className="min-w-80">
+                      <ScheduleItem
+                        classRoom={203}
+                        end={new Date("04/28/2024 9:30")}
+                        start={new Date("04/28/2024 8:00")}
+                        groupId="123"
+                        id="123"
+                        index={4}
+                        pavilion={{
+                          id: "123",
+                          address: "пр-т Ленина, 61",
+                          infoLink: "",
+                          mapLink: "",
+                          name: "Корпус М",
+                        }}
+                        pavilionId="123"
+                        status="Full"
+                        teacher={{
+                          surname: "Демкина",
+                          name: "Любовь",
+                          fathername: "Михайловна",
+                          status: "Преподаватель английского языка",
+                        }}
+                        teacherId="123"
+                        title="Иностранный язык в профессиональной деятельности"
+                        type="Lec"
+                      />
+                    </div>
+                  </td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline">
+                    <div className="min-w-80">
+                      <Button
+                        variant="ghost"
+                        className="block h-auto whitespace-normal rounded-lg bg-muted/45 p-4 text-base"
+                        asChild
+                      >
+                        <Link href={PagePathMap.Course + "1"}>
+                          <p>Лабораторная работа №1</p>
+                          <span className="text-muted-foreground">
+                            Иностранный язык в профессиональной деятельности
+                          </span>
+                        </Link>
+                      </Button>
+                    </div>
+                  </td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
                 </tr>
                 <tr>
                   <td
-                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    className="sticky left-0 top-0 z-10 h-20 border border-border bg-background text-center align-top"
                     colSpan={2}
                   >
                     13:20
                   </td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
                 </tr>
                 <tr>
                   <td
-                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    className="sticky left-0 top-0 z-10 h-20 border border-border bg-background text-center align-top"
                     colSpan={2}
                   >
                     15:00
                   </td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
                 </tr>
                 <tr>
                   <td
-                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    className="sticky left-0 top-0 z-10 h-20 border border-border bg-background text-center align-top"
                     colSpan={2}
                   >
                     16:40
                   </td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
                 </tr>
                 <tr>
                   <td
-                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    className="sticky left-0 top-0 z-10 h-20 border border-border bg-background text-center align-top"
                     colSpan={2}
                   >
                     18:20
                   </td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
                 </tr>
                 <tr>
                   <td
-                    className="sticky left-0 top-0 h-20 border border-border bg-background text-center align-top"
+                    className="sticky left-0 top-0 z-10 h-20 border border-border bg-background text-center align-top"
                     colSpan={2}
                   >
                     20:00
                   </td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
-                  <td className="border border-border p-2"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
+                  <td className="border border-border p-2 align-baseline"></td>
                 </tr>
               </tbody>
             </table>

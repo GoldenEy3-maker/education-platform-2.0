@@ -222,7 +222,7 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="gap-2 max-[1100px]:h-10 max-[1100px]:w-10 max-[1100px]:border-none max-[1100px]:bg-transparent max-[1100px]:shadow-none"
+              className="gap-2 bg-transparent max-[1100px]:h-10 max-[1100px]:w-10 max-[1100px]:border-none max-[1100px]:shadow-none"
               disabled={!session?.user}
             >
               <BiFilterAlt className="shrink-0 text-xl" />
@@ -284,7 +284,7 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
           <Button
             asChild
             variant="outline"
-            className="w-auto justify-between gap-2 max-[1100px]:border-none max-[1100px]:bg-transparent max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
+            className="w-auto justify-between gap-2 bg-transparent max-[1100px]:border-none max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
             disabled={!session?.user}
           >
             <SelectTrigger>

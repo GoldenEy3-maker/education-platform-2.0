@@ -166,7 +166,7 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
             );
 
           if (!props.isAuthor) {
-            if (props.type === "Test")
+            if (props.type === "Test" || props.type === "Pract")
               return (
                 <Button
                   variant="ghost"

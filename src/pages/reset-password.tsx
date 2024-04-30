@@ -1,64 +1,46 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { signIn } from "next-auth/react"
-import Link from "next/link"
-import { useRouter } from "next/router"
-import React, { useState } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import { z } from "zod"
-import { Avatar } from "~/components/avatar"
-import { CircularProgress } from "~/components/circular-progress"
-import { Button } from "~/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Avatar } from "~/components/avatar";
+import { CircularProgress } from "~/components/circular-progress";
+import { Button } from "~/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form"
-import { Input } from "~/components/ui/input"
-import { ScaffoldLayout } from "~/layouts/scaffold"
-import { PagePathMap } from "~/libs/enums"
-import { type NextPageWithLayout } from "./_app"
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { ScaffoldLayout } from "~/layouts/scaffold";
+import { PagePathMap } from "~/libs/enums";
+import { type NextPageWithLayout } from "./_app";
 
 const formSchema = z.object({
-  login: z.string().min(1, "Обязательное поле!"),
-  password: z.string().min(1, "Обязательное поле!"),
+  email: z.string().email("Невалидный email!").min(1, "Обязательное поле!"),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
 
-const AuthPage: NextPageWithLayout = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+const ResetPasswordPage: NextPageWithLayout = () => {
+  const isLoading = false;
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      login: "",
-      password: "",
+      email: "",
     },
   });
 
   const onSubmit = async (values: FormSchema) => {
-    setIsLoading(true);
-
-    const res = await signIn("credentials", {
-      ...values,
-      redirect: false,
-    });
-
-    if (res?.error) {
-      setIsLoading(false);
-      toast.error(res.error);
-      return;
-    }
-
-    setIsLoading(false);
-    toast.success("Вы успешно авторизовались!");
+    toast.success("Вы успешно сменили пароль!");
     form.reset();
-    void router.push((router.query.callbackUrl as string) ?? PagePathMap.Home);
   };
 
   return (
@@ -98,10 +80,10 @@ const AuthPage: NextPageWithLayout = () => {
         <div className="items-center justify-center bg-background px-6 py-6 sm:px-10 sm:py-8">
           <div className="md:w-80">
             <h3 className="mb-1 text-center text-xl font-medium">
-              Авторизация
+              Восстановление пароля
             </h3>
             <p className="mb-4 text-center text-sm text-muted-foreground">
-              Введите свой корпоративный логин и пароль от учетной записи АГУ
+              Введи привязанный к акканту email адрес
             </p>
             <Form {...form}>
               <form
@@ -110,41 +92,30 @@ const AuthPage: NextPageWithLayout = () => {
               >
                 <FormField
                   control={form.control}
-                  name="login"
+                  name="email"
                   disabled={isLoading}
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Логин</FormLabel>
-                      <FormControl>
-                        <Input placeholder="ivanov.101s1" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  disabled={isLoading}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Пароль</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="********"
-                          type="password"
+                          placeholder="ivanov@mail.ru"
+                          type="email"
                           {...field}
                         />
                       </FormControl>
+                      <FormDescription>
+                        Если вы забыли email адрес, или письмо не приходит,
+                        тогда обратитесь в тех. отдел.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <div className="flex items-center justify-between gap-4">
                   <Button asChild variant="link">
-                    <Link href={PagePathMap.ResetPassword}>Забыли пароль?</Link>
+                    <Link href={PagePathMap.Auth}>Авторизация</Link>
                   </Button>
-
                   <Button
                     className="gap-2"
                     variant="default"
@@ -157,7 +128,7 @@ const AuthPage: NextPageWithLayout = () => {
                         strokeWidth={5}
                       />
                     ) : null}
-                    Войти
+                    Дальше
                   </Button>
                 </div>
               </form>
@@ -180,8 +151,8 @@ const AuthPage: NextPageWithLayout = () => {
   );
 };
 
-AuthPage.getLayout = (page) => (
+ResetPasswordPage.getLayout = (page) => (
   <ScaffoldLayout title="Авторизация">{page}</ScaffoldLayout>
 );
 
-export default AuthPage;
+export default ResetPasswordPage;

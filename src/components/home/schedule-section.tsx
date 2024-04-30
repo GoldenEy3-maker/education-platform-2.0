@@ -21,7 +21,7 @@ import { cn } from "~/libs/utils";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { ScheduleItem, ScheduleItemSkeleton } from "./shedule-item";
+import { ScheduleItem, ScheduleItemSkeleton } from "./schedule-item";
 
 const TabsMap = {
   All: "All",
