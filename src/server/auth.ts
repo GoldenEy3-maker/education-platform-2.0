@@ -25,58 +25,6 @@ declare module "next-auth" {
   interface User extends Omit<PrismaUser, "password"> {}
 }
 
-// export const authOptions: NextAuthOptions = {
-//   // adapter: PrismaAdapter(db),
-//   callbacks: {
-//     jwt({ token, user }) {
-//       return { ...token, ...user };
-//     },
-//     session: async ({ session, token }) => {
-//       return {
-//         ...session,
-//         user: {
-//           ...session.user,
-//           ...token,
-//         },
-//       };
-//     },
-//   },
-//   providers: [
-//     CredentialsProvider({
-//       credentials: {
-//         login: { label: "Логин" },
-//         password: { label: "Пароль" },
-//       },
-//       async authorize(credentials) {
-//         if (!credentials?.login || !credentials.password)
-//           throw new Error("Неверный логин или пароль!");
-
-//         const user = await db.user.findUnique({
-//           where: {
-//             login: credentials.login,
-//           },
-//         });
-
-//         if (!user) throw new Error("Неверный логин или пароль!");
-
-//         const isPasswordsMatch = await bcrypt.compare(
-//           credentials.password,
-//           user.password,
-//         );
-
-//         if (!isPasswordsMatch) throw new Error("Неверный логин или пароль!");
-
-//         return user;
-//       },
-//     }),
-//   ],
-//   session: {
-//     strategy: "jwt",
-//   },
-//   secret: env.NEXTAUTH_SECRET,
-//   debug: env.NODE_ENV === "development",
-// };
-
 export const authOptions = (req: NextApiRequest, res: NextApiResponse) => {
   const adapter = PrismaAdapter(db);
 

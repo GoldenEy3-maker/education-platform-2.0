@@ -12,6 +12,7 @@ export const ScaffoldLayout: React.FC<ScaffoldLayoutProps> = ({
     <>
       <Head>
         <title>{title ?? "Образовательный портал АГУ"}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Образовательный портал АГУ" />
         <meta
           name="keywords"
