@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   BiBook,
-  BiCalendar,
   BiCalendarAlt,
   BiCog,
   BiHelpCircle,
@@ -132,7 +131,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
             className="w-full justify-normal gap-2"
             variant="ghost"
           >
-            <Link href={PagePathMap.Home}>
+            <Link href={PagePathMap.Settings}>
               <BiCog className="text-xl" /> <span>Настройки</span>
             </Link>
           </Button>

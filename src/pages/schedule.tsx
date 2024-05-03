@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { PagePathMap } from "~/libs/enums";
@@ -78,7 +79,7 @@ const SelectValueContentMap: Record<SelectValueMap, string> = {
 };
 
 const SchedulePage: NextPageWithLayout = () => {
-  const [tabs, setTabs] = useState<TabsMap>("All");
+  const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "All");
   const [selectValue, setSelectValue] = useState<SelectValueMap>("LastWeek");
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
@@ -160,7 +161,11 @@ const SchedulePage: NextPageWithLayout = () => {
           </PopoverContent>
         </Popover>
       </div>
-      <Tabs defaultValue={TabsMap.All} className="mt-4">
+      <Tabs
+        value={tabs}
+        onValueChange={(value) => setTabs(value as TabsMap)}
+        className="mt-4"
+      >
         <TabsList className="hidden-scrollbar mb-4 flex h-auto max-w-full justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
           {Object.entries(TabsTriggerMap).map(([key, value]) => (
             <TabsTrigger

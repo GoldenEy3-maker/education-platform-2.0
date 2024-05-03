@@ -16,10 +16,7 @@ const ProfilePage: NextPageWithLayout = () => {
       <div className="h-56 w-full rounded-3xl bg-muted/30"></div>
       <div className="-translate-y-14 sm:px-8">
         <div>
-          <Avatar
-            className="mb-1 h-28 w-28 text-2xl after:right-2"
-            fallback="КД"
-          />
+          <Avatar className="mb-1 h-28 w-28 text-2xl" fallback="КД" />
           <h2 className="text-xl font-medium sm:text-2xl">
             Королев Данил Николаевич
           </h2>

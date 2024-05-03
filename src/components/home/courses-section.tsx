@@ -27,7 +27,7 @@ export const CoursesSection: React.FC = () => {
       <header className="flex items-center gap-2 pb-3">
         <BiBook className="text-xl" />
         <h4 className="flex-grow text-lg font-semibold">Курсы</h4>
-        <Button variant="outline" type="button" asChild className="gap-2">
+        <Button variant="outline" type="button" asChild className="gap-1">
           <Link href={PagePathMap.Courses}>
             <span>Смотреть все</span>
             <BiChevronRight className="text-xl" />

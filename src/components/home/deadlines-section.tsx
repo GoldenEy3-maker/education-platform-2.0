@@ -84,7 +84,7 @@ export const DeadlinesSection: React.FC = () => {
       <header className="flex items-center gap-2 pb-3">
         <BiTimer className="text-xl" />
         <h4 className="flex-grow text-lg font-semibold">Дедлайны</h4>
-        <Button variant="outline" type="button" asChild className="gap-2">
+        <Button variant="outline" type="button" asChild className="gap-1">
           <Link href="#">
             <span>Смотреть все</span>
             <BiChevronRight className="text-xl" />

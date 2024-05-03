@@ -151,7 +151,7 @@ export const SidebarDrawer: React.FC<React.PropsWithChildren> = () => {
               className="w-full shrink-0 justify-normal gap-2"
               variant="ghost"
             >
-              <Link href={PagePathMap.Home}>
+              <Link href={PagePathMap.Settings}>
                 <BiCog className="text-xl" /> <span>Настройки</span>
               </Link>
             </Button>

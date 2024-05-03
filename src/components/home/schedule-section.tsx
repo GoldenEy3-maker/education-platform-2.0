@@ -370,7 +370,7 @@ export const ScheduleSection: React.FC = () => {
       <header className="flex items-center gap-2 overflow-hidden pb-3">
         <BiCalendar className="text-xl" />
         <h4 className="flex-grow truncate text-lg font-semibold">Расписание</h4>
-        <Button variant="outline" type="button" asChild className="gap-2">
+        <Button variant="outline" type="button" asChild className="gap-1">
           <Link href={PagePathMap.Schedule}>
             <span>Смотреть все</span>
             <BiChevronRight className="text-xl" />
@@ -452,8 +452,8 @@ export const ScheduleSection: React.FC = () => {
             <BiChevronRight className="text-xl" />
           </Button>
         </div>
-        <Tabs defaultValue={TabsMap.All} className="mt-4">
-          <TabsList className="hidden-scrollbar mb-2 flex h-auto justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
+        <Tabs defaultValue={TabsMap.All} className="mt-4 overflow-hidden">
+          <TabsList className="hidden-scrollbar mb-2 flex h-auto max-w-full justify-normal overflow-auto rounded-none border-b bg-transparent p-0">
             {Object.entries(TabsMap).map(([key, value]) => (
               <TabsTrigger
                 key={key}
