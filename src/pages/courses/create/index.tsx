@@ -12,7 +12,6 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
 import { CreateCourseLayout } from "~/layouts/create-course";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
@@ -60,10 +59,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
               <FormItem className="w-full">
                 <FormLabel>Название</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Иностранный язык в профессиональной деятельности"
-                    {...field}
-                  />
+                  <Input placeholder="Полное название курса" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -74,7 +70,17 @@ const CreateCoursePage: NextPageWithLayout = () => {
             name="description"
             render={({ field: { ref, ...field } }) => (
               <FormItem className="w-full">
-                <FormLabel>Описание</FormLabel>
+                <FormLabel
+                  onClick={(event) => {
+                    document
+                      .getElementById(
+                        event.currentTarget.getAttribute("for") ?? "",
+                      )
+                      ?.focus();
+                  }}
+                >
+                  Описание
+                </FormLabel>
                 <FormControl>
                   <Editor
                     placeholder="Расскажите студентам, какая цель курса, что будет изучаться и в каком формате..."

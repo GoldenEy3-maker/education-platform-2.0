@@ -267,7 +267,21 @@ export const AttachmentsMap: Record<
   },
 };
 
+export const EditorElementAlignMap = {
+  Center: "center",
+  Left: "left",
+  Right: "right",
+  Justify: "justify",
+} as const;
+
+export const EditorElementListTypeMap = {
+  Bulleted: "bulleted-list",
+  Numbered: "numbered-list",
+} as const;
+
 export type PagePathMap = ValueOf<typeof PagePathMap>;
 export type RoleContentMap = ValueOf<typeof RoleContentMap>;
 export type StatusCourseMap = ValueOf<typeof StatusCourseMap>;
 export type AttachmentExtensionsMap = ValueOf<typeof AttachmentExtensionsMap>;
+export type EditorElementListTypeMap = ValueOf<typeof EditorElementListTypeMap>;
+export type EditorElementAlignMap = ValueOf<typeof EditorElementAlignMap>;
