@@ -23,7 +23,10 @@ import {
   type RenderElementProps,
   type RenderLeafProps,
 } from "slate-react/dist/components/editable";
-import { EditorElementAlignMap, EditorElementListTypeMap } from "~/libs/enums";
+import {
+  EditorElementListTypeMap,
+  type EditorElementAlignMap,
+} from "~/libs/enums";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
@@ -73,7 +76,8 @@ export type FormattedText = {
 };
 
 export type TextFormat = keyof Omit<FormattedText, "text">;
-export type ElementFormat = EditorElementAlignMap | CustomElement["type"];
+export type ElementTypes = CustomElement["type"];
+export type ElementFormat = EditorElementAlignMap | ElementTypes;
 
 export type CustomText = FormattedText;
 
@@ -220,49 +224,49 @@ const isBlockActive = (
   return !!match;
 };
 
-const toggleBlock = (editor: CustomEditor, format: ElementFormat) => {
-  const isFormatAlignValues = Object.values(EditorElementAlignMap).includes(
-    format,
-  );
+// const toggleBlock = (editor: CustomEditor, format: ElementFormat) => {
+//   const isFormatAlignValues = Object.values(EditorElementAlignMap).includes(
+//     format,
+//   );
 
-  const isActive = isBlockActive(
-    editor,
-    format,
-    isFormatAlignValues ? "align" : "type",
-  );
+//   const isActive = isBlockActive(
+//     editor,
+//     format,
+//     isFormatAlignValues ? "align" : "type",
+//   );
 
-  const isList = Object.values(EditorElementListTypeMap).includes(format);
+//   const isList = Object.values(EditorElementListTypeMap).includes(format);
 
-  Transforms.unwrapNodes(editor, {
-    match: (n) =>
-      !SlateEditor.isEditor(n) &&
-      SlateElement.isElement(n) &&
-      Object.values(EditorElementListTypeMap).includes(n.type) &&
-      !isFormatAlignValues,
-    split: true,
-  });
+//   Transforms.unwrapNodes(editor, {
+//     match: (n) =>
+//       !SlateEditor.isEditor(n) &&
+//       SlateElement.isElement(n) &&
+//       Object.values(EditorElementListTypeMap).includes(n.type) &&
+//       !isFormatAlignValues,
+//     split: true,
+//   });
 
-  Transforms.setNodes(
-    editor,
-    isFormatAlignValues
-      ? { align: isActive ? undefined : (format as EditorElementAlignMap) }
-      : {
-          type: isActive
-            ? "paragraph"
-            : isList
-              ? "list-item"
-              : (format as EditorElementListTypeMap),
-        },
-  );
+//   Transforms.setNodes(
+//     editor,
+//     isFormatAlignValues
+//       ? { align: isActive ? undefined : (format as EditorElementAlignMap) }
+//       : {
+//           type: isActive
+//             ? "paragraph"
+//             : isList
+//               ? "list-item"
+//               : (format as EditorElementListTypeMap),
+//         },
+//   );
 
-  if (!isActive && isList) {
-    const block: CustomElement = {
-      type: format as EditorElementListTypeMap,
-      children: [],
-    };
-    Transforms.wrapNodes(editor, block);
-  }
-};
+//   if (!isActive && isList) {
+//     const block: CustomElement = {
+//       type: format as EditorElementListTypeMap,
+//       children: [],
+//     };
+//     Transforms.wrapNodes(editor, block);
+//   }
+// };
 
 const HoveringToolbar = () => {
   const ref = useRef<HTMLDivElement>(null);
