@@ -41,6 +41,9 @@ export const PagePathMap = {
   Schedule: "/schedule",
   ResetPassword: "/reset-password",
   Settings: "/settings",
+  CreateCourse: "/courses/create",
+  CreateCourseContent: "/courses/create/content",
+  CreateCourseSettings: "/courses/create/settings",
 } as const;
 
 export const RoleContentMap: Record<Role, string> = {
@@ -61,7 +64,7 @@ export const StatusCourseContentMap: Record<StatusCourseMap, string> = {
 
 export const TaskTypeContentMap: Record<TaskType, string> = {
   Lec: "Лекция",
-  Test: "Тест",
+  Quiz: "Тест",
   Pract: "Практическая",
 };
 

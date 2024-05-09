@@ -16,7 +16,7 @@ export const Header: React.FC<React.ComponentProps<"header">> = ({
   return (
     <header
       className={cn(
-        "container-grid sticky inset-y-0 top-0 z-50 border-b bg-background/95 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/40",
+        "container-grid sticky inset-y-0 top-0 z-50 border-b bg-background/95 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/60",
         className,
       )}
       {...props}

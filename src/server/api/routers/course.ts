@@ -24,4 +24,10 @@ export const courseRouter = createTRPCRouter({
 
       return course;
     }),
+
+  create: protectedProcedure
+    .input(z.object({ title: z.string() }))
+    .mutation(async (opts) => {
+      return opts.input;
+    }),
 });

@@ -36,6 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
+import { PagePathMap } from "~/libs/enums";
 import { cn, type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "../_app";
 
@@ -492,17 +493,17 @@ const CoursesPage: NextPageWithLayout = () => {
             ))}
           </SelectContent>
         </Select>
-        <Button
-          className={cn("gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full", {
-            hidden: session?.user.role !== "Teacher",
-          })}
-          asChild
-        >
-          <Link href="#">
-            <BiPlus className="shrink-0 text-xl" />
-            <span className="max-lg:hidden">Создать новый</span>
-          </Link>
-        </Button>
+        {session?.user.role === "Teacher" ? (
+          <Button
+            className="gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full"
+            asChild
+          >
+            <Link href={PagePathMap.CreateCourse}>
+              <BiPlus className="shrink-0 text-xl" />
+              <span className="max-lg:hidden">Создать новый</span>
+            </Link>
+          </Button>
+        ) : null}
       </div>
       <Tabs
         value={tabs}

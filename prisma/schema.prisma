@@ -216,6 +216,6 @@ enum LessionType {
 
 enum TaskType {
   Lec
-  Test
+  Quiz
   Pract
 }

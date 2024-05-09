@@ -70,7 +70,7 @@ const taskItemBadgeVariants = cva<{ type: Record<TaskType, string> }>(
   {
     variants: {
       type: {
-        Test: "bg-[hsl(260_56%_50%_/_.1)] text-[hsl(260_56%_50%)] dark:bg-[hsl(260_92%_80%_/_.1)] dark:text-[hsl(260_92%_80%)]",
+        Quiz: "bg-[hsl(260_56%_50%_/_.1)] text-[hsl(260_56%_50%)] dark:bg-[hsl(260_92%_80%_/_.1)] dark:text-[hsl(260_92%_80%)]",
         Lec: "bg-[hsl(26_85%_45%_/_.1)] text-[hsl(26_85%_45%)] dark:bg-[hsl(26_85%_60%_/_.1)] dark:text-[hsl(26_85%_60%)]",
         Pract:
           "bg-[hsl(171_60%_40%_/_.1)] text-[hsl(171_60%_40%)] dark:bg-[hsl(171_60%_60%_/_.1)] dark:text-[hsl(171_60%_60%)]",
@@ -82,7 +82,7 @@ const taskItemBadgeVariants = cva<{ type: Record<TaskType, string> }>(
 export const TaskItem: React.FC<TaskItemProps> = (props) => {
   const { availableTime, startDateTime } = props;
 
-  const isTimer = availableTime && startDateTime && props.type === "Test";
+  const isTimer = availableTime && startDateTime && props.type === "Quiz";
 
   const [timeLeft, setTimeLeft] = useState(() => {
     if (isTimer) {
@@ -155,7 +155,7 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
         {(() => {
           if (
             props.isAuthor &&
-            props.type === "Test" &&
+            props.type === "Quiz" &&
             props.availableAttempts
           )
             return (
@@ -166,7 +166,7 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
             );
 
           if (!props.isAuthor) {
-            if (props.type === "Test" || props.type === "Pract")
+            if (props.type === "Quiz" || props.type === "Pract")
               return (
                 <Button
                   variant="ghost"
@@ -284,7 +284,7 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
             );
           }
 
-          if (props.type === "Test")
+          if (props.type === "Quiz")
             return (
               <div className="flex items-center gap-2">
                 <BiStopwatch className="text-xl" />

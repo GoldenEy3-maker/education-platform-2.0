@@ -461,7 +461,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       section:
         "Unit 1.1. The United Kingdom of Great Britain and Northern Ireland",
       title: "The surfce of the USA",
-      type: "Test",
+      type: "Quiz",
       updatedAt: new Date(),
     },
     {
@@ -497,7 +497,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       section:
         "Unit 1.2. The United Kingdom of Great Britain and Northern Ireland",
       title: "The surfce of the USA",
-      type: "Test",
+      type: "Quiz",
       updatedAt: new Date(),
     },
     {
@@ -515,7 +515,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       section:
         "Unit 1.2. The United Kingdom of Great Britain and Northern Ireland",
       title: "The surfce of the USA",
-      type: "Test",
+      type: "Quiz",
       updatedAt: new Date(),
     },
   ],
