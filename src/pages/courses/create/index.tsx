@@ -20,7 +20,8 @@ import { type NextPageWithLayout } from "~/pages/_app";
 import { useCreateCourseStore } from "~/store/create-course";
 
 export const formSchema = z.object({
-  title: z.string().min(1, "Обязательное поле!"),
+  fullTitle: z.string().min(1, "Обязательное поле!"),
+  shortTitle: z.string().min(1, "Обязательное поле!"),
   description: z.string(),
 });
 
@@ -32,13 +33,15 @@ const CreateCoursePage: NextPageWithLayout = () => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: createCourseStore.title,
+      fullTitle: createCourseStore.fullTitle,
+      shortTitle: createCourseStore.shortTitle,
       description: createCourseStore.description,
     },
   });
 
   const onSubmit = (values: FormSchema) => {
-    createCourseStore.setTitle(values.title);
+    createCourseStore.setFullTitle(values.fullTitle);
+    createCourseStore.setShortTitle(values.shortTitle);
     createCourseStore.setDescription(values.description);
 
     void router.push(PagePathMap.CreateCourseContent);
@@ -52,19 +55,37 @@ const CreateCoursePage: NextPageWithLayout = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4"
         >
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Название</FormLabel>
-                <FormControl>
-                  <Input placeholder="Полное название курса" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex gap-4 max-sm:flex-col sm:items-center">
+            <FormField
+              control={form.control}
+              name="fullTitle"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Полное название курса</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Иностранный язык в профессиональной деятельности"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="shortTitle"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Сокращенное название курса</FormLabel>
+                  <FormControl>
+                    <Input placeholder="ИЯПД" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="description"

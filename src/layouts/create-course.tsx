@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React from "react";
 import {
   Breadcrumb,
@@ -38,7 +37,7 @@ export const CreateCourseLayout: React.FC<CreateCourseLayoutProps> = ({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <header className="mb-4 flex items-center justify-between gap-2">
+      <header className="mb-4 flex justify-between gap-2 max-sm:flex-col sm:items-center">
         <div>
           <h1 className="text-2xl font-medium">Создать новый курс</h1>
           <p className="text-muted-foreground">
@@ -46,7 +45,7 @@ export const CreateCourseLayout: React.FC<CreateCourseLayoutProps> = ({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">Сохранить в черновик</Button>
+          {/* <Button variant="outline">Сохранить в черновик</Button> */}
           {formId ? (
             <Button type="submit" form={formId}>
               Продолжить
@@ -54,7 +53,9 @@ export const CreateCourseLayout: React.FC<CreateCourseLayoutProps> = ({
           ) : (
             <Button
               onClick={() =>
-                createCourseMutation.mutate({ title: createCourseStore.title })
+                createCourseMutation.mutate({
+                  title: createCourseStore.fullTitle,
+                })
               }
             >
               Опубликовать
