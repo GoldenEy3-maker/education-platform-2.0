@@ -137,6 +137,7 @@ model TaskAttachment {
   id         String   @id @default(cuid())
   name       String
   href       String?
+  key        String
   task       Task     @relation(fields: [taskId], references: [id])
   taskId     String   @map("task_id")
   uploadedAt DateTime
@@ -172,6 +173,7 @@ model AnnouncementAttachment {
   id             String       @id @default(cuid())
   name           String
   href           String?
+  key            String
   announcement   Announcement @relation(fields: [announcementId], references: [id])
   announcementId String       @map("announcement_id")
   uploadedAt     DateTime
