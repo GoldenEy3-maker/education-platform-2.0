@@ -127,7 +127,7 @@ export const Editor: React.FC<EditableProps> = ({
         <Editable
           renderPlaceholder={({ children, attributes }) => (
             <span
-              className="!top-auto text-muted-foreground !opacity-100"
+              className="!top-auto pr-4 text-muted-foreground !opacity-100"
               {...attributes}
             >
               {children}

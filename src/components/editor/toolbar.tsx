@@ -9,6 +9,17 @@ import {
   BiListUl,
   BiUnderline,
 } from "react-icons/bi";
+import {
+  TbAlignCenter,
+  TbAlignJustified,
+  TbAlignLeft,
+  TbAlignRight,
+  TbBold,
+  TbItalic,
+  TbList,
+  TbListNumbers,
+  TbUnderline,
+} from "react-icons/tb";
 import { ReactEditor, useSlate } from "slate-react";
 import { cn } from "~/libs/utils";
 import { Button } from "../ui/button";
@@ -26,7 +37,7 @@ export const Toolbar: React.FC = () => {
 
   return (
     <div
-      className="sticky bottom-[1px] z-10 flex flex-wrap items-center gap-1 border-t border-input bg-background px-3 py-1"
+      className="sticky bottom-[1px] z-10 flex max-w-full items-center gap-1 overflow-auto rounded-b-md border-t border-input bg-background px-3 py-1"
       onPointerDown={(e) => e.preventDefault()}
     >
       <Button
@@ -38,7 +49,7 @@ export const Toolbar: React.FC = () => {
         })}
         onClick={() => toggleMark(editor, "bold")}
       >
-        <BiBold className="text-lg" />
+        <TbBold className="text-lg" />
       </Button>
       <Button
         type="button"
@@ -49,7 +60,7 @@ export const Toolbar: React.FC = () => {
         })}
         onClick={() => toggleMark(editor, "italic")}
       >
-        <BiItalic className="text-lg" />
+        <TbItalic className="text-lg" />
       </Button>
       <Button
         type="button"
@@ -60,7 +71,7 @@ export const Toolbar: React.FC = () => {
         })}
         onClick={() => toggleMark(editor, "underline")}
       >
-        <BiUnderline className="text-lg" />
+        <TbUnderline className="text-lg" />
       </Button>
       <Button
         type="button"
@@ -71,7 +82,7 @@ export const Toolbar: React.FC = () => {
         })}
         onClick={() => toggleBlock(editor, "left")}
       >
-        <BiAlignLeft className="text-lg" />
+        <TbAlignLeft className="text-lg" />
       </Button>
       <Button
         type="button"
@@ -82,7 +93,7 @@ export const Toolbar: React.FC = () => {
         })}
         onClick={() => toggleBlock(editor, "right")}
       >
-        <BiAlignRight className="text-lg" />
+        <TbAlignRight className="text-lg" />
       </Button>
       <Button
         type="button"
@@ -93,7 +104,7 @@ export const Toolbar: React.FC = () => {
         })}
         onClick={() => toggleBlock(editor, "center")}
       >
-        <BiAlignMiddle className="text-lg" />
+        <TbAlignCenter className="text-lg" />
       </Button>
       <Button
         type="button"
@@ -104,7 +115,7 @@ export const Toolbar: React.FC = () => {
         })}
         onClick={() => toggleBlock(editor, "justify")}
       >
-        <BiAlignJustify className="text-lg" />
+        <TbAlignJustified className="text-lg" />
       </Button>
       <Button
         type="button"
@@ -115,7 +126,7 @@ export const Toolbar: React.FC = () => {
         })}
         onClick={() => toggleBlock(editor, "bulleted-list")}
       >
-        <BiListUl className="text-lg" />
+        <TbList className="text-lg" />
       </Button>
       <Button
         type="button"
@@ -126,7 +137,7 @@ export const Toolbar: React.FC = () => {
         })}
         onClick={() => toggleBlock(editor, "numbered-list")}
       >
-        <BiListOl className="text-lg" />
+        <TbListNumbers className="text-lg" />
       </Button>
       {/* <Select defaultValue="h1">
         <Button
@@ -148,11 +159,11 @@ export const Toolbar: React.FC = () => {
           <SelectItem value="h6">h6</SelectItem>
         </SelectContent>
       </Select> */}
-      <span
+      {/* <span
         tabIndex={0}
         onFocus={() => ReactEditor.focus(editor)}
         className="absolute h-0 w-0"
-      />
+      /> */}
     </div>
   );
 };

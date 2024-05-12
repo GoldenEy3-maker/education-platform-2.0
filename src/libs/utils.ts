@@ -1,8 +1,13 @@
+import { generateReactHelpers } from "@uploadthing/react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { FileRouter } from "~/server/uploadthing";
 import { AttachmentsMap, type AttachmentExtensionsMap } from "./enums";
 
 export type ValueOf<T> = T[keyof T];
+
+export const { useUploadThing, uploadFiles } =
+  generateReactHelpers<FileRouter>();
 
 export const capitalizeFirstLetter = (str: string) =>
   str.at(0)!.toUpperCase() + str.slice(1);
@@ -60,4 +65,26 @@ export const handleAttachment = (attachment: {
 
 export const prepareSearchMatching = (str: string) => {
   return str.toUpperCase().trim();
+};
+
+export const formatBytes = (bytes: number, decimals = 2) => {
+  if (!+bytes) return "0 Bytes";
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = [
+    "Bytes",
+    "KiB",
+    "MiB",
+    "GiB",
+    "TiB",
+    "PiB",
+    "EiB",
+    "ZiB",
+    "YiB",
+  ];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };

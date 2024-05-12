@@ -210,11 +210,11 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
                     sub.user.name,
                   )}
                   src={sub.user.image}
-                  className="rounded-full border-[4px] border-[hsla(213,39%,95%)] dark:border-[hsl(220,67%,13%)] max-lg:hidden"
+                  className="rounded-full border-[4px] border-background max-lg:hidden"
                 />
               ))}
           {subscribers.length > 4 ? (
-            <div className="z-20 hidden h-12 w-12 items-center justify-center rounded-full border-[4px] border-[hsla(213,39%,95%)] bg-accent dark:border-[hsl(220,67%,13%)] lg:flex">
+            <div className="z-20 hidden h-12 w-12 items-center justify-center rounded-full border-[4px] border-background bg-accent lg:flex">
               +{subscribers.length - 4}
             </div>
           ) : null}
