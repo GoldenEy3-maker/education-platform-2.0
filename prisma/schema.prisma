@@ -101,11 +101,13 @@ model Course {
 }
 
 model CourseAttachment {
-  id       String  @id @default(cuid())
-  name     String
-  href     String?
-  course   Course  @relation(fields: [courseId], references: [id])
-  courseId String  @map("course_id")
+  id         String   @id @default(cuid())
+  name       String
+  key        String
+  href       String?
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   String   @map("course_id")
+  uploadedAt DateTime
 
   @@map("course_attachments")
 }
@@ -132,11 +134,12 @@ model Task {
 }
 
 model TaskAttachment {
-  id     String  @id @default(cuid())
-  name   String
-  href   String?
-  task   Task    @relation(fields: [taskId], references: [id])
-  taskId String  @map("task_id")
+  id         String   @id @default(cuid())
+  name       String
+  href       String?
+  task       Task     @relation(fields: [taskId], references: [id])
+  taskId     String   @map("task_id")
+  uploadedAt DateTime
 
   @@map("task_attachments")
 }
@@ -171,6 +174,7 @@ model AnnouncementAttachment {
   href           String?
   announcement   Announcement @relation(fields: [announcementId], references: [id])
   announcementId String       @map("announcement_id")
+  uploadedAt     DateTime
 
   @@map("announcement_attachments")
 }

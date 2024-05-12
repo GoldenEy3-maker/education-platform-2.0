@@ -2,6 +2,7 @@ import {
   createUploadthing,
   type FileRouter as UtFileRouter,
 } from "uploadthing/next-legacy";
+import { UTApi } from "uploadthing/server";
 
 const f = createUploadthing();
 
@@ -16,13 +17,10 @@ export const fileRouter = {
     blob: { maxFileCount: 10, maxFileSize: "512MB" },
     audio: { maxFileCount: 10, maxFileSize: "32MB" },
   }).onUploadComplete(async ({ file }) => {
-    // This code RUNS ON YOUR SERVER after upload
-
-    console.log("file url", file.url);
-
-    // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-    return { url: file.url };
+    return { ...file };
   }),
 } satisfies UtFileRouter;
 
 export type FileRouter = typeof fileRouter;
+
+export const utapi = new UTApi();

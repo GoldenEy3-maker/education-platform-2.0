@@ -47,13 +47,20 @@ export const getFirstLettersUserCredentials = (
 
 const AttachmentKeys = Object.keys(AttachmentsMap);
 
+export const handleFileName = (filename: string) => {
+  const lastIndex = filename.lastIndexOf(".");
+  const name = filename.substring(0, lastIndex);
+  const ext = filename.substring(lastIndex + 1);
+
+  return [name, ext] as const;
+};
+
 export const handleAttachment = (attachment: {
   name: string;
   href: string | null;
 }): [string, { icon: React.ReactNode; color: string }] => {
-  const lastIndex = attachment.name.lastIndexOf(".");
-  const name = attachment.name.substring(0, lastIndex);
-  const ext = attachment.name.substring(lastIndex + 1);
+  const [name, ext] = handleFileName(attachment.name);
+
   const template = attachment.href
     ? AttachmentsMap.LINK
     : AttachmentKeys.includes(ext.toLocaleUpperCase())
