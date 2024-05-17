@@ -103,8 +103,9 @@ model Course {
 model CourseAttachment {
   id         String   @id @default(cuid())
   name       String
-  key        String
+  key        String?
   href       String?
+  size       Int?
   course     Course   @relation(fields: [courseId], references: [id])
   courseId   String   @map("course_id")
   uploadedAt DateTime
@@ -137,7 +138,8 @@ model TaskAttachment {
   id         String   @id @default(cuid())
   name       String
   href       String?
-  key        String
+  key        String?
+  size       Int?
   task       Task     @relation(fields: [taskId], references: [id])
   taskId     String   @map("task_id")
   uploadedAt DateTime
@@ -173,7 +175,8 @@ model AnnouncementAttachment {
   id             String       @id @default(cuid())
   name           String
   href           String?
-  key            String
+  size           Int?
+  key            String?
   announcement   Announcement @relation(fields: [announcementId], references: [id])
   announcementId String       @map("announcement_id")
   uploadedAt     DateTime

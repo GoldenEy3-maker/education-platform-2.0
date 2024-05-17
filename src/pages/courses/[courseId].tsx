@@ -263,6 +263,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: "#",
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -271,6 +272,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -279,6 +281,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -287,6 +290,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -295,6 +299,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -303,6 +308,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -311,6 +317,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -319,6 +326,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -327,6 +335,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -335,6 +344,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -343,6 +353,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -351,6 +362,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -359,6 +371,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -367,6 +380,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -375,6 +389,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -383,6 +398,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -391,6 +407,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -399,6 +416,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -407,6 +425,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -415,6 +434,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -423,6 +443,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -431,6 +452,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -439,6 +461,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -447,6 +470,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -455,6 +479,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -463,6 +488,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
     {
@@ -471,6 +497,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       href: null,
       courseId: crypto.randomUUID(),
       key: "123",
+      size: null,
       uploadedAt: new Date(),
     },
   ],
@@ -485,6 +512,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
           name: "Презентация №1.ppt",
           taskId: "123",
           key: "123",
+          size: null,
           uploadedAt: new Date(),
         },
       ],
@@ -589,6 +617,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
           href: null,
           announcementId: crypto.randomUUID(),
           key: "123",
+          size: null,
           uploadedAt: new Date(),
         },
         {
@@ -597,6 +626,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
           href: null,
           announcementId: crypto.randomUUID(),
           key: "123",
+          size: null,
           uploadedAt: new Date(),
         },
         {
@@ -605,6 +635,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
           href: null,
           announcementId: crypto.randomUUID(),
           key: "123",
+          size: null,
           uploadedAt: new Date(),
         },
       ],

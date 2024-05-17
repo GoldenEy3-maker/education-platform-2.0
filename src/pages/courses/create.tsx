@@ -4,9 +4,14 @@ import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { BiTrash } from "react-icons/bi";
+import { toast } from "sonner";
 import { z } from "zod";
+import { CircularProgress } from "~/components/circular-progress";
 import { Editor } from "~/components/editor";
-import { FileUploader } from "~/components/file-uploader";
+import {
+  type UploadAttachments,
+  FileUploader,
+} from "~/components/file-uploader";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,7 +34,7 @@ import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
-import { handleAttachment } from "~/libs/utils";
+import { formatBytes, handleAttachment } from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
 import { getServerAuthSession } from "~/server/auth";
 
@@ -37,7 +42,7 @@ const formSchema = z.object({
   fullTitle: z.string().min(1, "Обязательное поле!"),
   shortTitle: z.string().min(1, "Обязательное поле!"),
   description: z.string(),
-  files: z.array(z.custom<File>()),
+  attachments: z.array(z.custom<UploadAttachments>()),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -49,7 +54,64 @@ const CreateCoursePage: NextPageWithLayout = () => {
       fullTitle: "",
       shortTitle: "",
       description: "",
-      files: [],
+      attachments: [],
+    },
+  });
+
+  const setAttachments = (value: React.SetStateAction<UploadAttachments[]>) => {
+    form.setValue(
+      "attachments",
+      typeof value === "function"
+        ? value(form.getValues("attachments"))
+        : value,
+    );
+  };
+
+  const deleteFile = api.course.deleteAttachment.useMutation({
+    onMutate(variables) {
+      setAttachments((attachments) =>
+        attachments.map((attachment) => {
+          if (attachment.key === variables.key) {
+            return { ...attachment, isDeleting: true };
+          }
+
+          return attachment;
+        }),
+      );
+    },
+    onSuccess(data, variables) {
+      if (data.success === false) {
+        setAttachments((files) =>
+          files.map((upFile) => {
+            if (upFile.key === variables.key) {
+              return { ...upFile, isDeleting: false };
+            }
+
+            return upFile;
+          }),
+        );
+
+        toast.error("Неожиданная ошибка! Попробуй позже.");
+
+        return;
+      }
+
+      setAttachments((files) =>
+        files.filter((upFile) => upFile.key !== variables.key),
+      );
+    },
+    onError(error, variables) {
+      setAttachments((files) =>
+        files.map((upFile) => {
+          if (upFile.key === variables.key) {
+            return { ...upFile, isDeleting: false };
+          }
+
+          return upFile;
+        }),
+      );
+
+      toast.error(error.message);
     },
   });
 
@@ -141,12 +203,12 @@ const CreateCoursePage: NextPageWithLayout = () => {
                 </FormItem>
               )}
             />
-            <div className="flex gap-8">
+            <div className="flex gap-4 max-[1120px]:flex-col min-[1120px]:gap-8">
               <FormField
                 control={form.control}
-                name="files"
-                render={({ field: { value, onChange, ...field } }) => (
-                  <FormItem className="w-full">
+                name="attachments"
+                render={({ field: { value, ref, onChange, ...field } }) => (
+                  <FormItem>
                     <FormLabel
                       onClick={(event) => {
                         document
@@ -161,13 +223,8 @@ const CreateCoursePage: NextPageWithLayout = () => {
                     <FormControl>
                       <FileUploader
                         multiple
-                        onChange={(event) =>
-                          onChange(
-                            event.target.files
-                              ? Array.from(event.target.files)
-                              : [],
-                          )
-                        }
+                        attachments={value}
+                        onChange={setAttachments}
                         {...field}
                       />
                     </FormControl>
@@ -175,54 +232,97 @@ const CreateCoursePage: NextPageWithLayout = () => {
                   </FormItem>
                 )}
               />
-              {/* <div className="flex-1 space-y-2">
-                <span className="text-sm font-medium">Загружено</span>
-                {form.watch("files").length > 0 ? (
+              <div className="flex-1">
+                <span className="text-sm font-medium">Выбрано</span>
+                {form.watch("attachments").length > 0 ? (
                   <ul className="custom-scrollbar max-h-72 space-y-2 overflow-auto">
-                    {form.watch("files").map((file) => {
-                      console.log(file);
-                      const [_name, attachment] = handleAttachment({
-                        name: file.name,
+                    {form.watch("attachments").map((attachment) => {
+                      const [, template] = handleAttachment({
+                        name: attachment.originalName,
                         href: null,
                       });
 
                       return (
                         <li
-                          key={file.lastModified}
+                          key={attachment.id}
                           className="grid grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] items-center gap-x-3"
                         >
                           <span className="row-span-2 text-3xl">
-                            {attachment.icon}
+                            {template.icon}
                           </span>
-                          <p className="truncate font-medium">{file.name}</p>
-                          <span className="col-start-2 row-start-2 truncate text-sm capitalize text-muted-foreground">
-                            {dayjs(file.lastModified).format(
-                              "DD MMM, YYYY HH:ss",
-                            )}
-                          </span>
-                          <Button
-                            variant="ghost-destructive"
-                            size="icon"
-                            className="row-span-2 rounded-full"
+                          <p className="truncate font-medium">
+                            {attachment.originalName}
+                          </p>
+                          <p
+                            className="col-start-2 row-start-2 flex
+                           items-center gap-2 truncate text-sm text-muted-foreground"
                           >
-                            <BiTrash className="text-xl" />
-                          </Button>
+                            {dayjs(attachment.uploadedAt).format(
+                              "DD MMM, YYYY HH:ss",
+                            )}{" "}
+                            {attachment.file ? (
+                              <>
+                                <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
+                                {attachment.isUploaded
+                                  ? formatBytes(attachment.file.size)
+                                  : `${formatBytes(attachment.file.size * (attachment.progress / 100))} / ${formatBytes(attachment.file.size)}`}
+                              </>
+                            ) : null}
+                          </p>
+                          {attachment.isUploaded ? (
+                            <Button
+                              className="row-span-2 rounded-full"
+                              variant="ghost-destructive"
+                              size="icon"
+                              disabled={attachment.isDeleting}
+                              onClick={() => {
+                                if (!attachment.key) return;
+
+                                deleteFile.mutate({ key: attachment.key });
+                              }}
+                            >
+                              {attachment.isDeleting ? (
+                                <CircularProgress
+                                  strokeWidth={5}
+                                  className="text-xl text-primary"
+                                  variant="indeterminate"
+                                />
+                              ) : (
+                                <BiTrash className="text-xl" />
+                              )}
+                            </Button>
+                          ) : (
+                            <CircularProgress
+                              className="row-span-2 text-2xl text-primary"
+                              strokeWidth={5}
+                              value={attachment.progress}
+                            />
+                          )}
                         </li>
                       );
                     })}
                   </ul>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    Тут можно отслеживать загруженные файлы.
+                    Тут будут отображаться выбранные файлы.
                   </p>
                 )}
-              </div> */}
+              </div>
             </div>
             <footer className="flex items-center justify-end gap-2">
               <Button type="button" variant="outline">
                 Сохранить в черновик
               </Button>
-              <Button>Опубликовать</Button>
+              <Button
+                disabled={form
+                  .watch("attachments")
+                  .some(
+                    (attachment) =>
+                      attachment.isDeleting || !attachment.isUploaded,
+                  )}
+              >
+                Опубликовать
+              </Button>
             </footer>
           </form>
         </Form>
