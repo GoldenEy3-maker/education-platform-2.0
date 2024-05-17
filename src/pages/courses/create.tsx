@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import { type GetServerSideProps } from "next";
-import { useRouter } from "next/router";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
@@ -42,6 +42,7 @@ const formSchema = z.object({
   fullTitle: z.string().min(1, "Обязательное поле!"),
   shortTitle: z.string().min(1, "Обязательное поле!"),
   description: z.string(),
+  bgImage: z.string(),
   attachments: z.array(z.custom<UploadAttachments>()),
 });
 
@@ -51,6 +52,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      bgImage: "",
       fullTitle: "",
       shortTitle: "",
       description: "",
@@ -146,37 +148,64 @@ const CreateCoursePage: NextPageWithLayout = () => {
       <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="flex gap-4 max-sm:flex-col sm:items-center">
+            <div className="flex-wrap gap-5 xs:flex">
               <FormField
                 control={form.control}
-                name="fullTitle"
+                name="bgImage"
                 render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Полное название курса</FormLabel>
+                  <FormItem>
+                    <FormLabel>Фоновое изображение</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Иностранный язык в профессиональной деятельности"
-                        {...field}
-                      />
+                      <div className="relative h-56 w-full overflow-hidden rounded-md shadow-sm xs:w-80">
+                        <Image src="/bg-abstract-3.jpg" fill alt="Фон курса" />
+                      </div>
+
+                      {/* <Input
+                      placeholder="Иностранный язык в профессиональной деятельности"
+                      {...field}
+                    /> */}
                     </FormControl>
                     <FormMessage />
+                    <div className="flex items-center justify-between gap-2">
+                      <Button variant="ghost">Выбрать другое</Button>
+                      <Button variant="ghost">Загрузить свое</Button>
+                    </div>
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="shortTitle"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Сокращенное название курса</FormLabel>
-                    <FormControl>
-                      <Input placeholder="ИЯПД" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex-1 basis-72 space-y-4">
+                <FormField
+                  control={form.control}
+                  name="fullTitle"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Полное название курса</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Иностранный язык в профессиональной деятельности"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="shortTitle"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Сокращенное название курса</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ИЯПД" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
+
             <FormField
               control={form.control}
               name="description"

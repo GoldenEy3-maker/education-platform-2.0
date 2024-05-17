@@ -133,6 +133,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
     title: "Иностранный язык в профессиональной деятельности",
+    shortTitle: "ИЯПД",
     isArchived: false,
   },
   {
@@ -150,6 +151,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
     title: "Иностранный язык в профессиональной деятельности",
+    shortTitle: "ИЯПД",
     isArchived: true,
   },
   {
@@ -167,6 +169,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
     title: "Иностранный язык в профессиональной деятельности",
+    shortTitle: "ИЯПД",
     isArchived: false,
   },
   {
@@ -184,6 +187,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
     title: "Иностранный язык в профессиональной деятельности",
+    shortTitle: "ИЯПД",
     isArchived: false,
   },
   {
@@ -201,6 +205,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
     title: "Иностранный язык в профессиональной деятельности",
+    shortTitle: "ИЯПД",
     isArchived: true,
   },
   {
@@ -218,6 +223,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
     title: "Иностранный язык в профессиональной деятельности",
+    shortTitle: "ИЯПД",
     isArchived: false,
   },
   {
@@ -235,6 +241,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
     title: "Иностранный язык в профессиональной деятельности",
+    shortTitle: "ИЯПД",
     isArchived: false,
   },
   {
@@ -252,6 +259,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
     title: "Иностранный язык в профессиональной деятельности",
+    shortTitle: "ИЯПД",
     isArchived: true,
   },
 ];

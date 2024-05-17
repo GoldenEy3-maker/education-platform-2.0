@@ -32,6 +32,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   multiple,
   attachments,
   onChange,
+  disabled,
   ...props
 }) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -130,26 +131,25 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     onDrop,
     accept: fileTypes ? generateClientDropzoneAccept(fileTypes) : undefined,
     multiple: multiple,
+    disabled: disabled,
   });
 
   return (
-    <div {...getRootProps()}>
+    <div
+      {...getRootProps()}
+      className={cn(
+        "flex h-72 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-foreground/20 bg-primary/5 px-6 py-2 shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring  xs:min-w-96",
+        className,
+        {
+          "border-primary": isDragActive,
+          "cursor-not-allowed opacity-50": disabled,
+        },
+      )}
+    >
       <input {...props} {...getInputProps()} />
-      <div
-        className={cn(
-          "flex h-72 flex-col items-center justify-center rounded-lg border border-dashed border-foreground/20 bg-primary/5 px-6 py-2 shadow-sm peer-focus-visible:outline-none peer-focus-visible:ring-1 peer-focus-visible:ring-ring peer-disabled:cursor-not-allowed peer-disabled:opacity-50 xs:min-w-96",
-          className,
-          {
-            "border-primary": isDragActive,
-          },
-        )}
-      >
-        <BiCloudUpload className="text-7xl text-primary/80" />
-        <p className="text-sm text-muted-foreground">
-          Перетащите сюда файл или
-        </p>
-        <span className="text-sm text-primary">Найдите его на устройстве</span>
-      </div>
+      <BiCloudUpload className="text-7xl text-primary/80" />
+      <p className="text-sm text-muted-foreground">Перетащите сюда файл или</p>
+      <span className="text-sm text-primary">Найдите его на устройстве</span>
     </div>
   );
 };
