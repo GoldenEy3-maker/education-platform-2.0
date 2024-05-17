@@ -85,6 +85,7 @@ model Lession {
 model Course {
   id            String             @id @default(cuid())
   title         String
+  shortTitle    String?
   description   String?
   author        User               @relation("author", fields: [authorId], references: [id])
   authorId      String             @map("author_id")
