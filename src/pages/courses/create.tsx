@@ -1,11 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
-import { type GetServerSideProps } from "next";
-import Image from "next/image";
+import { type GetServerSideProps, type GetStaticProps } from "next";
+import { useSession } from "next-auth/react";
+import Image, { type StaticImageData } from "next/image";
+import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ChooseBgCourseDialogDrawer } from "~/components/choose-bg-course-dialog-drawer";
 import { CircularProgress } from "~/components/circular-progress";
 import { Editor } from "~/components/editor";
 import {
@@ -34,25 +38,54 @@ import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
-import { formatBytes, handleAttachment } from "~/libs/utils";
+import { formatBytes, getRandomInt, handleAttachment } from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
-import { getServerAuthSession } from "~/server/auth";
+
+import BgAbstract1 from "~/assets/bg-abstract-1.jpg";
+import BgAbstract10 from "~/assets/bg-abstract-10.png";
+import BgAbstract2 from "~/assets/bg-abstract-2.jpg";
+import BgAbstract3 from "~/assets/bg-abstract-3.jpg";
+import BgAbstract4 from "~/assets/bg-abstract-4.jpg";
+import BgAbstract5 from "~/assets/bg-abstract-5.jpg";
+import BgAbstract6 from "~/assets/bg-abstract-6.jpg";
+import BgAbstract7 from "~/assets/bg-abstract-7.jpg";
+import BgAbstract8 from "~/assets/bg-abstract-8.png";
+import BgAbstract9 from "~/assets/bg-abstract-9.jpg";
 
 const formSchema = z.object({
   fullTitle: z.string().min(1, "Обязательное поле!"),
   shortTitle: z.string().min(1, "Обязательное поле!"),
   description: z.string(),
-  bgImage: z.string(),
+  bgImage: z.string().or(z.custom<StaticImageData>()),
   attachments: z.array(z.custom<UploadAttachments>()),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
 
 const CreateCoursePage: NextPageWithLayout = () => {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const preloadedBgImages = useMemo(
+    () => [
+      BgAbstract1,
+      BgAbstract2,
+      BgAbstract3,
+      BgAbstract4,
+      BgAbstract5,
+      BgAbstract6,
+      BgAbstract7,
+      BgAbstract8,
+      BgAbstract9,
+      BgAbstract10,
+    ],
+    [],
+  );
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bgImage: "",
+      bgImage: preloadedBgImages[0],
       fullTitle: "",
       shortTitle: "",
       description: "",
@@ -126,6 +159,19 @@ const CreateCoursePage: NextPageWithLayout = () => {
     // });
   };
 
+  useEffect(() => {
+    if (session?.user && session?.user.role !== "Teacher") {
+      void router.push(PagePathMap.Courses);
+    }
+  }, [router, session]);
+
+  useEffect(() => {
+    form.setValue(
+      "bgImage",
+      preloadedBgImages[getRandomInt(0, preloadedBgImages.length - 1)]!,
+    );
+  }, [form, preloadedBgImages]);
+
   return (
     <main>
       <Breadcrumb className="mb-4 overflow-hidden">
@@ -157,7 +203,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
                     <FormLabel>Фоновое изображение</FormLabel>
                     <FormControl>
                       <div className="relative h-56 w-full overflow-hidden rounded-md shadow-sm xs:w-80">
-                        <Image src="/bg-abstract-3.jpg" fill alt="Фон курса" />
+                        <Image src={field.value} fill alt="Фон курса" />
                       </div>
 
                       {/* <Input
@@ -167,7 +213,11 @@ const CreateCoursePage: NextPageWithLayout = () => {
                     </FormControl>
                     <FormMessage />
                     <div className="flex items-center justify-between gap-2">
-                      <Button variant="ghost">Выбрать другое</Button>
+                      <ChooseBgCourseDialogDrawer
+                        onImageSelect={field.onChange}
+                      >
+                        <Button variant="ghost">Выбрать другое</Button>
+                      </ChooseBgCourseDialogDrawer>
                       <Button variant="ghost">Загрузить свое</Button>
                     </div>
                   </FormItem>
@@ -366,20 +416,20 @@ CreateCoursePage.getLayout = (page) => (
   </ScaffoldLayout>
 );
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerAuthSession(ctx);
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   const session = await getServerAuthSession(ctx);
 
-  if (session?.user.role !== "Teacher")
-    return {
-      redirect: {
-        permanent: false,
-        destination: PagePathMap.Courses,
-      },
-    };
+//   if (session?.user.role !== "Teacher")
+//     return {
+//       redirect: {
+//         permanent: false,
+//         destination: PagePathMap.Courses,
+//       },
+//     };
 
-  return {
-    props: {},
-  };
-};
+//   return {
+//     props: {},
+//   };
+// };
 
 export default CreateCoursePage;
