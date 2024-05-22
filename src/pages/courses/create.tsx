@@ -1,10 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
-import { type GetServerSideProps, type GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import Image, { type StaticImageData } from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
@@ -42,14 +41,12 @@ import { formatBytes, getRandomInt, handleAttachment } from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
 
 import BgAbstract1 from "~/assets/bg-abstract-1.jpg";
-import BgAbstract10 from "~/assets/bg-abstract-10.png";
 import BgAbstract2 from "~/assets/bg-abstract-2.jpg";
 import BgAbstract3 from "~/assets/bg-abstract-3.jpg";
 import BgAbstract4 from "~/assets/bg-abstract-4.jpg";
 import BgAbstract5 from "~/assets/bg-abstract-5.jpg";
 import BgAbstract6 from "~/assets/bg-abstract-6.jpg";
 import BgAbstract7 from "~/assets/bg-abstract-7.jpg";
-import BgAbstract8 from "~/assets/bg-abstract-8.png";
 import BgAbstract9 from "~/assets/bg-abstract-9.jpg";
 
 const formSchema = z.object({
@@ -61,6 +58,138 @@ const formSchema = z.object({
 });
 
 type FormSchema = z.infer<typeof formSchema>;
+
+type UploadedAttachmentsListProps = {
+  attachments: UploadAttachments[];
+  onDelete: (attachments: UploadAttachments[]) => void;
+};
+
+const UploadedAttachmentsList: React.FC<UploadedAttachmentsListProps> = ({
+  attachments,
+  onDelete,
+}) => {
+  const deleteFile = api.course.deleteAttachment.useMutation({
+    onMutate(variables) {
+      onDelete(
+        attachments.map((attachment) => {
+          if (attachment.key === variables.key) {
+            return { ...attachment, isDeleting: true };
+          }
+
+          return attachment;
+        }),
+      );
+    },
+    onSuccess(data, variables) {
+      if (data.success === false) {
+        onDelete(
+          attachments.map((attachment) => {
+            if (attachment.key === variables.key) {
+              return { ...attachment, isDeleting: false };
+            }
+
+            return attachment;
+          }),
+        );
+
+        toast.error("Неожиданная ошибка! Попробуй позже.");
+
+        return;
+      }
+
+      onDelete(
+        attachments.filter((attachment) => attachment.key !== variables.key),
+      );
+    },
+    onError(error, variables) {
+      onDelete(
+        attachments.map((attachment) => {
+          if (attachment.key === variables.key) {
+            return { ...attachment, isDeleting: false };
+          }
+
+          return attachment;
+        }),
+      );
+
+      toast.error(error.message);
+    },
+  });
+  return (
+    <div className="flex-1">
+      <span className="text-sm font-medium">Выбрано</span>
+      {attachments.length > 0 ? (
+        <ul className="custom-scrollbar max-h-72 space-y-2 overflow-auto">
+          {attachments.map((attachment) => {
+            const [, template] = handleAttachment({
+              name: attachment.originalName,
+              href: null,
+            });
+
+            return (
+              <li
+                key={attachment.id}
+                className="grid grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] items-center gap-x-3"
+              >
+                <span className="row-span-2 text-3xl">{template.icon}</span>
+                <p className="truncate font-medium">
+                  {attachment.originalName}
+                </p>
+                <p
+                  className="col-start-2 row-start-2 flex
+                           items-center gap-2 truncate text-sm text-muted-foreground"
+                >
+                  {dayjs(attachment.uploadedAt).format("DD MMM, YYYY HH:ss")}{" "}
+                  {attachment.file ? (
+                    <>
+                      <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
+                      {attachment.isUploaded
+                        ? formatBytes(attachment.file.size)
+                        : `${formatBytes(attachment.file.size * (attachment.progress / 100))} / ${formatBytes(attachment.file.size)}`}
+                    </>
+                  ) : null}
+                </p>
+                {attachment.isUploaded ? (
+                  <Button
+                    className="row-span-2 rounded-full"
+                    variant="ghost-destructive"
+                    size="icon"
+                    disabled={attachment.isDeleting}
+                    onClick={() => {
+                      if (!attachment.key) return;
+
+                      deleteFile.mutate({ key: attachment.key });
+                    }}
+                  >
+                    {attachment.isDeleting ? (
+                      <CircularProgress
+                        strokeWidth={5}
+                        className="text-xl text-primary"
+                        variant="indeterminate"
+                      />
+                    ) : (
+                      <BiTrash className="text-xl" />
+                    )}
+                  </Button>
+                ) : (
+                  <CircularProgress
+                    className="row-span-2 text-2xl text-primary"
+                    strokeWidth={5}
+                    value={attachment.progress}
+                  />
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          Тут будут отображаться выбранные файлы.
+        </p>
+      )}
+    </div>
+  );
+};
 
 const CreateCoursePage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -75,9 +204,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
       BgAbstract5,
       BgAbstract6,
       BgAbstract7,
-      BgAbstract8,
       BgAbstract9,
-      BgAbstract10,
     ],
     [],
   );
@@ -101,54 +228,6 @@ const CreateCoursePage: NextPageWithLayout = () => {
         : value,
     );
   };
-
-  const deleteFile = api.course.deleteAttachment.useMutation({
-    onMutate(variables) {
-      setAttachments((attachments) =>
-        attachments.map((attachment) => {
-          if (attachment.key === variables.key) {
-            return { ...attachment, isDeleting: true };
-          }
-
-          return attachment;
-        }),
-      );
-    },
-    onSuccess(data, variables) {
-      if (data.success === false) {
-        setAttachments((files) =>
-          files.map((upFile) => {
-            if (upFile.key === variables.key) {
-              return { ...upFile, isDeleting: false };
-            }
-
-            return upFile;
-          }),
-        );
-
-        toast.error("Неожиданная ошибка! Попробуй позже.");
-
-        return;
-      }
-
-      setAttachments((files) =>
-        files.filter((upFile) => upFile.key !== variables.key),
-      );
-    },
-    onError(error, variables) {
-      setAttachments((files) =>
-        files.map((upFile) => {
-          if (upFile.key === variables.key) {
-            return { ...upFile, isDeleting: false };
-          }
-
-          return upFile;
-        }),
-      );
-
-      toast.error(error.message);
-    },
-  });
 
   const createCourseMutation = api.course.create.useMutation();
 
@@ -194,7 +273,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
       <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="flex-wrap gap-5 xs:flex">
+            <div className="flex flex-wrap gap-5">
               <FormField
                 control={form.control}
                 name="bgImage"
@@ -203,7 +282,23 @@ const CreateCoursePage: NextPageWithLayout = () => {
                     <FormLabel>Фоновое изображение</FormLabel>
                     <FormControl>
                       <div className="relative h-56 w-full overflow-hidden rounded-md shadow-sm xs:w-80">
-                        <Image src={field.value} fill alt="Фон курса" />
+                        {typeof field.value === "string" ? (
+                          <Image
+                            src={field.value}
+                            sizes="33vw"
+                            fill
+                            alt="Фон курса"
+                          />
+                        ) : (
+                          <Image
+                            src={field.value}
+                            fill
+                            blurDataURL={field.value.blurDataURL}
+                            placeholder="blur"
+                            alt="Фон курса"
+                            sizes="33vw"
+                          />
+                        )}
                       </div>
 
                       {/* <Input
@@ -214,6 +309,12 @@ const CreateCoursePage: NextPageWithLayout = () => {
                     <FormMessage />
                     <div className="flex items-center justify-between gap-2">
                       <ChooseBgCourseDialogDrawer
+                        image={
+                          typeof form.watch("bgImage") === "string"
+                            ? undefined
+                            : (form.watch("bgImage") as StaticImageData)
+                        }
+                        preloadedImages={preloadedBgImages}
                         onImageSelect={field.onChange}
                       >
                         <Button variant="ghost">Выбрать другое</Button>
@@ -311,82 +412,10 @@ const CreateCoursePage: NextPageWithLayout = () => {
                   </FormItem>
                 )}
               />
-              <div className="flex-1">
-                <span className="text-sm font-medium">Выбрано</span>
-                {form.watch("attachments").length > 0 ? (
-                  <ul className="custom-scrollbar max-h-72 space-y-2 overflow-auto">
-                    {form.watch("attachments").map((attachment) => {
-                      const [, template] = handleAttachment({
-                        name: attachment.originalName,
-                        href: null,
-                      });
-
-                      return (
-                        <li
-                          key={attachment.id}
-                          className="grid grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] items-center gap-x-3"
-                        >
-                          <span className="row-span-2 text-3xl">
-                            {template.icon}
-                          </span>
-                          <p className="truncate font-medium">
-                            {attachment.originalName}
-                          </p>
-                          <p
-                            className="col-start-2 row-start-2 flex
-                           items-center gap-2 truncate text-sm text-muted-foreground"
-                          >
-                            {dayjs(attachment.uploadedAt).format(
-                              "DD MMM, YYYY HH:ss",
-                            )}{" "}
-                            {attachment.file ? (
-                              <>
-                                <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
-                                {attachment.isUploaded
-                                  ? formatBytes(attachment.file.size)
-                                  : `${formatBytes(attachment.file.size * (attachment.progress / 100))} / ${formatBytes(attachment.file.size)}`}
-                              </>
-                            ) : null}
-                          </p>
-                          {attachment.isUploaded ? (
-                            <Button
-                              className="row-span-2 rounded-full"
-                              variant="ghost-destructive"
-                              size="icon"
-                              disabled={attachment.isDeleting}
-                              onClick={() => {
-                                if (!attachment.key) return;
-
-                                deleteFile.mutate({ key: attachment.key });
-                              }}
-                            >
-                              {attachment.isDeleting ? (
-                                <CircularProgress
-                                  strokeWidth={5}
-                                  className="text-xl text-primary"
-                                  variant="indeterminate"
-                                />
-                              ) : (
-                                <BiTrash className="text-xl" />
-                              )}
-                            </Button>
-                          ) : (
-                            <CircularProgress
-                              className="row-span-2 text-2xl text-primary"
-                              strokeWidth={5}
-                              value={attachment.progress}
-                            />
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    Тут будут отображаться выбранные файлы.
-                  </p>
-                )}
-              </div>
+              <UploadedAttachmentsList
+                attachments={form.watch("attachments")}
+                onDelete={setAttachments}
+              />
             </div>
             <footer className="flex items-center justify-end gap-2">
               <Button type="button" variant="outline">
@@ -415,21 +444,5 @@ CreateCoursePage.getLayout = (page) => (
     <MainLayout>{page}</MainLayout>
   </ScaffoldLayout>
 );
-
-// export const getServerSideProps: GetServerSideProps = async (ctx) => {
-//   const session = await getServerAuthSession(ctx);
-
-//   if (session?.user.role !== "Teacher")
-//     return {
-//       redirect: {
-//         permanent: false,
-//         destination: PagePathMap.Courses,
-//       },
-//     };
-
-//   return {
-//     props: {},
-//   };
-// };
 
 export default CreateCoursePage;

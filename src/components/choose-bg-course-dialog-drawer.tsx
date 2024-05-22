@@ -8,66 +8,76 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./ui/drawer";
 
-import Image from "next/image";
-import BgAbstract1 from "~/assets/bg-abstract-1.jpg";
-import BgAbstract10 from "~/assets/bg-abstract-10.png";
-import BgAbstract2 from "~/assets/bg-abstract-2.jpg";
-import BgAbstract3 from "~/assets/bg-abstract-3.jpg";
-import BgAbstract4 from "~/assets/bg-abstract-4.jpg";
-import BgAbstract5 from "~/assets/bg-abstract-5.jpg";
-import BgAbstract6 from "~/assets/bg-abstract-6.jpg";
-import BgAbstract7 from "~/assets/bg-abstract-7.jpg";
-import BgAbstract8 from "~/assets/bg-abstract-8.png";
-import BgAbstract9 from "~/assets/bg-abstract-9.jpg";
+import Image, { type StaticImageData } from "next/image";
+import { BiCheck, BiCheckCircle } from "react-icons/bi";
+import { cn } from "~/libs/utils";
 
 type ChooseBgCourseDialogDrawerProps = {
-  onImageSelect: (src: string) => void;
+  image: StaticImageData | undefined;
+  onImageSelect: (image: StaticImageData) => void;
+  preloadedImages: StaticImageData[];
 } & React.PropsWithChildren;
 
 export const ChooseBgCourseDialogDrawer: React.FC<
   ChooseBgCourseDialogDrawerProps
-> = ({ children, onImageSelect }) => {
+> = ({ children, preloadedImages, image, onImageSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-
-  const preloadedBgImages = [
-    BgAbstract1,
-    BgAbstract2,
-    BgAbstract3,
-    BgAbstract4,
-    BgAbstract5,
-    BgAbstract6,
-    BgAbstract7,
-    BgAbstract8,
-    BgAbstract9,
-    BgAbstract10,
-  ];
 
   if (isDesktop) {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent>
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Выберите предустановленное изображение</DialogTitle>
             <DialogDescription>
-              Фоновое изображение можно будет понять в любой момент в настройках
-              курса.
+              Изображение можно будет понять в любой момент.
             </DialogDescription>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2">
-              {preloadedBgImages.map((imageData, index) => (
-                <div key={index} className="relative h-32">
-                  <Image
-                    src={imageData}
-                    fill
-                    alt="Предустановенное фоновое изображение"
-                  />
-                </div>
-              ))}
-            </div>
           </DialogHeader>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-2">
+            {preloadedImages.map((imageData, index) => (
+              <button
+                type="button"
+                key={index}
+                className={cn(
+                  "relative h-40 overflow-hidden rounded-md transition-all",
+                  {
+                    "scale-95": image?.src === imageData.src,
+                  },
+                )}
+                onClick={() => onImageSelect(imageData)}
+              >
+                <Image
+                  src={imageData}
+                  fill
+                  blurDataURL={imageData.blurDataURL}
+                  placeholder="blur"
+                  alt="Предустановенное фоновое изображение"
+                  sizes="33vw"
+                />
+                <span
+                  className={cn(
+                    "invisible absolute bottom-2 right-2 rounded-full bg-background opacity-0 transition-all",
+                    {
+                      "visible opacity-100": image?.src === imageData.src,
+                    },
+                  )}
+                >
+                  <BiCheck className="text-2xl text-primary" />
+                </span>
+              </button>
+            ))}
+          </div>
         </DialogContent>
       </Dialog>
     );
@@ -76,7 +86,48 @@ export const ChooseBgCourseDialogDrawer: React.FC<
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent>123</DrawerContent>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Выберите предустановленное изображение</DrawerTitle>
+          <DrawerDescription>
+            Изображение можно будет понять в любой момент.
+          </DrawerDescription>
+        </DrawerHeader>
+        <div className="grid max-h-[calc(100vh-10rem)] grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-2 overflow-auto">
+          {preloadedImages.map((imageData, index) => (
+            <button
+              type="button"
+              key={index}
+              className={cn(
+                "relative h-40 overflow-hidden rounded-md transition-all",
+                {
+                  "scale-95": image?.src === imageData.src,
+                },
+              )}
+              onClick={() => onImageSelect(imageData)}
+            >
+              <Image
+                src={imageData}
+                fill
+                blurDataURL={imageData.blurDataURL}
+                placeholder="blur"
+                alt="Предустановенное фоновое изображение"
+                sizes="33vw"
+              />
+              <span
+                className={cn(
+                  "invisible absolute bottom-2 right-2 rounded-full bg-background opacity-0 transition-all",
+                  {
+                    "visible opacity-100": image?.src === imageData.src,
+                  },
+                )}
+              >
+                <BiCheck className="text-2xl text-primary" />
+              </span>
+            </button>
+          ))}
+        </div>
+      </DrawerContent>
     </Drawer>
   );
 };
