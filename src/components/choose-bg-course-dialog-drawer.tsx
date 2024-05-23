@@ -18,7 +18,7 @@ import {
 } from "./ui/drawer";
 
 import Image, { type StaticImageData } from "next/image";
-import { BiCheck, BiCheckCircle } from "react-icons/bi";
+import { BiCheck } from "react-icons/bi";
 import { cn } from "~/libs/utils";
 
 type ChooseBgCourseDialogDrawerProps = {
@@ -93,13 +93,13 @@ export const ChooseBgCourseDialogDrawer: React.FC<
             Изображение можно будет понять в любой момент.
           </DrawerDescription>
         </DrawerHeader>
-        <div className="grid max-h-[calc(100vh-10rem)] grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-2 overflow-auto">
+        <div className="grid max-h-[calc(100vh-15rem)] gap-2 overflow-auto xs:grid-cols-[repeat(auto-fill,minmax(12rem,1fr))]">
           {preloadedImages.map((imageData, index) => (
             <button
               type="button"
               key={index}
               className={cn(
-                "relative h-40 overflow-hidden rounded-md transition-all",
+                "relative h-56 overflow-hidden rounded-md transition-all xs:h-40",
                 {
                   "scale-95": image?.src === imageData.src,
                 },

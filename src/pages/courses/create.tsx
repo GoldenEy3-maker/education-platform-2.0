@@ -1,12 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import BgAbstract1 from "public/bg-abstract-1.jpg";
+import BgAbstract2 from "public/bg-abstract-2.jpg";
+import BgAbstract3 from "public/bg-abstract-3.jpg";
+import BgAbstract4 from "public/bg-abstract-4.jpg";
+import BgAbstract5 from "public/bg-abstract-5.jpg";
+import BgAbstract6 from "public/bg-abstract-6.jpg";
+import BgAbstract7 from "public/bg-abstract-7.jpg";
+import BgAbstract9 from "public/bg-abstract-9.jpg";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
+import { type ClientUploadedFileData } from "uploadthing/types";
 import { z } from "zod";
 import { ChooseBgCourseDialogDrawer } from "~/components/choose-bg-course-dialog-drawer";
 import { CircularProgress } from "~/components/circular-progress";
@@ -33,27 +42,26 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { useFileReader } from "~/hooks/fileReader";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
-import { formatBytes, getRandomInt, handleAttachment } from "~/libs/utils";
+import {
+  cn,
+  formatBytes,
+  getRandomInt,
+  handleAttachment,
+  handleFileName,
+  uploadFiles,
+} from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
-
-import BgAbstract1 from "~/assets/bg-abstract-1.jpg";
-import BgAbstract2 from "~/assets/bg-abstract-2.jpg";
-import BgAbstract3 from "~/assets/bg-abstract-3.jpg";
-import BgAbstract4 from "~/assets/bg-abstract-4.jpg";
-import BgAbstract5 from "~/assets/bg-abstract-5.jpg";
-import BgAbstract6 from "~/assets/bg-abstract-6.jpg";
-import BgAbstract7 from "~/assets/bg-abstract-7.jpg";
-import BgAbstract9 from "~/assets/bg-abstract-9.jpg";
 
 const formSchema = z.object({
   fullTitle: z.string().min(1, "Обязательное поле!"),
   shortTitle: z.string().min(1, "Обязательное поле!"),
   description: z.string(),
-  bgImage: z.string().or(z.custom<StaticImageData>()),
+  bgImage: z.array(z.custom<File>()),
   attachments: z.array(z.custom<UploadAttachments>()),
 });
 
@@ -63,6 +71,17 @@ type UploadedAttachmentsListProps = {
   attachments: UploadAttachments[];
   onDelete: (attachments: UploadAttachments[]) => void;
 };
+
+const preloadedBgImages = [
+  BgAbstract1,
+  BgAbstract2,
+  BgAbstract3,
+  BgAbstract4,
+  BgAbstract5,
+  BgAbstract6,
+  BgAbstract7,
+  BgAbstract9,
+];
 
 const UploadedAttachmentsList: React.FC<UploadedAttachmentsListProps> = ({
   attachments,
@@ -193,26 +212,21 @@ const UploadedAttachmentsList: React.FC<UploadedAttachmentsListProps> = ({
 
 const CreateCoursePage: NextPageWithLayout = () => {
   const router = useRouter();
+  const fileReader = useFileReader();
   const { data: session } = useSession();
 
-  const preloadedBgImages = useMemo(
-    () => [
-      BgAbstract1,
-      BgAbstract2,
-      BgAbstract3,
-      BgAbstract4,
-      BgAbstract5,
-      BgAbstract6,
-      BgAbstract7,
-      BgAbstract9,
-    ],
-    [],
+  const [preloadedImage, setPreloadedImage] = useState(
+    () => preloadedBgImages[getRandomInt(0, preloadedBgImages.length - 1)]!,
   );
+
+  const [bgImageLoadingProgress, setBgImageLoadingProgress] = useState<
+    false | number
+  >(10);
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bgImage: preloadedBgImages[0],
+      bgImage: [],
       fullTitle: "",
       shortTitle: "",
       description: "",
@@ -231,11 +245,100 @@ const CreateCoursePage: NextPageWithLayout = () => {
 
   const createCourseMutation = api.course.create.useMutation();
 
-  const onSubmit = (values: FormSchema) => {
-    console.log(values);
-    // createCourseMutation.mutate({
-    //   title: createCourseStore.fullTitle,
-    // });
+  const onSubmit = async (values: FormSchema) => {
+    let uploadedBgImage: ClientUploadedFileData<{
+      name: string;
+      size: number;
+      type: string;
+      customId: string | null;
+      key: string;
+      url: string;
+    }>[] = [];
+
+    // let uploadedAttachments: ClientUploadedFileData<{
+    //   name: string;
+    //   size: number;
+    //   type: string;
+    //   customId: string | null;
+    //   key: string;
+    //   url: string;
+    // }>[] = [];
+
+    if (values.bgImage.length > 0) {
+      uploadedBgImage = await uploadFiles("uploader", {
+        files: values.bgImage.map((file) => {
+          const [_, ext] = handleFileName(file.name);
+
+          return new File([file], crypto.randomUUID() + "." + ext, {
+            type: file.type,
+          });
+        }),
+        onUploadProgress: (opts) => {
+          setBgImageLoadingProgress(opts.progress);
+        },
+        // skipPolling: true,
+      });
+    }
+
+    // if (values.attachments.length > 0) {
+    //   uploadedAttachments = await uploadFiles("uploader", {
+    //     files: renamedAcceptedFiles.map(({ file }) => file),
+    //     onUploadProgress(opts) {
+    //       onChange((attachments) =>
+    //         attachments.map((attachment) => {
+    //           if (opts.file === attachment.file?.name) {
+    //             return {
+    //               ...attachment,
+    //               progress: opts.progress,
+    //               isUploaded: opts.progress < 100 ? false : true,
+    //             };
+    //           }
+
+    //           return attachment;
+    //         }),
+    //       );
+    //     },
+    //     skipPolling: true,
+    //   }).then((uploadedFiles) => {
+    //     onChange((attachments) =>
+    //       attachments.map((attachment) => {
+    //         const upFile = uploadedFiles.find(
+    //           (upFile) => upFile.name === attachment.file?.name,
+    //         );
+    //         if (upFile) {
+    //           return { ...attachment, key: upFile.key };
+    //         }
+
+    //         return attachment;
+    //       }),
+    //     );
+    //   });
+    //   // .catch((error) => {
+    //   //   if (error instanceof UploadThingError) {
+    //   //     const message = error.message.toUpperCase().trim();
+
+    //   //     toast.error(
+    //   //       message.includes("filetype".toUpperCase().trim())
+    //   //         ? "Недопустимый формат файлов!"
+    //   //         : message.includes("filesize".toUpperCase().trim())
+    //   //           ? "Первышен максимальный размер файлов!"
+    //   //           : message.includes("countmismatch".toUpperCase().trim())
+    //   //             ? "Превышено количество файлов!"
+    //   //             : "Возникла неожиданная ошибка!",
+    //   //     );
+    //   //   } else {
+    //   //     toast.error("Возникла неожиданная ошибка!");
+    //   //   }
+
+    //   //   onChange((attachments) =>
+    //   //     attachments.filter((attachment) => attachment.key !== undefined),
+    //   //   );
+    //   // });
+    // }
+
+    createCourseMutation.mutate({
+      title: values.fullTitle,
+    });
   };
 
   useEffect(() => {
@@ -243,13 +346,6 @@ const CreateCoursePage: NextPageWithLayout = () => {
       void router.push(PagePathMap.Courses);
     }
   }, [router, session]);
-
-  useEffect(() => {
-    form.setValue(
-      "bgImage",
-      preloadedBgImages[getRandomInt(0, preloadedBgImages.length - 1)]!,
-    );
-  }, [form, preloadedBgImages]);
 
   return (
     <main>
@@ -282,44 +378,85 @@ const CreateCoursePage: NextPageWithLayout = () => {
                     <FormLabel>Фоновое изображение</FormLabel>
                     <FormControl>
                       <div className="relative h-56 w-full overflow-hidden rounded-md shadow-sm xs:w-80">
-                        {typeof field.value === "string" ? (
-                          <Image
-                            src={field.value}
-                            sizes="33vw"
-                            fill
-                            alt="Фон курса"
-                          />
-                        ) : (
-                          <Image
-                            src={field.value}
-                            fill
-                            blurDataURL={field.value.blurDataURL}
-                            placeholder="blur"
-                            alt="Фон курса"
-                            sizes="33vw"
-                          />
-                        )}
+                        <Image
+                          src={
+                            fileReader.previews
+                              ? fileReader.previews[0]!.base64
+                              : preloadedImage
+                          }
+                          fill
+                          blurDataURL={preloadedImage.blurDataURL}
+                          placeholder="blur"
+                          alt="Фон курса"
+                          sizes="33vw"
+                        />
+                        <div
+                          className={cn(
+                            "invisible absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-all",
+                            {
+                              "visible opacity-100":
+                                bgImageLoadingProgress !== false,
+                            },
+                          )}
+                        >
+                          <span className="rounded-full bg-background/70 p-1">
+                            <CircularProgress
+                              variant="determinate"
+                              value={
+                                bgImageLoadingProgress !== false
+                                  ? bgImageLoadingProgress
+                                  : undefined
+                              }
+                              strokeWidth={5}
+                              className="text-5xl text-primary"
+                            />
+                          </span>
+                        </div>
                       </div>
-
-                      {/* <Input
-                      placeholder="Иностранный язык в профессиональной деятельности"
-                      {...field}
-                    /> */}
                     </FormControl>
                     <FormMessage />
                     <div className="flex items-center justify-between gap-2">
                       <ChooseBgCourseDialogDrawer
                         image={
-                          typeof form.watch("bgImage") === "string"
-                            ? undefined
-                            : (form.watch("bgImage") as StaticImageData)
+                          form.watch("bgImage").length === 0
+                            ? preloadedImage
+                            : undefined
                         }
                         preloadedImages={preloadedBgImages}
-                        onImageSelect={field.onChange}
+                        onImageSelect={(image) => {
+                          setPreloadedImage(image);
+                          form.setValue("bgImage", []);
+                          fileReader.reset();
+                        }}
                       >
                         <Button variant="ghost">Выбрать другое</Button>
                       </ChooseBgCourseDialogDrawer>
-                      <Button variant="ghost">Загрузить свое</Button>
+                      <Button
+                        variant="ghost"
+                        asChild
+                        className="cursor-pointer"
+                      >
+                        <label htmlFor="bg-course">
+                          <span>Загрузить свое</span>
+                          <input
+                            hidden
+                            type="file"
+                            id="bg-course"
+                            onChange={async (event) => {
+                              if (
+                                event.target.files &&
+                                event.target.files.length > 0
+                              ) {
+                                await fileReader.readFiles(event.target.files);
+                                form.setValue("bgImage", [
+                                  event.target.files[0]!,
+                                ]);
+                              }
+                            }}
+                            accept="image/*"
+                          />
+                        </label>
+                      </Button>
                     </div>
                   </FormItem>
                 )}

@@ -64,61 +64,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     );
 
     onChange((attachments) => [...attachments, ...mappedAcceptedFiles]);
-
-    uploadFiles("uploader", {
-      files: renamedAcceptedFiles.map(({ file }) => file),
-      onUploadProgress(opts) {
-        onChange((attachments) =>
-          attachments.map((attachment) => {
-            if (opts.file === attachment.file?.name) {
-              return {
-                ...attachment,
-                progress: opts.progress,
-                isUploaded: opts.progress < 100 ? false : true,
-              };
-            }
-
-            return attachment;
-          }),
-        );
-      },
-      skipPolling: true,
-    })
-      .then((uploadedFiles) => {
-        onChange((attachments) =>
-          attachments.map((attachment) => {
-            const upFile = uploadedFiles.find(
-              (upFile) => upFile.name === attachment.file?.name,
-            );
-            if (upFile) {
-              return { ...attachment, key: upFile.key };
-            }
-
-            return attachment;
-          }),
-        );
-      })
-      .catch((error) => {
-        if (error instanceof UploadThingError) {
-          const message = error.message.toUpperCase().trim();
-
-          toast.error(
-            message.includes("filetype".toUpperCase().trim())
-              ? "Недопустимый формат файлов!"
-              : message.includes("filesize".toUpperCase().trim())
-                ? "Первышен максимальный размер файлов!"
-                : message.includes("countmismatch".toUpperCase().trim())
-                  ? "Превышено количество файлов!"
-                  : "Возникла неожиданная ошибка!",
-          );
-        } else {
-          toast.error("Возникла неожиданная ошибка!");
-        }
-
-        onChange((attachments) =>
-          attachments.filter((attachment) => attachment.key !== undefined),
-        );
-      });
   }, []);
 
   const { permittedFileInfo } = useUploadThing("uploader");
