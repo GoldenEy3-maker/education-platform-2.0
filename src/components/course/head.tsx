@@ -10,7 +10,11 @@ import {
   BiStar,
   BiUserPlus,
 } from "react-icons/bi";
-import { StatusCourseContentMap, type StatusCourseMap } from "~/libs/enums";
+import {
+  PagePathMap,
+  StatusCourseContentMap,
+  type StatusCourseMap,
+} from "~/libs/enums";
 import { cn, getFirstLettersUserCredentials } from "~/libs/utils";
 import { Avatar } from "../avatar";
 import { InviteDialogDrawer } from "../invite-dialog-drawer";
@@ -26,6 +30,7 @@ import { Progress } from "../ui/progress";
 import { Skeleton } from "../ui/skeleton";
 
 type CourseHeadProps = {
+  id: string;
   title: string;
   author: {
     id: string;
@@ -65,6 +70,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
   author,
   subscribers,
   title,
+  id,
 }) => {
   const status: StatusCourseMap = isArchived ? "Archived" : "Published";
 
@@ -245,7 +251,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
                 variant="default"
                 className="gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full max-[570px]:hidden"
               >
-                <Link href="#">
+                <Link href={PagePathMap.EditCourse + id}>
                   <BiSliderAlt className="shrink-0 text-xl" />
                   <span className="max-lg:hidden">Редактировать</span>
                   <span className="sr-only">Редактировать</span>
@@ -322,9 +328,15 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
               if (isAuthor)
                 return (
                   <DropdownMenuItem asChild>
-                    <Button variant="ghost" className="w-full justify-start">
-                      <BiSliderAlt className="mr-2 text-xl" />
-                      <span>Редактировать</span>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link href={PagePathMap.EditCourse + id}>
+                        <BiSliderAlt className="mr-2 text-xl" />
+                        <span>Редактировать</span>
+                      </Link>
                     </Button>
                   </DropdownMenuItem>
                 );

@@ -663,7 +663,7 @@ const CoursePage: NextPageWithLayout = () => {
     HideTest: false,
   });
 
-  const isAuthor = false;
+  const isAuthor = true;
   const isSubStudent = false;
   const isTeacher = false;
   const isLoading = false;
@@ -686,6 +686,7 @@ const CoursePage: NextPageWithLayout = () => {
         </BreadcrumbList>
       </Breadcrumb>
       <CourseHead
+        id={MOK_DATA.id}
         isAuthor={isAuthor}
         isSubStudent={isSubStudent}
         isTeacher={isTeacher}
