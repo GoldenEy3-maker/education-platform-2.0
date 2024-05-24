@@ -261,7 +261,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "1",
       name: "Ссылка №1",
-      href: "#",
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -270,7 +270,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "5",
       name: "Таблица №1.csv",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -279,7 +279,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "9",
       name: "Таблица №2.xls",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -288,7 +288,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "2",
       name: "Документ №1.pdf",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -297,7 +297,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "3",
       name: "Документ №2.doc",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -306,7 +306,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "4",
       name: "Документ №3.docx",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -315,7 +315,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "6",
       name: "Архив №1.rar",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -324,7 +324,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "11",
       name: "Изображение №3.jpg",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -333,7 +333,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "7",
       name: "Изображение №1.png",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -342,7 +342,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "10",
       name: "Изображение №2.svg",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -351,7 +351,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "12",
       name: "Изображение №4.webp",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -360,7 +360,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "13",
       name: "Изображение №5.xcf",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -369,7 +369,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "14",
       name: "Изображение №6.gif",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -378,7 +378,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "8",
       name: "Файл №1.bat",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -387,7 +387,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "15",
       name: "Файл №2.ai",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -396,7 +396,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "16",
       name: "Файл №3.xml",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -405,7 +405,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "17",
       name: "Файл №4.html",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -414,7 +414,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "18",
       name: "Файл №5.css",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -423,7 +423,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "19",
       name: "Файл №6.js",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -432,7 +432,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "20",
       name: "Файл №7.jsx",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -441,7 +441,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "21",
       name: "Файл №8.ts",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -450,7 +450,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "22",
       name: "Файл №9.tsx",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -459,7 +459,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "24",
       name: "Файл №10.db",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -468,7 +468,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "25",
       name: "Файл №11.sql",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -477,7 +477,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "26",
       name: "Файл №12.php",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -486,7 +486,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "27",
       name: "Файл №13.txt",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -495,7 +495,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     {
       id: "23",
       name: "Презентация №1.ppt",
-      href: null,
+      url: "",
       courseId: crypto.randomUUID(),
       key: "123",
       size: null,
@@ -508,7 +508,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
       courseId: crypto.randomUUID(),
       attachments: [
         {
-          href: null,
+          url: "",
           id: "123",
           name: "Презентация №1.ppt",
           taskId: "123",
@@ -615,7 +615,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         {
           id: crypto.randomUUID(),
           name: "Таблица №1.csv",
-          href: null,
+          url: "",
           announcementId: crypto.randomUUID(),
           key: "123",
           size: null,
@@ -624,7 +624,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         {
           id: crypto.randomUUID(),
           name: "Документ №1.pdf",
-          href: null,
+          url: "",
           announcementId: crypto.randomUUID(),
           key: "123",
           size: null,
@@ -633,7 +633,7 @@ const MOK_DATA: Prisma.CourseGetPayload<{
         {
           id: crypto.randomUUID(),
           name: "Документ №2.doc",
-          href: null,
+          url: "",
           announcementId: crypto.randomUUID(),
           key: "123",
           size: null,

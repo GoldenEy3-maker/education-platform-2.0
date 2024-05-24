@@ -43,7 +43,7 @@ export const CourseOverviewTab: React.FC<CourseOverviewTabProps> = ({
                       <Link href="#">
                         <span className="text-2xl">{template.icon}</span>
                         <p className="grow truncate group-hover:underline">
-                          {attachment.href ? attachment.name : name}
+                          {!attachment.key ? attachment.name : name}
                         </p>
                         <span className="text-sm text-muted-foreground">
                           ({dayjs().format("DD MMMM YYYY")})

@@ -11,10 +11,9 @@ export type UploadAttachments = {
   progress: number;
   key?: string;
   size?: number;
-  href?: string;
+  url?: string;
   originalName: string;
-  isUploaded: boolean;
-  isDeleting: boolean;
+  isUploading: boolean;
   uploadedAt: Date;
   file?: File;
 };
@@ -52,10 +51,10 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         return {
           originalName: originalName,
           id: crypto.randomUUID(),
-          isUploaded: false,
-          isDeleting: false,
+          isUploading: false,
           progress: 0,
-          href: undefined,
+          key: undefined,
+          url: undefined,
           size: file.size,
           uploadedAt: new Date(),
           file: new File([file], file.name, { type: file.type }),

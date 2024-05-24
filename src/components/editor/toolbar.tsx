@@ -32,7 +32,11 @@ import {
 } from "../ui/select";
 import { isBlockActive, isMarkActive, toggleBlock, toggleMark } from "./utils";
 
-export const Toolbar: React.FC = () => {
+type ToolbarProps = {
+  disabled?: boolean;
+};
+
+export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
   const editor = useSlate();
 
   return (
@@ -44,6 +48,7 @@ export const Toolbar: React.FC = () => {
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disabled}
         className={cn("shrink-0", {
           "bg-muted": isMarkActive(editor, "bold"),
         })}
@@ -55,6 +60,7 @@ export const Toolbar: React.FC = () => {
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disabled}
         className={cn("shrink-0", {
           "bg-muted": isMarkActive(editor, "italic"),
         })}
@@ -66,6 +72,7 @@ export const Toolbar: React.FC = () => {
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disabled}
         className={cn("mr-2 shrink-0", {
           "bg-muted": isMarkActive(editor, "underline"),
         })}
@@ -77,6 +84,7 @@ export const Toolbar: React.FC = () => {
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disabled}
         className={cn("shrink-0", {
           "bg-muted": isBlockActive(editor, "left", "align"),
         })}
@@ -88,6 +96,7 @@ export const Toolbar: React.FC = () => {
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disabled}
         className={cn("shrink-0", {
           "bg-muted": isBlockActive(editor, "right", "align"),
         })}
@@ -99,6 +108,7 @@ export const Toolbar: React.FC = () => {
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disabled}
         className={cn("shrink-0", {
           "bg-muted": isBlockActive(editor, "center", "align"),
         })}
@@ -110,6 +120,7 @@ export const Toolbar: React.FC = () => {
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disabled}
         className={cn("mr-2 shrink-0", {
           "bg-muted": isBlockActive(editor, "justify", "align"),
         })}
@@ -121,6 +132,7 @@ export const Toolbar: React.FC = () => {
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disabled}
         className={cn("shrink-0", {
           "bg-muted": isBlockActive(editor, "bulleted-list"),
         })}
@@ -132,6 +144,7 @@ export const Toolbar: React.FC = () => {
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disabled}
         className={cn("mr-2 shrink-0", {
           "bg-muted": isBlockActive(editor, "numbered-list"),
         })}

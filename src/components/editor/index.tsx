@@ -117,6 +117,7 @@ const Element: React.FC<RenderElementProps> = ({
 export const Editor: React.FC<EditableProps> = ({
   className,
   onBlur,
+  onFocus,
   ...props
 }) => {
   const [editor] = useState(() => withHistory(withReact(createEditor())));
@@ -136,7 +137,10 @@ export const Editor: React.FC<EditableProps> = ({
           renderLeaf={(props) => <Leaf {...props} />}
           renderElement={(props) => <Element {...props} />}
           className={cn(
-            "hidden-scrollbar mb-[1px] !min-h-28 w-full overflow-auto rounded-t-md bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground placeholder-shown:truncate focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+            "hidden-scrollbar mb-[1px] !min-h-28 w-full overflow-auto rounded-t-md bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground placeholder-shown:truncate focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ",
+            {
+              "pointer-events-none opacity-50": props.disabled,
+            },
             className,
           )}
           onDOMBeforeInput={(event: InputEvent) => {
@@ -155,9 +159,10 @@ export const Editor: React.FC<EditableProps> = ({
           onBlur={(event) => {
             if (onBlur) onBlur(event);
           }}
+          readOnly={props.disabled}
           {...props}
         />
-        <Toolbar />
+        <Toolbar disabled={props.disabled} />
       </div>
       {/* <HoveringToolbar /> */}
     </Slate>

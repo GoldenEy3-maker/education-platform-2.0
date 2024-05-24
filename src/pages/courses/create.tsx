@@ -13,7 +13,7 @@ import BgAbstract7 from "public/bg-abstract-7.jpg";
 import BgAbstract9 from "public/bg-abstract-9.jpg";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { BiTrash } from "react-icons/bi";
+import { BiCheck, BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
 import { type ClientUploadedFileData } from "uploadthing/types";
 import { z } from "zod";
@@ -67,7 +67,7 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-type UploadedAttachmentsListProps = {
+type AttachmentsListProps = {
   attachments: UploadAttachments[];
   onDelete: (attachments: UploadAttachments[]) => void;
 };
@@ -83,57 +83,10 @@ const preloadedBgImages = [
   BgAbstract9,
 ];
 
-const UploadedAttachmentsList: React.FC<UploadedAttachmentsListProps> = ({
+const AttachmentsList: React.FC<AttachmentsListProps> = ({
   attachments,
   onDelete,
 }) => {
-  const deleteFile = api.course.deleteAttachment.useMutation({
-    onMutate(variables) {
-      onDelete(
-        attachments.map((attachment) => {
-          if (attachment.key === variables.key) {
-            return { ...attachment, isDeleting: true };
-          }
-
-          return attachment;
-        }),
-      );
-    },
-    onSuccess(data, variables) {
-      if (data.success === false) {
-        onDelete(
-          attachments.map((attachment) => {
-            if (attachment.key === variables.key) {
-              return { ...attachment, isDeleting: false };
-            }
-
-            return attachment;
-          }),
-        );
-
-        toast.error("Неожиданная ошибка! Попробуй позже.");
-
-        return;
-      }
-
-      onDelete(
-        attachments.filter((attachment) => attachment.key !== variables.key),
-      );
-    },
-    onError(error, variables) {
-      onDelete(
-        attachments.map((attachment) => {
-          if (attachment.key === variables.key) {
-            return { ...attachment, isDeleting: false };
-          }
-
-          return attachment;
-        }),
-      );
-
-      toast.error(error.message);
-    },
-  });
   return (
     <div className="flex-1">
       <span className="text-sm font-medium">Выбрано</span>
@@ -142,7 +95,7 @@ const UploadedAttachmentsList: React.FC<UploadedAttachmentsListProps> = ({
           {attachments.map((attachment) => {
             const [, template] = handleAttachment({
               name: attachment.originalName,
-              href: null,
+              key: attachment.key ?? null,
             });
 
             return (
@@ -162,40 +115,45 @@ const UploadedAttachmentsList: React.FC<UploadedAttachmentsListProps> = ({
                   {attachment.file ? (
                     <>
                       <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
-                      {attachment.isUploaded
-                        ? formatBytes(attachment.file.size)
-                        : `${formatBytes(attachment.file.size * (attachment.progress / 100))} / ${formatBytes(attachment.file.size)}`}
+                      {attachment.isUploading
+                        ? `${formatBytes(attachment.file.size * (attachment.progress / 100))} / ${formatBytes(attachment.file.size)}`
+                        : formatBytes(attachment.file.size)}
                     </>
                   ) : null}
                 </p>
-                {attachment.isUploaded ? (
+                {attachment.isUploading ? (
+                  <CircularProgress
+                    variant={
+                      attachment.progress === 100
+                        ? "indeterminate"
+                        : "determinate"
+                    }
+                    className="row-span-2 text-2xl text-primary"
+                    strokeWidth={5}
+                    value={
+                      attachment.progress < 100
+                        ? attachment.progress
+                        : undefined
+                    }
+                  />
+                ) : attachment.key ? (
+                  <span className="row-span-2 flex items-center justify-center">
+                    <BiCheck className="text-2xl text-primary" />
+                  </span>
+                ) : (
                   <Button
+                    type="button"
                     className="row-span-2 rounded-full"
                     variant="ghost-destructive"
                     size="icon"
-                    disabled={attachment.isDeleting}
                     onClick={() => {
-                      if (!attachment.key) return;
-
-                      deleteFile.mutate({ key: attachment.key });
+                      onDelete(
+                        attachments.filter((a) => a.id !== attachment.id),
+                      );
                     }}
                   >
-                    {attachment.isDeleting ? (
-                      <CircularProgress
-                        strokeWidth={5}
-                        className="text-xl text-primary"
-                        variant="indeterminate"
-                      />
-                    ) : (
-                      <BiTrash className="text-xl" />
-                    )}
+                    <BiTrash className="text-xl" />
                   </Button>
-                ) : (
-                  <CircularProgress
-                    className="row-span-2 text-2xl text-primary"
-                    strokeWidth={5}
-                    value={attachment.progress}
-                  />
                 )}
               </li>
             );
@@ -220,8 +178,8 @@ const CreateCoursePage: NextPageWithLayout = () => {
   );
 
   const [bgImageLoadingProgress, setBgImageLoadingProgress] = useState<
-    false | number
-  >(10);
+    boolean | number
+  >(false);
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -243,7 +201,16 @@ const CreateCoursePage: NextPageWithLayout = () => {
     );
   };
 
-  const createCourseMutation = api.course.create.useMutation();
+  const createCourseMutation = api.course.create.useMutation({
+    // onSettled: () => {
+    // setBgImageLoadingProgress(false);
+    // },
+  });
+
+  const isLoading =
+    typeof bgImageLoadingProgress === "number" ||
+    createCourseMutation.isLoading ||
+    form.watch("attachments").some((attachment) => attachment.isUploading);
 
   const onSubmit = async (values: FormSchema) => {
     let uploadedBgImage: ClientUploadedFileData<{
@@ -255,17 +222,8 @@ const CreateCoursePage: NextPageWithLayout = () => {
       url: string;
     }>[] = [];
 
-    // let uploadedAttachments: ClientUploadedFileData<{
-    //   name: string;
-    //   size: number;
-    //   type: string;
-    //   customId: string | null;
-    //   key: string;
-    //   url: string;
-    // }>[] = [];
-
     if (values.bgImage.length > 0) {
-      uploadedBgImage = await uploadFiles("uploader", {
+      uploadFiles("uploader", {
         files: values.bgImage.map((file) => {
           const [_, ext] = handleFileName(file.name);
 
@@ -273,68 +231,75 @@ const CreateCoursePage: NextPageWithLayout = () => {
             type: file.type,
           });
         }),
+        onUploadBegin: () => {
+          setBgImageLoadingProgress(0);
+        },
         onUploadProgress: (opts) => {
           setBgImageLoadingProgress(opts.progress);
         },
-        // skipPolling: true,
-      });
+      })
+        .then((uploadedData) => {
+          uploadedBgImage = uploadedData;
+          setBgImageLoadingProgress(true);
+        })
+        .catch((error) => console.error(error));
     }
 
-    // if (values.attachments.length > 0) {
-    //   uploadedAttachments = await uploadFiles("uploader", {
-    //     files: renamedAcceptedFiles.map(({ file }) => file),
-    //     onUploadProgress(opts) {
-    //       onChange((attachments) =>
-    //         attachments.map((attachment) => {
-    //           if (opts.file === attachment.file?.name) {
-    //             return {
-    //               ...attachment,
-    //               progress: opts.progress,
-    //               isUploaded: opts.progress < 100 ? false : true,
-    //             };
-    //           }
+    if (values.attachments.filter((attachment) => attachment.file).length > 0) {
+      uploadFiles("uploader", {
+        files: values.attachments.map(({ file }) => file!),
+        onUploadBegin(opts) {
+          console.log("begin");
+          setAttachments((attachments) =>
+            attachments.map((attachment) => {
+              if (opts.file === attachment.file?.name) {
+                return {
+                  ...attachment,
+                  isUploading: true,
+                };
+              }
 
-    //           return attachment;
-    //         }),
-    //       );
-    //     },
-    //     skipPolling: true,
-    //   }).then((uploadedFiles) => {
-    //     onChange((attachments) =>
-    //       attachments.map((attachment) => {
-    //         const upFile = uploadedFiles.find(
-    //           (upFile) => upFile.name === attachment.file?.name,
-    //         );
-    //         if (upFile) {
-    //           return { ...attachment, key: upFile.key };
-    //         }
+              return attachment;
+            }),
+          );
+        },
+        onUploadProgress(opts) {
+          console.log("progress");
+          setAttachments((attachments) =>
+            attachments.map((attachment) => {
+              if (opts.file === attachment.file?.name) {
+                return {
+                  ...attachment,
+                  progress: opts.progress,
+                };
+              }
 
-    //         return attachment;
-    //       }),
-    //     );
-    //   });
-    //   // .catch((error) => {
-    //   //   if (error instanceof UploadThingError) {
-    //   //     const message = error.message.toUpperCase().trim();
+              return attachment;
+            }),
+          );
+        },
+      })
+        .then((uploadedAttachments) => {
+          setAttachments((attachments) =>
+            attachments.map((attachment) => {
+              const upFile = uploadedAttachments.find(
+                (upFile) => upFile.name === attachment.file?.name,
+              );
+              if (upFile) {
+                return {
+                  ...attachment,
+                  key: upFile.key,
+                  url: upFile.url,
+                  isUploading: false,
+                };
+              }
 
-    //   //     toast.error(
-    //   //       message.includes("filetype".toUpperCase().trim())
-    //   //         ? "Недопустимый формат файлов!"
-    //   //         : message.includes("filesize".toUpperCase().trim())
-    //   //           ? "Первышен максимальный размер файлов!"
-    //   //           : message.includes("countmismatch".toUpperCase().trim())
-    //   //             ? "Превышено количество файлов!"
-    //   //             : "Возникла неожиданная ошибка!",
-    //   //     );
-    //   //   } else {
-    //   //     toast.error("Возникла неожиданная ошибка!");
-    //   //   }
-
-    //   //   onChange((attachments) =>
-    //   //     attachments.filter((attachment) => attachment.key !== undefined),
-    //   //   );
-    //   // });
-    // }
+              return attachment;
+            }),
+          );
+        })
+        .catch((error) => console.error(error));
+    }
 
     createCourseMutation.mutate({
       title: values.fullTitle,
@@ -400,16 +365,25 @@ const CreateCoursePage: NextPageWithLayout = () => {
                           )}
                         >
                           <span className="rounded-full bg-background/70 p-1">
-                            <CircularProgress
-                              variant="determinate"
-                              value={
-                                bgImageLoadingProgress !== false
-                                  ? bgImageLoadingProgress
-                                  : undefined
-                              }
-                              strokeWidth={5}
-                              className="text-5xl text-primary"
-                            />
+                            {bgImageLoadingProgress !== true ? (
+                              <CircularProgress
+                                variant={
+                                  bgImageLoadingProgress === 100
+                                    ? "indeterminate"
+                                    : "determinate"
+                                }
+                                value={
+                                  typeof bgImageLoadingProgress === "number" &&
+                                  bgImageLoadingProgress !== 100
+                                    ? bgImageLoadingProgress
+                                    : undefined
+                                }
+                                strokeWidth={5}
+                                className="text-5xl text-primary"
+                              />
+                            ) : (
+                              <BiCheck className="text-5xl text-primary" />
+                            )}
                           </span>
                         </div>
                       </div>
@@ -429,19 +403,27 @@ const CreateCoursePage: NextPageWithLayout = () => {
                           fileReader.reset();
                         }}
                       >
-                        <Button variant="ghost">Выбрать другое</Button>
+                        <Button variant="ghost" disabled={isLoading}>
+                          Выбрать другое
+                        </Button>
                       </ChooseBgCourseDialogDrawer>
                       <Button
                         variant="ghost"
                         asChild
                         className="cursor-pointer"
                       >
-                        <label htmlFor="bg-course">
+                        <label
+                          htmlFor="bg-course"
+                          className={cn({
+                            "pointer-events-none opacity-50": isLoading,
+                          })}
+                        >
                           <span>Загрузить свое</span>
                           <input
                             hidden
                             type="file"
                             id="bg-course"
+                            disabled={isLoading}
                             onChange={async (event) => {
                               if (
                                 event.target.files &&
@@ -465,6 +447,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
                 <FormField
                   control={form.control}
                   name="fullTitle"
+                  disabled={isLoading}
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>Полное название курса</FormLabel>
@@ -481,6 +464,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
                 <FormField
                   control={form.control}
                   name="shortTitle"
+                  disabled={isLoading}
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>Сокращенное название курса</FormLabel>
@@ -493,10 +477,10 @@ const CreateCoursePage: NextPageWithLayout = () => {
                 />
               </div>
             </div>
-
             <FormField
               control={form.control}
               name="description"
+              disabled={isLoading}
               render={({ field: { ref, ...field } }) => (
                 <FormItem className="w-full">
                   <FormLabel
@@ -542,6 +526,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
                         multiple
                         attachments={value}
                         onChange={setAttachments}
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
@@ -549,25 +534,16 @@ const CreateCoursePage: NextPageWithLayout = () => {
                   </FormItem>
                 )}
               />
-              <UploadedAttachmentsList
+              <AttachmentsList
                 attachments={form.watch("attachments")}
                 onDelete={setAttachments}
               />
             </div>
             <footer className="flex items-center justify-end gap-2">
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={isLoading}>
                 Сохранить в черновик
               </Button>
-              <Button
-                disabled={form
-                  .watch("attachments")
-                  .some(
-                    (attachment) =>
-                      attachment.isDeleting || !attachment.isUploaded,
-                  )}
-              >
-                Опубликовать
-              </Button>
+              <Button disabled={isLoading}>Опубликовать</Button>
             </footer>
           </form>
         </Form>
