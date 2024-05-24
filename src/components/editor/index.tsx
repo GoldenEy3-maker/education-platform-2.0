@@ -114,16 +114,25 @@ const Element: React.FC<RenderElementProps> = ({
   }
 };
 
-export const Editor: React.FC<EditableProps> = ({
-  className,
-  onBlur,
-  onFocus,
-  ...props
-}) => {
+export const Editor: React.FC<
+  Omit<EditableProps, "onChange"> & { onChange?: (value: Descendant[]) => void }
+> = ({ className, onBlur, onChange, ...props }) => {
   const [editor] = useState(() => withHistory(withReact(createEditor())));
 
   return (
-    <Slate editor={editor} initialValue={initialValue}>
+    <Slate
+      editor={editor}
+      initialValue={initialValue}
+      onChange={(value) => {
+        const isAstChange = editor.operations.some(
+          (op) => "set_selection" !== op.type,
+        );
+
+        if (isAstChange) {
+          if (onChange) onChange(value);
+        }
+      }}
+    >
       <div className="relative rounded-md border border-input shadow-sm">
         <Editable
           renderPlaceholder={({ children, attributes }) => (

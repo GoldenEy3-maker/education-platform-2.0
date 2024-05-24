@@ -363,12 +363,12 @@ const EditCoursePage: NextPageWithLayout = () => {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Новый курс</BreadcrumbPage>
+            <BreadcrumbPage>Редактирование курса</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
       <header className="mb-4">
-        <h1 className="text-2xl font-medium">Редактирование курса</h1>
+        <h1 className="text-2xl font-medium">Редактировать курс</h1>
         <p className="text-muted-foreground">
           Заполните все поля информации вашего курса.
         </p>

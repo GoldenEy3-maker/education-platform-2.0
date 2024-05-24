@@ -201,11 +201,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
     );
   };
 
-  const createCourseMutation = api.course.create.useMutation({
-    // onSettled: () => {
-    // setBgImageLoadingProgress(false);
-    // },
-  });
+  const createCourseMutation = api.course.create.useMutation({});
 
   const isLoading =
     typeof bgImageLoadingProgress === "number" ||
@@ -481,7 +477,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
               control={form.control}
               name="description"
               disabled={isLoading}
-              render={({ field: { ref, ...field } }) => (
+              render={({ field: { ref, onChange, ...field } }) => (
                 <FormItem className="w-full">
                   <FormLabel
                     onClick={(event) => {
@@ -497,6 +493,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
                   <FormControl>
                     <Editor
                       placeholder="Расскажите студентам, какая цель курса, что будет изучаться и в каком формате..."
+                      onChange={(value) => onChange(JSON.stringify(value))}
                       {...field}
                     />
                   </FormControl>
