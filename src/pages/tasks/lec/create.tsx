@@ -81,6 +81,13 @@ const CreateLecPage: NextPageWithLayout = () => {
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      courseId: "",
+      section: "",
+      title: "",
+      content: "",
+      attachments: [],
+    },
   });
 
   const onSubmit = (values: FormSchema) => {
@@ -107,9 +114,7 @@ const CreateLecPage: NextPageWithLayout = () => {
         </BreadcrumbList>
       </Breadcrumb>
       <header className="mb-4">
-        <h1 className="text-2xl font-medium">
-          Размещение лекционного материала
-        </h1>
+        <h1 className="text-2xl font-medium">Разместить лекционный материал</h1>
         <p className="text-muted-foreground">
           Разместите лекционный материал в максимально доступном формате.
         </p>
