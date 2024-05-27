@@ -17,14 +17,14 @@ import {
   DrawerTrigger,
 } from "./ui/drawer";
 
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import { BiCheck } from "react-icons/bi";
 import { cn } from "~/libs/utils";
 
 type ChooseBgCourseDialogDrawerProps = {
-  image: StaticImageData | undefined;
-  onImageSelect: (image: StaticImageData) => void;
-  preloadedImages: StaticImageData[];
+  image?: string;
+  onImageSelect: (image: string) => void;
+  preloadedImages: string[];
 } & React.PropsWithChildren;
 
 export const ChooseBgCourseDialogDrawer: React.FC<
@@ -52,7 +52,7 @@ export const ChooseBgCourseDialogDrawer: React.FC<
                 className={cn(
                   "relative h-40 overflow-hidden rounded-md transition-all",
                   {
-                    "scale-95": image?.src === imageData.src,
+                    "scale-95": image === imageData,
                   },
                 )}
                 onClick={() => onImageSelect(imageData)}
@@ -60,8 +60,6 @@ export const ChooseBgCourseDialogDrawer: React.FC<
                 <Image
                   src={imageData}
                   fill
-                  blurDataURL={imageData.blurDataURL}
-                  placeholder="blur"
                   alt="Предустановенное фоновое изображение"
                   sizes="33vw"
                 />
@@ -69,7 +67,7 @@ export const ChooseBgCourseDialogDrawer: React.FC<
                   className={cn(
                     "invisible absolute bottom-2 right-2 rounded-full bg-background opacity-0 transition-all",
                     {
-                      "visible opacity-100": image?.src === imageData.src,
+                      "visible opacity-100": image === imageData,
                     },
                   )}
                 >
@@ -101,7 +99,7 @@ export const ChooseBgCourseDialogDrawer: React.FC<
               className={cn(
                 "relative h-56 overflow-hidden rounded-md transition-all xs:h-40",
                 {
-                  "scale-95": image?.src === imageData.src,
+                  "scale-95": image === imageData,
                 },
               )}
               onClick={() => onImageSelect(imageData)}
@@ -109,8 +107,6 @@ export const ChooseBgCourseDialogDrawer: React.FC<
               <Image
                 src={imageData}
                 fill
-                blurDataURL={imageData.blurDataURL}
-                placeholder="blur"
                 alt="Предустановенное фоновое изображение"
                 sizes="33vw"
               />
@@ -118,7 +114,7 @@ export const ChooseBgCourseDialogDrawer: React.FC<
                 className={cn(
                   "invisible absolute bottom-2 right-2 rounded-full bg-background opacity-0 transition-all",
                   {
-                    "visible opacity-100": image?.src === imageData.src,
+                    "visible opacity-100": image === imageData,
                   },
                 )}
               >
