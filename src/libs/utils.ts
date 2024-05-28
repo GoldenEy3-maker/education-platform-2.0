@@ -57,15 +57,15 @@ export const handleFileName = (filename: string) => {
 
 export const handleAttachment = (attachment: {
   name: string;
-  key: string | null;
+  isLink: boolean;
 }): [string, { icon: React.ReactNode; color: string }] => {
+  if (attachment.isLink) return [attachment.name, AttachmentsMap.LINK];
+
   const [name, ext] = handleFileName(attachment.name);
 
-  const template = !attachment.key
-    ? AttachmentsMap.LINK
-    : AttachmentKeys.includes(ext.toLocaleUpperCase())
-      ? AttachmentsMap[ext.toUpperCase() as AttachmentExtensionsMap]
-      : AttachmentsMap.UNKNOWN;
+  const template = AttachmentKeys.includes(ext.toUpperCase())
+    ? AttachmentsMap[ext.toUpperCase() as AttachmentExtensionsMap]
+    : AttachmentsMap.UNKNOWN;
 
   return [name, template];
 };

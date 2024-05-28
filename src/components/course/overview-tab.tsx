@@ -31,7 +31,10 @@ export const CourseOverviewTab: React.FC<CourseOverviewTabProps> = ({
             {attachments.length > 0 ? (
               <div className="flex flex-col gap-2">
                 {attachments.map((attachment) => {
-                  const [name, template] = handleAttachment(attachment);
+                  const [name, template] = handleAttachment({
+                    name: attachment.name,
+                    isLink: !attachment.key,
+                  });
 
                   return (
                     <Button

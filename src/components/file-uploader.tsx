@@ -1,10 +1,8 @@
 import { useDropzone } from "@uploadthing/react";
 import { useCallback } from "react";
 import { BiCloudUpload } from "react-icons/bi";
-import { toast } from "sonner";
 import { generateClientDropzoneAccept } from "uploadthing/client";
-import { UploadThingError } from "uploadthing/server";
-import { cn, handleFileName, uploadFiles, useUploadThing } from "~/libs/utils";
+import { cn, handleFileName, useUploadThing } from "~/libs/utils";
 
 export type UploadAttachments = {
   id: string;
@@ -22,14 +20,12 @@ type FileUploaderProps = Omit<
   React.ComponentProps<"input">,
   "type" | "onChange"
 > & {
-  attachments: UploadAttachments[];
   onChange: (value: React.SetStateAction<UploadAttachments[]>) => void;
 };
 
 export const FileUploader: React.FC<FileUploaderProps> = ({
   className,
   multiple,
-  attachments,
   onChange,
   disabled,
   ...props

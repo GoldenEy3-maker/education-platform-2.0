@@ -175,7 +175,11 @@ export const CourseAnnouncementsTab: React.FC<CourseAnnouncementsTabProps> = ({
                     announcement.attachments.length > 0 ? (
                       <div className="mt-4 flex flex-wrap items-center gap-2">
                         {announcement.attachments.map((attachment) => {
-                          const [name, template] = handleAttachment(attachment);
+                          const [name, template] = handleAttachment({
+                            name: attachment.name,
+                            isLink: !attachment.key,
+                          });
+
                           return (
                             <Button
                               key={attachment.id}

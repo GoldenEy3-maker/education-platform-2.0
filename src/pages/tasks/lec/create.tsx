@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BiCheck, BiExpandVertical } from "react-icons/bi";
 import { z } from "zod";
+import { AttachmentsUploader } from "~/components/attachments-uploader";
 import { AutoComplete } from "~/components/autocomplete";
 import { Editor } from "~/components/editor";
 import { type UploadAttachments } from "~/components/file-uploader";
@@ -89,6 +90,15 @@ const CreateLecPage: NextPageWithLayout = () => {
       attachments: [],
     },
   });
+
+  const setAttachments = (value: React.SetStateAction<UploadAttachments[]>) => {
+    form.setValue(
+      "attachments",
+      typeof value === "function"
+        ? value(form.getValues("attachments"))
+        : value,
+    );
+  };
 
   const onSubmit = (values: FormSchema) => {
     console.log(values);
@@ -219,6 +229,19 @@ const CreateLecPage: NextPageWithLayout = () => {
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="attachments"
+              render={({ field: { value, ref, onChange, ...field } }) => (
+                <AttachmentsUploader
+                  attachments={value}
+                  onChange={setAttachments}
+                  // isLoading={isLoading}
+                  multiple
+                  {...field}
+                />
+              )}
+            />
             <FormField
               control={form.control}
               name="content"

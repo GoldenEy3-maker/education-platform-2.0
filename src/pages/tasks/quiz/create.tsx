@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -15,12 +14,9 @@ import {
 } from "react-icons/bi";
 import { TbMist } from "react-icons/tb";
 import { z } from "zod";
+import { AttachmentsUploader } from "~/components/attachments-uploader";
 import { AutoComplete } from "~/components/autocomplete";
-import { CircularProgress } from "~/components/circular-progress";
-import {
-  FileUploader,
-  type UploadAttachments,
-} from "~/components/file-uploader";
+import { type UploadAttachments } from "~/components/file-uploader";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,7 +26,6 @@ import {
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
 import { Button } from "~/components/ui/button";
-import { Checkbox } from "~/components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -67,7 +62,7 @@ import { Switch } from "~/components/ui/switch";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { PagePathMap } from "~/libs/enums";
-import { cn, formatBytes, handleAttachment } from "~/libs/utils";
+import { cn } from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
 
 const createdCourses = [
@@ -107,96 +102,6 @@ const formSchema = z.object({
 });
 
 type FormSchema = z.infer<typeof formSchema>;
-
-type AttachmentsListProps = {
-  attachments: UploadAttachments[];
-  onDelete: (attachments: UploadAttachments[]) => void;
-};
-
-const AttachmentsList: React.FC<AttachmentsListProps> = ({
-  attachments,
-  onDelete,
-}) => {
-  return (
-    <div className="flex-1">
-      <span className="text-sm font-medium">Выбрано</span>
-      {attachments.length > 0 ? (
-        <ul className="custom-scrollbar max-h-72 space-y-2 overflow-auto">
-          {attachments.map((attachment) => {
-            const [, template] = handleAttachment({
-              name: attachment.originalName,
-              key: attachment.key ?? null,
-            });
-
-            return (
-              <li
-                key={attachment.id}
-                className="grid grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] items-center gap-x-3"
-              >
-                <span className="row-span-2 text-3xl">{template.icon}</span>
-                <p className="truncate font-medium">
-                  {attachment.originalName}
-                </p>
-                <p
-                  className="col-start-2 row-start-2 flex
-                           items-center gap-2 truncate text-sm text-muted-foreground"
-                >
-                  {dayjs(attachment.uploadedAt).format("DD MMM, YYYY HH:ss")}{" "}
-                  {attachment.file ? (
-                    <>
-                      <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
-                      {attachment.isUploading
-                        ? `${formatBytes(attachment.file.size * (attachment.progress / 100))} / ${formatBytes(attachment.file.size)}`
-                        : formatBytes(attachment.file.size)}
-                    </>
-                  ) : null}
-                </p>
-                {attachment.isUploading ? (
-                  <CircularProgress
-                    variant={
-                      attachment.progress === 100
-                        ? "indeterminate"
-                        : "determinate"
-                    }
-                    className="row-span-2 text-2xl text-primary"
-                    strokeWidth={5}
-                    value={
-                      attachment.progress < 100
-                        ? attachment.progress
-                        : undefined
-                    }
-                  />
-                ) : attachment.key ? (
-                  <span className="row-span-2 flex items-center justify-center">
-                    <BiCheck className="text-2xl text-primary" />
-                  </span>
-                ) : (
-                  <Button
-                    type="button"
-                    className="row-span-2 rounded-full"
-                    variant="ghost-destructive"
-                    size="icon"
-                    onClick={() => {
-                      onDelete(
-                        attachments.filter((a) => a.id !== attachment.id),
-                      );
-                    }}
-                  >
-                    <BiTrash className="text-xl" />
-                  </Button>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <p className="text-sm text-muted-foreground">
-          Тут будут отображаться выбранные файлы.
-        </p>
-      )}
-    </div>
-  );
-};
 
 const CreateQuizPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -351,41 +256,19 @@ const CreateQuizPage: NextPageWithLayout = () => {
                 )}
               />
             </div>
-            <div className="flex gap-4 max-[1120px]:flex-col min-[1120px]:gap-8">
-              <FormField
-                control={form.control}
-                name="attachments"
-                render={({ field: { value, ref, onChange, ...field } }) => (
-                  <FormItem>
-                    <FormLabel
-                      onClick={(event) => {
-                        document
-                          .getElementById(
-                            event.currentTarget.getAttribute("for") ?? "",
-                          )
-                          ?.focus();
-                      }}
-                    >
-                      Дополнительные материалы
-                    </FormLabel>
-                    <FormControl>
-                      <FileUploader
-                        multiple
-                        attachments={value}
-                        onChange={setAttachments}
-                        // disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <AttachmentsList
-                attachments={form.watch("attachments")}
-                onDelete={setAttachments}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="attachments"
+              render={({ field: { value, ref, onChange, ...field } }) => (
+                <AttachmentsUploader
+                  attachments={value}
+                  onChange={setAttachments}
+                  // isLoading={isLoading}
+                  multiple
+                  {...field}
+                />
+              )}
+            />
             <fieldset className="rounded-lg border-2 border-input p-4">
               <legend>Вопрос №1</legend>
               <Input
