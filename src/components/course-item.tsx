@@ -14,11 +14,12 @@ import { Avatar } from "./avatar";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Skeleton } from "./ui/skeleton";
+import Image from "next/image";
 
 type CourseItemProps = {
   id: string;
   title: string;
-  image?: string;
+  image: string;
   status?: StatusCourseMap;
   progress?: number;
   isFavorited?: boolean;
@@ -44,8 +45,12 @@ export const CourseItem: React.FC<CourseItemProps> = ({
 }) => {
   return (
     <div className={cn("flex flex-col", className)} {...props}>
-      <Link href={PagePathMap.Course + id}>
-        <Skeleton className="mb-3 h-48 w-full rounded-lg" />
+      <Link
+        href={PagePathMap.Course + id}
+        className="relative mb-3 h-56 w-full  overflow-hidden rounded-lg "
+      >
+        <Skeleton className="absolute inset-0" />
+        <Image src={image} alt="Фоновое изображение" className="z-10" fill />
       </Link>
       {status ? (
         <div className="mb-1 flex items-center justify-between gap-2">

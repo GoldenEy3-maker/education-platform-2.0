@@ -83,6 +83,7 @@ const ProfilePage: NextPageWithLayout = () => {
           <div className="grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-4">
             <CourseItem
               id="123"
+              image="/bg-abstract-1.jpg"
               title="Иностранный язык в профессиональной деятельности"
               author={{
                 fathername: "Михайловна",
@@ -94,6 +95,7 @@ const ProfilePage: NextPageWithLayout = () => {
             />
             <CourseItem
               id="123"
+              image="/bg-abstract-1.jpg"
               title="Иностранный язык в профессиональной деятельности"
               author={{
                 fathername: "Михайловна",
@@ -105,6 +107,7 @@ const ProfilePage: NextPageWithLayout = () => {
             />
             <CourseItem
               id="123"
+              image="/bg-abstract-1.jpg"
               title="Иностранный язык в профессиональной деятельности"
               author={{
                 fathername: "Михайловна",
@@ -116,6 +119,7 @@ const ProfilePage: NextPageWithLayout = () => {
             />
             <CourseItem
               id="123"
+              image="/bg-abstract-1.jpg"
               title="Иностранный язык в профессиональной деятельности"
               author={{
                 fathername: "Михайловна",

@@ -132,8 +132,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     updatedAt: new Date(),
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    title: "Иностранный язык в профессиональной деятельности",
+    fullTitle: "Иностранный язык в профессиональной деятельности",
     shortTitle: "ИЯПД",
+    image: "/bg-abstract-1.jpg",
     isArchived: false,
   },
   {
@@ -150,8 +151,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     updatedAt: new Date(),
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    title: "Иностранный язык в профессиональной деятельности",
+    fullTitle: "Иностранный язык в профессиональной деятельности",
     shortTitle: "ИЯПД",
+    image: "/bg-abstract-2.jpg",
     isArchived: true,
   },
   {
@@ -168,8 +170,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     updatedAt: new Date(),
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    title: "Иностранный язык в профессиональной деятельности",
+    fullTitle: "Иностранный язык в профессиональной деятельности",
     shortTitle: "ИЯПД",
+    image: "/bg-abstract-3.jpg",
     isArchived: false,
   },
   {
@@ -186,8 +189,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     updatedAt: new Date(),
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    title: "Иностранный язык в профессиональной деятельности",
+    fullTitle: "Иностранный язык в профессиональной деятельности",
     shortTitle: "ИЯПД",
+    image: "/bg-abstract-4.jpg",
     isArchived: false,
   },
   {
@@ -204,8 +208,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     updatedAt: new Date(),
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    title: "Иностранный язык в профессиональной деятельности",
+    fullTitle: "Иностранный язык в профессиональной деятельности",
     shortTitle: "ИЯПД",
+    image: "/bg-abstract-5.jpg",
     isArchived: true,
   },
   {
@@ -222,8 +227,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     updatedAt: new Date(),
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    title: "Иностранный язык в профессиональной деятельности",
+    fullTitle: "Иностранный язык в профессиональной деятельности",
     shortTitle: "ИЯПД",
+    image: "/bg-abstract-6.jpg",
     isArchived: false,
   },
   {
@@ -240,8 +246,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     updatedAt: new Date(),
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    title: "Иностранный язык в профессиональной деятельности",
+    fullTitle: "Иностранный язык в профессиональной деятельности",
     shortTitle: "ИЯПД",
+    image: "/bg-abstract-7.jpg",
     isArchived: false,
   },
   {
@@ -258,8 +265,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
     updatedAt: new Date(),
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    title: "Иностранный язык в профессиональной деятельности",
+    fullTitle: "Иностранный язык в профессиональной деятельности",
     shortTitle: "ИЯПД",
+    image: "https://utfs.io/f/6ad55f4a-836d-45f5-9b43-5795d63f0ff4-2b2mwe.png",
     isArchived: true,
   },
 ];
@@ -545,7 +553,8 @@ const CoursesPage: NextPageWithLayout = () => {
                   <CourseItem
                     key={course.id}
                     id={course.id}
-                    title={course.title}
+                    image={course.image}
+                    title={course.fullTitle}
                     status={course.isArchived ? "Archived" : "Published"}
                     isFavorited={MOK_FAVORITES.some(
                       (favCourse) => favCourse.id === course.id,

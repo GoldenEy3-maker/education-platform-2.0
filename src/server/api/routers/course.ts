@@ -27,9 +27,46 @@ export const courseRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(z.object({ title: z.string() }))
+    .input(
+      z.object({
+        fullTitle: z.string(),
+        shortTitle: z.string().optional(),
+        image: z.string(),
+        description: z.string().optional(),
+        attachments: z.array(
+          z.object({
+            originalName: z.string(),
+            key: z.string().optional(),
+            url: z.string(),
+            size: z.number().optional(),
+            uploadedAt: z.date(),
+          }),
+        ),
+      }),
+    )
     .mutation(async (opts) => {
-      return opts.input;
+      const newCourse = await opts.ctx.db.course.create({
+        data: {
+          fullTitle: opts.input.fullTitle,
+          shortTitle: opts.input.shortTitle,
+          image: opts.input.image,
+          authorId: opts.ctx.session.user.id,
+          description: opts.input.description,
+          attachments: {
+            createMany: {
+              data: opts.input.attachments.map((attachment) => ({
+                name: attachment.originalName,
+                url: attachment.url,
+                size: attachment.size,
+                uploadedAt: attachment.uploadedAt,
+                key: attachment.key,
+              })),
+            },
+          },
+        },
+      });
+
+      return newCourse;
     }),
 
   deleteAttachment: protectedProcedure

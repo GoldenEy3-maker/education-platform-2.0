@@ -144,8 +144,9 @@ const MOK_DATA: Prisma.CourseGetPayload<{
   description:
     "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam, quisquam? Accusamus dicta eum nesciunt ut, cumque corporis nulla explicabo reiciendis quisquam, pariatur odio id unde sapiente repudiandae. Nihil, hic dicta. Aliquid illo dignissimos quod odio. Omnis repellendus saepe cupiditate aliquam ratione, nemo vel repellat sapiente illum fuga labore cum suscipit iusto, reiciendis voluptas totam beatae repudiandae, reprehenderit et quod porro! Expedita blanditiis ea dolor itaque, hic reiciendis optio mollitia obcaecati recusandae neque vero soluta. Odit consequuntur soluta, sed voluptatibus ipsa itaque enim quas qui blanditiis modi, accusantium quod temporibus ullam.",
   isArchived: false,
-  title: "Иностранный язык в профессиональной деятельности",
+  fullTitle: "Иностранный язык в профессиональной деятельности",
   shortTitle: "ИЯПД",
+  image: "/bg-abstract-1.jpg",
   updatedAt: new Date(),
   subscribers: [
     {
@@ -678,7 +679,7 @@ const CoursePage: NextPageWithLayout = () => {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             {!isLoading ? (
-              <BreadcrumbPage>{MOK_DATA.title}</BreadcrumbPage>
+              <BreadcrumbPage>{MOK_DATA.fullTitle}</BreadcrumbPage>
             ) : (
               <Skeleton className="h-5 w-52 rounded-full sm:w-72" />
             )}
@@ -694,7 +695,7 @@ const CoursePage: NextPageWithLayout = () => {
         author={MOK_DATA.author}
         isArchived={MOK_DATA.isArchived}
         subscribers={MOK_DATA.subscribers}
-        title={MOK_DATA.title}
+        title={MOK_DATA.fullTitle}
       />
       <Tabs
         value={tabs}

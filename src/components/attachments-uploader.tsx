@@ -1,18 +1,21 @@
-import { formatBytes, handleAttachment } from "~/libs/utils";
+import { cn, formatBytes, handleAttachment } from "~/libs/utils";
 import { FileUploader, type UploadAttachments } from "./file-uploader";
 import { Label } from "./ui/label";
 import dayjs from "dayjs";
 import { CircularProgress } from "./circular-progress";
 import { BiCheck, BiTrash } from "react-icons/bi";
 import { Button } from "./ui/button";
+import { useId } from "react";
 
 type AttachmentsUploaderProps = {
   multiple?: boolean;
   attachments: UploadAttachments[];
   onChange: (value: React.SetStateAction<UploadAttachments[]>) => void;
   isLoading?: boolean;
+  isError?: boolean;
   name?: string;
   onBlur?: React.FocusEventHandler;
+  errorMessage?: React.ReactNode;
 };
 
 export const AttachmentsUploader: React.FC<AttachmentsUploaderProps> = ({
@@ -20,20 +23,28 @@ export const AttachmentsUploader: React.FC<AttachmentsUploaderProps> = ({
   multiple,
   name,
   isLoading,
+  isError,
+  errorMessage,
   onChange,
   onBlur,
 }) => {
+  const id = useId();
+
   return (
     <div className="flex gap-4 max-[1120px]:flex-col min-[1120px]:gap-8">
-      <div className="space-y-2">
-        <Label htmlFor="">Дополнительные материалы</Label>
+      <div className="max-w-96 space-y-2">
+        <Label htmlFor={id} className={cn({ "text-destructive": isError })}>
+          Дополнительные материалы
+        </Label>
         <FileUploader
           multiple={multiple}
           onChange={onChange}
           disabled={isLoading}
           onBlur={onBlur}
           name={name}
+          id={id}
         />
+        {errorMessage}
       </div>
       <div className="flex-1 space-y-2">
         <span className="text-sm font-medium">Выбрано</span>
@@ -93,6 +104,7 @@ export const AttachmentsUploader: React.FC<AttachmentsUploaderProps> = ({
                       className="row-span-2 rounded-full"
                       variant="ghost-destructive"
                       size="icon"
+                      disabled={isLoading}
                       onClick={() => {
                         onChange(
                           attachments.filter((a) => a.id !== attachment.id),

@@ -3,6 +3,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { UploadThingError } from "uploadthing/server";
 import { type ClientUploadedFileData } from "uploadthing/types";
 import { z } from "zod";
 import { AttachmentsUploader } from "~/components/attachments-uploader";
@@ -36,9 +38,11 @@ import { type NextPageWithLayout } from "~/pages/_app";
 
 const formSchema = z.object({
   fullTitle: z.string().min(1, "Обязательное поле!"),
-  shortTitle: z.string().min(1, "Обязательное поле!"),
+  shortTitle: z.string(),
   description: z.string(),
-  bgImage: z.array(z.custom<File>()),
+  bgImage: z
+    .array(z.custom<File>())
+    .max(1, "Для фонового изображения доступен только один файл!"),
   attachments: z.array(z.custom<UploadAttachments>()),
 });
 
@@ -87,7 +91,17 @@ const CreateCoursePage: NextPageWithLayout = () => {
     );
   };
 
-  const createCourseMutation = api.course.create.useMutation({});
+  const createCourseMutation = api.course.create.useMutation({
+    onSuccess: (course) => {
+      toast.success(
+        "Ваш новый курс успешно опубликова! Сейчас вас перенаправит к нему.",
+      );
+      void router.push(PagePathMap.Course + course.id);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const isLoading =
     typeof bgImageLoadingProgress === "number" ||
@@ -104,85 +118,124 @@ const CreateCoursePage: NextPageWithLayout = () => {
       url: string;
     }>[] = [];
 
-    if (values.bgImage.length > 0) {
-      uploadFiles("uploader", {
-        files: values.bgImage.map((file) => {
-          const [_, ext] = handleFileName(file.name);
+    // let uploadedAttachments: ClientUploadedFileData<{
+    //   name: string;
+    //   size: number;
+    //   type: string;
+    //   customId: string | null;
+    //   key: string;
+    //   url: string;
+    // }>[] = [];
 
-          return new File([file], crypto.randomUUID() + "." + ext, {
-            type: file.type,
+    if (values.bgImage.length > 0) {
+      try {
+        uploadedBgImage = await uploadFiles("image", {
+          files: values.bgImage.map((file) => {
+            const [_, ext] = handleFileName(file.name);
+
+            return new File([file], crypto.randomUUID() + "." + ext, {
+              type: file.type,
+            });
+          }),
+          onUploadBegin: () => {
+            setBgImageLoadingProgress(0);
+          },
+          onUploadProgress: (opts) => {
+            setBgImageLoadingProgress(opts.progress);
+          },
+        });
+
+        setBgImageLoadingProgress(true);
+      } catch (error) {
+        if (error instanceof UploadThingError) {
+          form.setError("bgImage", { message: error.message });
+        } else {
+          form.setError("bgImage", {
+            message:
+              "Возникла неожиданная ошибка во время загрузки изображения! Повторите попытку позже.",
           });
-        }),
-        onUploadBegin: () => {
-          setBgImageLoadingProgress(0);
-        },
-        onUploadProgress: (opts) => {
-          setBgImageLoadingProgress(opts.progress);
-        },
-      })
-        .then((uploadedData) => {
-          uploadedBgImage = uploadedData;
-          setBgImageLoadingProgress(true);
-        })
-        .catch((error) => console.error(error));
+        }
+
+        setBgImageLoadingProgress(false);
+      }
     }
 
     if (values.attachments.filter((attachment) => attachment.file).length > 0) {
-      uploadFiles("uploader", {
-        files: values.attachments.map(({ file }) => file!),
-        onUploadBegin(opts) {
-          setAttachments((attachments) =>
-            attachments.map((attachment) => {
-              if (opts.file === attachment.file?.name) {
-                return {
-                  ...attachment,
-                  isUploading: true,
-                };
-              }
+      try {
+        const uploadedAttachments = await uploadFiles("uploader", {
+          files: values.attachments.map(({ file }) => file!),
+          onUploadBegin(opts) {
+            setAttachments((attachments) =>
+              attachments.map((attachment) => {
+                if (opts.file === attachment.file?.name) {
+                  return {
+                    ...attachment,
+                    isUploading: true,
+                  };
+                }
 
-              return attachment;
-            }),
-          );
-        },
-        onUploadProgress(opts) {
-          setAttachments((attachments) =>
-            attachments.map((attachment) => {
-              if (opts.file === attachment.file?.name) {
-                return {
-                  ...attachment,
-                  progress: opts.progress,
-                };
-              }
+                return attachment;
+              }),
+            );
+          },
+          onUploadProgress(opts) {
+            setAttachments((attachments) =>
+              attachments.map((attachment) => {
+                if (opts.file === attachment.file?.name) {
+                  return {
+                    ...attachment,
+                    progress: opts.progress,
+                  };
+                }
 
-              return attachment;
-            }),
-          );
-        },
-      })
-        .then((uploadedAttachments) => {
-          setAttachments((attachments) =>
-            attachments.map((attachment) => {
-              const upFile = uploadedAttachments.find(
-                (upFile) => upFile.name === attachment.file?.name,
-              );
-              if (upFile) {
-                return {
-                  ...attachment,
-                  key: upFile.key,
-                  url: upFile.url,
-                  isUploading: false,
-                };
-              }
+                return attachment;
+              }),
+            );
+          },
+        });
 
-              return attachment;
-            }),
-          );
-        })
-        .catch((error) => console.error(error));
+        setAttachments((attachments) =>
+          attachments.map((attachment) => {
+            const upFile = uploadedAttachments.find(
+              (upFile) => upFile.name === attachment.file?.name,
+            );
+            if (upFile) {
+              return {
+                ...attachment,
+                key: upFile.key,
+                url: upFile.url,
+                isUploading: false,
+              };
+            }
+
+            return attachment;
+          }),
+        );
+      } catch (error) {
+        if (error instanceof UploadThingError) {
+          form.setError("attachments", { message: error.message });
+        } else {
+          form.setError("attachments", {
+            message:
+              "Возникла неожиданная ошибка во время загрузки дополнительного материала! Повторите попытку позже.",
+          });
+        }
+      }
     }
 
     createCourseMutation.mutate({
-      title: values.fullTitle,
+      fullTitle: values.fullTitle,
+      shortTitle: values.shortTitle,
+      image:
+        uploadedBgImage.length > 0 ? uploadedBgImage[0]!.url : preloadedImage,
+      description: values.description,
+      attachments: form.getValues("attachments").map((attachment) => ({
+        key: attachment.key,
+        originalName: attachment.originalName,
+        uploadedAt: attachment.uploadedAt,
+        url: attachment.url!,
+        size: attachment.size,
+      })),
     });
   };
 
@@ -219,7 +272,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
                 control={form.control}
                 name="bgImage"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="max-w-80">
                     <FormLabel htmlFor="bg-course">
                       Фоновое изображение
                     </FormLabel>
@@ -312,6 +365,10 @@ const CreateCoursePage: NextPageWithLayout = () => {
                   onChange={setAttachments}
                   isLoading={isLoading}
                   multiple
+                  isError={
+                    form.getFieldState("attachments").error !== undefined
+                  }
+                  errorMessage={<FormMessage />}
                   {...field}
                 />
               )}

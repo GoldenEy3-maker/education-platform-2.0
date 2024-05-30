@@ -6,16 +6,19 @@ import { UTApi } from "uploadthing/server";
 
 const f = createUploadthing();
 
-// FileRouter for your app, can contain multiple FileRoutes
 export const fileRouter = {
-  // Define as many FileRoutes as you like, each with a unique routeSlug
+  image: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } }).onUploadComplete(
+    async ({ file }) => {
+      return { ...file };
+    },
+  ),
   uploader: f({
-    image: { maxFileSize: "16MB", maxFileCount: 10 },
-    video: { maxFileCount: 2, maxFileSize: "512MB" },
-    text: { maxFileCount: 10, maxFileSize: "16MB" },
-    pdf: { maxFileCount: 10, maxFileSize: "16MB" },
-    blob: { maxFileCount: 10, maxFileSize: "512MB" },
-    audio: { maxFileCount: 10, maxFileSize: "32MB" },
+    image: { maxFileSize: "16MB", maxFileCount: 20 },
+    video: { maxFileSize: "512MB", maxFileCount: 20 },
+    text: { maxFileSize: "16MB", maxFileCount: 20 },
+    pdf: { maxFileSize: "16MB", maxFileCount: 20 },
+    blob: { maxFileSize: "512MB", maxFileCount: 20 },
+    audio: { maxFileSize: "32MB", maxFileCount: 20 },
   }).onUploadComplete(async ({ file }) => {
     return { ...file };
   }),

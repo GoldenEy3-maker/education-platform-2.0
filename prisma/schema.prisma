@@ -84,7 +84,8 @@ model Lession {
 
 model Course {
   id            String             @id @default(cuid())
-  title         String
+  image         String
+  fullTitle     String
   shortTitle    String?
   description   String?
   author        User               @relation("author", fields: [authorId], references: [id])
@@ -109,7 +110,7 @@ model CourseAttachment {
   size       Int?
   course     Course   @relation(fields: [courseId], references: [id])
   courseId   String   @map("course_id")
-  uploadedAt DateTime
+  uploadedAt DateTime @map("updated_at")
 
   @@map("course_attachments")
 }
