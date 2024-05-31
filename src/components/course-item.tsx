@@ -15,6 +15,9 @@ import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Skeleton } from "./ui/skeleton";
 import Image from "next/image";
+import { type Descendant } from "slate";
+import { serializeHTML } from "./editor/utils";
+import parse from "html-react-parser";
 
 type CourseItemProps = {
   id: string;
@@ -22,6 +25,7 @@ type CourseItemProps = {
   image: string;
   status?: StatusCourseMap;
   progress?: number;
+  description?: string | null;
   isFavorited?: boolean;
   author: {
     surname: string;
@@ -38,6 +42,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
   image,
   status,
   progress,
+  description,
   isFavorited,
   author,
   className,
@@ -104,15 +109,20 @@ export const CourseItem: React.FC<CourseItemProps> = ({
         </div>
       ) : null}
       <h4 className="mb-1 line-clamp-2 text-lg font-medium">{title}</h4>
-      {/* <p
-        className={cn("mb-auto line-clamp-2 text-muted-foreground", {
-          "line-clamp-4": !progress,
-        })}
-      >
-        {description}
-      </p> */}
+      {description ? (
+        <div
+          className={cn("mb-auto line-clamp-2 text-muted-foreground", {
+            "line-clamp-4": !progress,
+          })}
+          dangerouslySetInnerHTML={{
+            __html: (JSON.parse(description) as Descendant[])
+              .map((node) => serializeHTML(node))
+              .join(""),
+          }}
+        ></div>
+      ) : null}
       {progress ? (
-        <div className="mt-1">
+        <div className="mt-auto pt-1">
           <div className="mb-2 flex items-center justify-between gap-2">
             <span className="text-muted-foreground">Прогресс</span>
             <span className="text-primary">{progress}%</span>
@@ -120,7 +130,14 @@ export const CourseItem: React.FC<CourseItemProps> = ({
           <Progress value={progress} />
         </div>
       ) : null}
-      <footer className="mt-auto flex items-center justify-between gap-2 overflow-hidden pt-3">
+      <footer
+        className={cn(
+          "flex items-center justify-between gap-2 overflow-hidden pt-3",
+          {
+            "mt-auto": !progress,
+          },
+        )}
+      >
         <Button
           className="h-auto w-fit justify-normal gap-3 px-2 py-1"
           variant="ghost"

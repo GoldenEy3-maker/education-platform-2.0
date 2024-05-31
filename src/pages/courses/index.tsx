@@ -42,8 +42,9 @@ import { PagePathMap, StatusCourseContentMap } from "~/libs/enums";
 import { cn, prepareSearchMatching, type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "../_app";
 import { api, type RouterOutputs } from "~/libs/api";
-import { useRouter } from "next/router";
 import dayjs from "dayjs";
+import { serializeText } from "~/components/editor/utils";
+import { type Descendant } from "slate";
 
 const TabsMap = {
   All: "All",
@@ -126,7 +127,6 @@ const CoursesEmpty: React.FC<CoursesEmptyProps> = ({ icon, text }) => {
 
 const CoursesPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
-  const router = useRouter();
   const [searchValue, setSearchValue] = useRouterQueryState<string>(
     "search",
     "",
@@ -307,27 +307,37 @@ const CoursesPage: NextPageWithLayout = () => {
             </div>
             <Separator className="my-2" />
             <div className="space-y-1">
-              {Object.entries(FiltersContentMap).map(([key, value]) => (
-                <Button
-                  key={key}
-                  asChild
-                  variant="ghost"
-                  className="w-full cursor-pointer justify-between gap-3"
-                  onClick={() =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      [key]: !prev[key as FiltersMap],
-                    }))
-                  }
-                >
-                  <div>
-                    <Label htmlFor={key} className="pointer-events-none">
-                      {value}
-                    </Label>
-                    <Switch id={key} checked={filters[key as FiltersMap]} />
-                  </div>
-                </Button>
-              ))}
+              {Object.entries(FiltersContentMap)
+                .filter(([key]) => {
+                  if (
+                    key === FiltersMap.HideCompleted &&
+                    session?.user.role === "Teacher"
+                  )
+                    return false;
+
+                  return true;
+                })
+                .map(([key, value]) => (
+                  <Button
+                    key={key}
+                    asChild
+                    variant="ghost"
+                    className="w-full cursor-pointer justify-between gap-3"
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        [key]: !prev[key as FiltersMap],
+                      }))
+                    }
+                  >
+                    <div>
+                      <Label htmlFor={key} className="pointer-events-none">
+                        {value}
+                      </Label>
+                      <Switch id={key} checked={filters[key as FiltersMap]} />
+                    </div>
+                  </Button>
+                ))}
             </div>
           </PopoverContent>
         </Popover>
@@ -351,11 +361,21 @@ const CoursesPage: NextPageWithLayout = () => {
             </SelectTrigger>
           </Button>
           <SelectContent>
-            {Object.entries(SortValueContentMap).map(([key, value]) => (
-              <SelectItem key={key} value={key}>
-                {value}
-              </SelectItem>
-            ))}
+            {Object.entries(SortValueContentMap)
+              .filter(([key]) => {
+                if (
+                  key === SortValueMap.Progress &&
+                  session?.user.role === "Teacher"
+                )
+                  return false;
+
+                return true;
+              })
+              .map(([key, value]) => (
+                <SelectItem key={key} value={key}>
+                  {value}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
         {session?.user.role === "Teacher" ? (
@@ -400,6 +420,11 @@ const CoursesPage: NextPageWithLayout = () => {
             const shortTitle = course.shortTitle
               ? prepareSearchMatching(course.shortTitle).includes(value)
               : true;
+            const description = course.description
+              ? prepareSearchMatching(
+                  serializeText(JSON.parse(course.description) as Descendant[]),
+                ).includes(value)
+              : true;
             const status = prepareSearchMatching(
               StatusCourseContentMap[
                 course.isArchived ? "Archived" : "Published"
@@ -419,6 +444,7 @@ const CoursesPage: NextPageWithLayout = () => {
               fullTitle ||
               shortTitle ||
               status ||
+              description ||
               formatedCreatedAt ||
               isoCreatdAt ||
               dateCreatedAt
@@ -437,6 +463,7 @@ const CoursesPage: NextPageWithLayout = () => {
                     <CourseItem
                       key={course.id}
                       id={course.id}
+                      description={course.description}
                       image={course.image}
                       title={course.fullTitle}
                       status={course.isArchived ? "Archived" : "Published"}

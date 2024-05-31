@@ -1,4 +1,4 @@
-import { Editor, Element, Transforms } from "slate";
+import { type Descendant, Editor, Element, Transforms } from "slate";
 import {
   ElementAlignMap,
   ElementListTypeMap,
@@ -8,6 +8,9 @@ import {
   type ElementTypeMap,
   type TextFormat,
 } from "./types";
+import { Node } from "slate";
+import { Text } from "slate";
+import escapeHTML from "escape-html";
 
 export const toggleMark = (editor: CustomEditor, format: TextFormat) => {
   const isActive = isMarkActive(editor, format);
@@ -84,5 +87,40 @@ export const toggleBlock = (editor: CustomEditor, format: ElementFormat) => {
       children: [],
     };
     Transforms.wrapNodes(editor, block);
+  }
+};
+
+export const serializeText = (nodes: Descendant[]) => {
+  return nodes.map((n) => Node.string(n)).join("\n");
+};
+
+export const serializeHTML = (node: Descendant): string => {
+  if (Text.isText(node)) {
+    let string = escapeHTML(node.text);
+    if (node.bold) {
+      string = `<span style='font-weight: bold;'>${string}</span>`;
+    }
+    if (node.italic) {
+      string = `<span style='font-style: italic;'>${string}</span>`;
+    }
+    if (node.underline) {
+      string = `<span style='font-decoration: underline;'>${string}</span>`;
+    }
+    return string;
+  }
+
+  const children = node.children.map((n) => serializeHTML(n)).join("");
+
+  switch (node.type) {
+    case "paragraph":
+      return `<p style='text-align: ${node.align}'>${children}</p>`;
+    case "bulleted-list":
+      return `<ul class='list-inside list-disc'>${children}</ul>`;
+    case "numbered-list":
+      return `<ol class='list-inside list-decimal'>${children}</ol>`;
+    case "list-item":
+      return `<li style='text-align: ${node.align}'>${children}</li>`;
+    default:
+      return children;
   }
 };
