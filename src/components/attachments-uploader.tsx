@@ -3,9 +3,10 @@ import { FileUploader, type UploadAttachments } from "./file-uploader";
 import { Label } from "./ui/label";
 import dayjs from "dayjs";
 import { CircularProgress } from "./circular-progress";
-import { BiCheck, BiTrash } from "react-icons/bi";
+import { BiCheck, BiSolidBadgeCheck, BiTrash, BiX } from "react-icons/bi";
 import { Button } from "./ui/button";
 import { useId } from "react";
+import { Progress } from "./ui/progress";
 
 type AttachmentsUploaderProps = {
   multiple?: boolean;
@@ -59,50 +60,70 @@ export const AttachmentsUploader: React.FC<AttachmentsUploaderProps> = ({
               return (
                 <li
                   key={attachment.id}
-                  className="grid grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] items-center gap-x-3"
+                  className="relative rounded-lg border border-border p-2"
                 >
-                  <span className="row-span-2 text-3xl">{template.icon}</span>
-                  <p className="truncate font-medium">
-                    {attachment.originalName}
-                  </p>
-                  <p
-                    className="col-start-2 row-start-2 flex
+                  <div className="flex items-center gap-x-3">
+                    <span className="row-span-2 text-4xl">{template.icon}</span>
+                    <div>
+                      <p className="mb-0.5 truncate font-medium">
+                        {attachment.originalName}
+                      </p>
+                      <p
+                        className="flex
                            items-center gap-2 truncate text-sm text-muted-foreground"
-                  >
-                    {dayjs(attachment.uploadedAt).format("DD MMM, YYYY HH:ss")}{" "}
-                    {attachment.file ? (
-                      <>
-                        <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
-                        {attachment.isUploading
-                          ? `${formatBytes(attachment.file.size * (attachment.progress / 100))} / ${formatBytes(attachment.file.size)}`
-                          : formatBytes(attachment.file.size)}
-                      </>
-                    ) : null}
-                  </p>
+                      >
+                        {dayjs(attachment.uploadedAt).format(
+                          "DD MMM, YYYY HH:ss",
+                        )}{" "}
+                        {attachment.file ? (
+                          <>
+                            <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
+                            <span>
+                              {attachment.isUploading
+                                ? `${formatBytes(attachment.file.size * (attachment.progress / 100))} / ${formatBytes(attachment.file.size)}`
+                                : formatBytes(attachment.file.size)}
+                            </span>
+                            {attachment.isUploading ? (
+                              <>
+                                <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
+                                <CircularProgress
+                                  variant="indeterminate"
+                                  className="ml-1 inline-block text-base"
+                                />
+                                <span className="-ml-1 text-foreground">
+                                  {attachment.progress === 100
+                                    ? "Синхронизируется..."
+                                    : "Загружается..."}
+                                </span>
+                              </>
+                            ) : attachment.key ? (
+                              <>
+                                <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
+                                <BiSolidBadgeCheck className="text-base text-useful" />
+                                <span className="-ml-1 text-foreground">
+                                  Завершено
+                                </span>
+                              </>
+                            ) : null}
+                          </>
+                        ) : null}
+                      </p>
+                    </div>
+                  </div>
                   {attachment.isUploading ? (
-                    <CircularProgress
-                      variant={
-                        attachment.progress === 100
-                          ? "indeterminate"
-                          : "determinate"
-                      }
-                      className="row-span-2 text-2xl text-primary"
-                      strokeWidth={5}
-                      value={
-                        attachment.progress < 100
-                          ? attachment.progress
-                          : undefined
-                      }
-                    />
-                  ) : attachment.key ? (
-                    <span className="row-span-2 flex items-center justify-center">
-                      <BiCheck className="text-2xl text-primary" />
-                    </span>
-                  ) : (
                     <Button
                       type="button"
-                      className="row-span-2 rounded-full"
-                      variant="ghost-destructive"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-2 top-2 h-9 w-9 rounded-full"
+                    >
+                      <BiX className="text-base" />
+                    </Button>
+                  ) : !attachment.key ? (
+                    <Button
+                      type="button"
+                      className="absolute right-2 top-2 h-9 w-9 rounded-full"
+                      variant="ghost"
                       size="icon"
                       disabled={isLoading}
                       onClick={() => {
@@ -111,9 +132,12 @@ export const AttachmentsUploader: React.FC<AttachmentsUploaderProps> = ({
                         );
                       }}
                     >
-                      <BiTrash className="text-xl" />
+                      <BiTrash className="text-base" />
                     </Button>
-                  )}
+                  ) : null}
+                  {attachment.isUploading ? (
+                    <Progress value={attachment.progress} className="mt-2" />
+                  ) : null}
                 </li>
               );
             })}

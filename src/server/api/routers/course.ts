@@ -1,8 +1,38 @@
 import { z } from "zod";
 import { utapi } from "~/server/uploadthing";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const courseRouter = createTRPCRouter({
+  getAll: publicProcedure.query(async (opts) => {
+    const courses = await opts.ctx.db.course.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            image: true,
+            name: true,
+            surname: true,
+            fathername: true,
+          },
+        },
+        favoritedBy: {
+          select: {
+            userId: true,
+          },
+        },
+        subscribers: {
+          select: {
+            userId: true,
+          },
+        },
+      },
+    });
+
+    return courses;
+  }),
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async (opts) => {

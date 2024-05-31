@@ -13,12 +13,12 @@ export const fileRouter = {
     },
   ),
   uploader: f({
-    image: { maxFileSize: "16MB", maxFileCount: 20 },
-    video: { maxFileSize: "512MB", maxFileCount: 20 },
-    text: { maxFileSize: "16MB", maxFileCount: 20 },
-    pdf: { maxFileSize: "16MB", maxFileCount: 20 },
-    blob: { maxFileSize: "512MB", maxFileCount: 20 },
-    audio: { maxFileSize: "32MB", maxFileCount: 20 },
+    image: { maxFileSize: "64MB", maxFileCount: 20 },
+    video: { maxFileSize: "64MB", maxFileCount: 20 },
+    text: { maxFileSize: "64MB", maxFileCount: 20 },
+    pdf: { maxFileSize: "64MB", maxFileCount: 20 },
+    blob: { maxFileSize: "64MB", maxFileCount: 20 },
+    audio: { maxFileSize: "64MB", maxFileCount: 20 },
   }).onUploadComplete(async ({ file }) => {
     return { ...file };
   }),

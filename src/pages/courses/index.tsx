@@ -1,10 +1,11 @@
-import { type Prisma } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import {
   BiBook,
+  BiDetail,
   BiFilterAlt,
+  BiMeteor,
   BiPlus,
   BiSearch,
   BiSolidBookmark,
@@ -12,6 +13,7 @@ import {
   BiSolidMeteor,
   BiSolidStar,
   BiSortAlt2,
+  BiStar,
 } from "react-icons/bi";
 import { CourseItem, CourseItemSkeleton } from "~/components/course-item";
 import { Badge } from "~/components/ui/badge";
@@ -36,9 +38,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
-import { PagePathMap } from "~/libs/enums";
-import { cn, type ValueOf } from "~/libs/utils";
+import { PagePathMap, StatusCourseContentMap } from "~/libs/enums";
+import { cn, prepareSearchMatching, type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "../_app";
+import { api, type RouterOutputs } from "~/libs/api";
+import { useRouter } from "next/router";
+import dayjs from "dayjs";
 
 const TabsMap = {
   All: "All",
@@ -54,25 +59,25 @@ const TabsTriggerMap: Record<TabsMap, { text: string; icon: React.ReactNode }> =
     All: {
       text: "Все",
       icon: (
-        <BiSolidDetail className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiDetail className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
     },
     Owned: {
       text: "Мои",
       icon: (
-        <BiSolidBookmark className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiBook className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
     },
     Favorited: {
       text: "Избранные",
       icon: (
-        <BiSolidStar className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiStar className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
     },
     Suggestions: {
       text: "Рекомендации",
       icon: (
-        <BiSolidMeteor className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiMeteor className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
     },
   };
@@ -105,173 +110,6 @@ const FiltersContentMap: Record<FiltersMap, string> = {
   HidePublished: "Скрыть публикации",
 };
 
-const MOK_DATA: Prisma.CourseGetPayload<{
-  include: {
-    author: {
-      select: {
-        id: true;
-        image: true;
-        name: true;
-        surname: true;
-        fathername: true;
-      };
-    };
-  };
-}>[] = [
-  {
-    id: crypto.randomUUID(),
-    author: {
-      image: null,
-      surname: "Демкина",
-      name: "Любовь",
-      fathername: "Михайловна",
-      id: "user_1",
-    },
-    authorId: "user_1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    fullTitle: "Иностранный язык в профессиональной деятельности",
-    shortTitle: "ИЯПД",
-    image: "/bg-abstract-1.jpg",
-    isArchived: false,
-  },
-  {
-    id: crypto.randomUUID(),
-    author: {
-      image: null,
-      surname: "Демкина",
-      name: "Любовь",
-      fathername: "Михайловна",
-      id: "user_1",
-    },
-    authorId: "user_1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    fullTitle: "Иностранный язык в профессиональной деятельности",
-    shortTitle: "ИЯПД",
-    image: "/bg-abstract-2.jpg",
-    isArchived: true,
-  },
-  {
-    id: crypto.randomUUID(),
-    author: {
-      image: null,
-      surname: "Демкина",
-      name: "Любовь",
-      fathername: "Михайловна",
-      id: "user_1",
-    },
-    authorId: "user_1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    fullTitle: "Иностранный язык в профессиональной деятельности",
-    shortTitle: "ИЯПД",
-    image: "/bg-abstract-3.jpg",
-    isArchived: false,
-  },
-  {
-    id: crypto.randomUUID(),
-    author: {
-      image: null,
-      surname: "Демкина",
-      name: "Любовь",
-      fathername: "Михайловна",
-      id: "user_1",
-    },
-    authorId: "user_1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    fullTitle: "Иностранный язык в профессиональной деятельности",
-    shortTitle: "ИЯПД",
-    image: "/bg-abstract-4.jpg",
-    isArchived: false,
-  },
-  {
-    id: crypto.randomUUID(),
-    author: {
-      image: null,
-      surname: "Демкина",
-      name: "Любовь",
-      fathername: "Михайловна",
-      id: "user_1",
-    },
-    authorId: "user_1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    fullTitle: "Иностранный язык в профессиональной деятельности",
-    shortTitle: "ИЯПД",
-    image: "/bg-abstract-5.jpg",
-    isArchived: true,
-  },
-  {
-    id: crypto.randomUUID(),
-    author: {
-      image: null,
-      surname: "Демкина",
-      name: "Любовь",
-      fathername: "Михайловна",
-      id: "user_1",
-    },
-    authorId: "user_1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    fullTitle: "Иностранный язык в профессиональной деятельности",
-    shortTitle: "ИЯПД",
-    image: "/bg-abstract-6.jpg",
-    isArchived: false,
-  },
-  {
-    id: crypto.randomUUID(),
-    author: {
-      image: null,
-      surname: "Демкина",
-      name: "Любовь",
-      fathername: "Михайловна",
-      id: "user_1",
-    },
-    authorId: "user_1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    fullTitle: "Иностранный язык в профессиональной деятельности",
-    shortTitle: "ИЯПД",
-    image: "/bg-abstract-7.jpg",
-    isArchived: false,
-  },
-  {
-    id: crypto.randomUUID(),
-    author: {
-      image: null,
-      surname: "Демкина",
-      name: "Любовь",
-      fathername: "Михайловна",
-      id: "user_1",
-    },
-    authorId: "user_1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste saepe quam aut ducimus voluptatem aliquid dolor distinctio explicabo. Illum officia voluptatibus, nemo obcaecati dolorum architecto aperiam numquam repudiandae quam! Repudiandae.",
-    fullTitle: "Иностранный язык в профессиональной деятельности",
-    shortTitle: "ИЯПД",
-    image: "https://utfs.io/f/6ad55f4a-836d-45f5-9b43-5795d63f0ff4-2b2mwe.png",
-    isArchived: true,
-  },
-];
-
 type CoursesEmptyProps = {
   icon: React.ReactNode;
   text: React.ReactNode;
@@ -288,7 +126,7 @@ const CoursesEmpty: React.FC<CoursesEmptyProps> = ({ icon, text }) => {
 
 const CoursesPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
-  const isLoading = !session?.user;
+  const router = useRouter();
   const [searchValue, setSearchValue] = useRouterQueryState<string>(
     "search",
     "",
@@ -303,18 +141,29 @@ const CoursesPage: NextPageWithLayout = () => {
 
   const activeFilters = Object.values(filters).filter((val) => val === true);
 
-  const MOK_SUBSCRIPTIONS = MOK_DATA.slice(1, 4);
-  const MOK_FAVORITES = MOK_DATA.slice(2, 6);
-  const MOK_SUGGESTIONS = MOK_DATA.filter(
-    (course) =>
-      !MOK_SUBSCRIPTIONS.some((subCourse) => subCourse.id === course.id),
-  );
+  const getAllCoursesQuery = api.course.getAll.useQuery();
 
-  const MOK_DATA_MAP: Record<TabsMap, typeof MOK_DATA> = {
-    All: MOK_DATA,
-    Owned: MOK_SUBSCRIPTIONS,
-    Favorited: MOK_FAVORITES,
-    Suggestions: MOK_SUGGESTIONS,
+  const isLoading = !session?.user || getAllCoursesQuery.isLoading;
+
+  const subscriptionsData =
+    getAllCoursesQuery.data?.filter((course) =>
+      course.subscribers.some((sub) => sub.userId === session?.user.id),
+    ) ?? [];
+  const favoritesData =
+    getAllCoursesQuery.data?.filter((course) =>
+      course.favoritedBy.some((fav) => fav.userId === session?.user.id),
+    ) ?? [];
+  const suggestionsData =
+    getAllCoursesQuery.data?.filter(
+      (course) =>
+        !subscriptionsData.some((subCourse) => subCourse.id === course.id),
+    ) ?? [];
+
+  const coursesDataMap: Record<TabsMap, RouterOutputs["course"]["getAll"]> = {
+    All: getAllCoursesQuery.data ?? [],
+    Owned: subscriptionsData,
+    Favorited: favoritesData,
+    Suggestions: suggestionsData,
   };
 
   const EmptyDataMap: Record<TabsMap, React.ReactNode> = {
@@ -541,41 +390,77 @@ const CoursesPage: NextPageWithLayout = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        {Object.entries(MOK_DATA_MAP).map(([key, data]) => (
-          <TabsContent
-            key={key}
-            value={key}
-            className="grid grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] gap-4 gap-y-6"
-          >
-            {!isLoading ? (
-              data.length > 0 ? (
-                data.map((course) => (
-                  <CourseItem
-                    key={course.id}
-                    id={course.id}
-                    image={course.image}
-                    title={course.fullTitle}
-                    status={course.isArchived ? "Archived" : "Published"}
-                    isFavorited={MOK_FAVORITES.some(
-                      (favCourse) => favCourse.id === course.id,
-                    )}
-                    author={course.author}
-                    progress={40}
-                  />
-                ))
+        {Object.entries(coursesDataMap).map(([key, data]) => {
+          const filteredData = data.filter((course) => {
+            const value = prepareSearchMatching(searchValue);
+            const creatdAt = dayjs(course.createdAt);
+            const fullTitle = prepareSearchMatching(course.fullTitle).includes(
+              value,
+            );
+            const shortTitle = course.shortTitle
+              ? prepareSearchMatching(course.shortTitle).includes(value)
+              : true;
+            const status = prepareSearchMatching(
+              StatusCourseContentMap[
+                course.isArchived ? "Archived" : "Published"
+              ],
+            ).includes(value);
+            const formatedCreatedAt = prepareSearchMatching(
+              creatdAt.format("DD MMM YYYY"),
+            ).includes(value);
+            const isoCreatdAt = prepareSearchMatching(
+              creatdAt.toISOString(),
+            ).includes(value);
+            const dateCreatedAt = prepareSearchMatching(
+              creatdAt.toString(),
+            ).includes(value);
+
+            return (
+              fullTitle ||
+              shortTitle ||
+              status ||
+              formatedCreatedAt ||
+              isoCreatdAt ||
+              dateCreatedAt
+            );
+          });
+
+          return (
+            <TabsContent
+              key={key}
+              value={key}
+              className="grid grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] gap-4 gap-y-6"
+            >
+              {!isLoading ? (
+                filteredData.length > 0 ? (
+                  filteredData.map((course) => (
+                    <CourseItem
+                      key={course.id}
+                      id={course.id}
+                      image={course.image}
+                      title={course.fullTitle}
+                      status={course.isArchived ? "Archived" : "Published"}
+                      isFavorited={favoritesData.some(
+                        (fav) => fav.id === course.id,
+                      )}
+                      author={course.author}
+                      progress={40}
+                    />
+                  ))
+                ) : (
+                  EmptyDataMap[key as TabsMap]
+                )
               ) : (
-                EmptyDataMap[key as TabsMap]
-              )
-            ) : (
-              <>
-                <CourseItemSkeleton />
-                <CourseItemSkeleton />
-                <CourseItemSkeleton />
-                <CourseItemSkeleton />
-              </>
-            )}
-          </TabsContent>
-        ))}
+                <>
+                  <CourseItemSkeleton />
+                  <CourseItemSkeleton />
+                  <CourseItemSkeleton />
+                  <CourseItemSkeleton />
+                </>
+              )}
+            </TabsContent>
+          );
+        })}
       </Tabs>
     </main>
   );

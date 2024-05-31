@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { BiCloudUpload } from "react-icons/bi";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { cn, handleFileName, useUploadThing } from "~/libs/utils";
+import { Button } from "./ui/button";
 
 export type UploadAttachments = {
   id: string;
@@ -78,7 +79,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     <div
       {...getRootProps()}
       className={cn(
-        "flex h-72 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-foreground/20 bg-primary/5 px-6 py-2 shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring xs:w-96",
+        "flex h-72 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-foreground/20 px-6 py-2 shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring xs:w-96",
         className,
         {
           "border-primary": isDragActive,
@@ -87,9 +88,14 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       )}
     >
       <input {...props} {...getInputProps()} />
-      <BiCloudUpload className="text-7xl text-primary/80" />
-      <p className="text-sm text-muted-foreground">Перетащите сюда файл или</p>
-      <span className="text-sm text-primary">Найдите его на устройстве</span>
+      <BiCloudUpload className="mb-4 text-5xl text-muted-foreground" />
+      <p className="text-sm">Выберите файл или перетащите его сюда.</p>
+      <span className="text-sm text-muted-foreground">
+        Любой формат файла до 64 МБ.
+      </span>
+      <Button type="button" variant="outline" className="mt-4">
+        Найти на устройстве
+      </Button>
     </div>
   );
 };

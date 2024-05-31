@@ -54,7 +54,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         })}
         onClick={() => toggleMark(editor, "bold")}
       >
-        <TbBold className="text-lg" />
+        <TbBold className="text-base" />
       </Button>
       <Button
         type="button"
@@ -66,7 +66,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         })}
         onClick={() => toggleMark(editor, "italic")}
       >
-        <TbItalic className="text-lg" />
+        <TbItalic className="text-base" />
       </Button>
       <Button
         type="button"
@@ -78,7 +78,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         })}
         onClick={() => toggleMark(editor, "underline")}
       >
-        <TbUnderline className="text-lg" />
+        <TbUnderline className="text-base" />
       </Button>
       <Button
         type="button"
@@ -90,7 +90,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         })}
         onClick={() => toggleBlock(editor, "left")}
       >
-        <TbAlignLeft className="text-lg" />
+        <TbAlignLeft className="text-base" />
       </Button>
       <Button
         type="button"
@@ -102,7 +102,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         })}
         onClick={() => toggleBlock(editor, "right")}
       >
-        <TbAlignRight className="text-lg" />
+        <TbAlignRight className="text-base" />
       </Button>
       <Button
         type="button"
@@ -114,7 +114,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         })}
         onClick={() => toggleBlock(editor, "center")}
       >
-        <TbAlignCenter className="text-lg" />
+        <TbAlignCenter className="text-base" />
       </Button>
       <Button
         type="button"
@@ -126,7 +126,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         })}
         onClick={() => toggleBlock(editor, "justify")}
       >
-        <TbAlignJustified className="text-lg" />
+        <TbAlignJustified className="text-base" />
       </Button>
       <Button
         type="button"
@@ -138,7 +138,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         })}
         onClick={() => toggleBlock(editor, "bulleted-list")}
       >
-        <TbList className="text-lg" />
+        <TbList className="text-base" />
       </Button>
       <Button
         type="button"
@@ -150,7 +150,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         })}
         onClick={() => toggleBlock(editor, "numbered-list")}
       >
-        <TbListNumbers className="text-lg" />
+        <TbListNumbers className="text-base" />
       </Button>
       {/* <Select defaultValue="h1">
         <Button
