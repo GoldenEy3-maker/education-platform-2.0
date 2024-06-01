@@ -26,6 +26,7 @@ export const courseRouter = createTRPCRouter({
         subscribers: {
           select: {
             userId: true,
+            progress: true,
           },
         },
       },
@@ -97,6 +98,32 @@ export const courseRouter = createTRPCRouter({
       });
 
       return newCourse;
+    }),
+
+  removeFavorite: protectedProcedure
+    .input(z.object({ courseId: z.string() }))
+    .mutation(async (opts) => {
+      const removedFavoriteCourse = await opts.ctx.db.favorite.deleteMany({
+        where: {
+          courseId: opts.input.courseId,
+          userId: opts.ctx.session.user.id,
+        },
+      });
+
+      return removedFavoriteCourse;
+    }),
+
+  toFavorite: protectedProcedure
+    .input(z.object({ courseId: z.string() }))
+    .mutation(async (opts) => {
+      const favoritedCourse = await opts.ctx.db.favorite.create({
+        data: {
+          courseId: opts.input.courseId,
+          userId: opts.ctx.session.user.id,
+        },
+      });
+
+      return favoritedCourse;
     }),
 
   deleteAttachment: protectedProcedure

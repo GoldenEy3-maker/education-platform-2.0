@@ -17,7 +17,9 @@ import { Skeleton } from "./ui/skeleton";
 import Image from "next/image";
 import { type Descendant } from "slate";
 import { serializeHTML } from "./editor/utils";
-import parse from "html-react-parser";
+import { api } from "~/libs/api";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 type CourseItemProps = {
   id: string;
@@ -48,6 +50,69 @@ export const CourseItem: React.FC<CourseItemProps> = ({
   className,
   ...props
 }) => {
+  const { data: session } = useSession();
+
+  const utils = api.useUtils();
+
+  const courseToFavoriteMutation = api.course.toFavorite.useMutation({
+    onMutate: async ({ courseId }) => {
+      await utils.course.getAll.cancel();
+
+      const prevData = utils.course.getAll.getData();
+
+      utils.course.getAll.setData(undefined, (old) =>
+        old?.map((course) => {
+          if (course.id === courseId) {
+            return { ...course, favoritedBy: [{ userId: session!.user.id }] };
+          }
+
+          return course;
+        }),
+      );
+
+      return { prevData };
+    },
+    onError: (error, data, ctx) => {
+      utils.course.getAll.setData(undefined, ctx?.prevData);
+      toast.error(error.message);
+    },
+    onSettled: () => {
+      void utils.course.getAll.invalidate();
+    },
+  });
+
+  const courseRemoveFavoriteMutation = api.course.removeFavorite.useMutation({
+    onMutate: async ({ courseId }) => {
+      await utils.course.getAll.cancel();
+
+      const prevData = utils.course.getAll.getData();
+
+      utils.course.getAll.setData(undefined, (old) =>
+        old?.map((course) => {
+          if (course.id === courseId) {
+            return {
+              ...course,
+              favoritedBy: course.favoritedBy.filter(
+                (fav) => fav.userId !== session?.user.id,
+              ),
+            };
+          }
+
+          return course;
+        }),
+      );
+
+      return { prevData };
+    },
+    onError: (error, data, ctx) => {
+      utils.course.getAll.setData(undefined, ctx?.prevData);
+      toast.error(error.message);
+    },
+    onSettled: () => {
+      void utils.course.getAll.invalidate();
+    },
+  });
+
   return (
     <div className={cn("flex flex-col", className)} {...props}>
       <Link
@@ -93,6 +158,17 @@ export const CourseItem: React.FC<CourseItemProps> = ({
             type="button"
             variant="ghost"
             size="icon"
+            disabled={
+              courseToFavoriteMutation.isLoading ||
+              courseRemoveFavoriteMutation.isLoading
+            }
+            onClick={() => {
+              if (isFavorited) {
+                courseRemoveFavoriteMutation.mutate({ courseId: id });
+              } else {
+                courseToFavoriteMutation.mutate({ courseId: id });
+              }
+            }}
             className={cn(
               "shrink-0 rounded-full text-muted-foreground hover:text-warning",
               {
@@ -143,7 +219,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
           variant="ghost"
           asChild
         >
-          <Link href="#">
+          <Link href={PagePathMap.Profile + author.id}>
             <Avatar
               fallback={getFirstLettersUserCredentials(
                 author.surname,

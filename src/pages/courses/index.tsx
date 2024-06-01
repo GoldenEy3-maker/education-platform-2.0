@@ -471,7 +471,11 @@ const CoursesPage: NextPageWithLayout = () => {
                         (fav) => fav.id === course.id,
                       )}
                       author={course.author}
-                      progress={40}
+                      progress={
+                        course.subscribers.find(
+                          (sub) => sub.userId === session.user.id,
+                        )?.progress
+                      }
                     />
                   ))
                 ) : (
