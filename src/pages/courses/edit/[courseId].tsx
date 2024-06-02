@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiSolidCog, BiSolidNotepad, BiSolidWidget } from "react-icons/bi";
-import { type ClientUploadedFileData } from "uploadthing/types";
 import { z } from "zod";
 import { AttachmentsUploader } from "~/components/attachments-uploader";
 import { SelectBgImage } from "~/components/create-course/select-bg-image";
@@ -29,18 +28,12 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useFileReader } from "~/hooks/fileReader";
 import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
-import {
-  getRandomInt,
-  handleFileName,
-  uploadFiles,
-  type ValueOf,
-} from "~/libs/utils";
+import { getRandomInt, type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
 
 const formSchema = z.object({
@@ -96,7 +89,6 @@ const preloadedBgImages = [
 
 const EditCoursePage: NextPageWithLayout = () => {
   const router = useRouter();
-  const fileReader = useFileReader();
   const { data: session } = useSession();
 
   const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "Info");
@@ -259,6 +251,7 @@ const EditCoursePage: NextPageWithLayout = () => {
                   control={form.control}
                   name="description"
                   disabled={isLoading}
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   render={({ field: { ref, ...field } }) => (
                     <FormItem className="w-full">
                       <FormLabel
@@ -285,6 +278,7 @@ const EditCoursePage: NextPageWithLayout = () => {
                 <FormField
                   control={form.control}
                   name="attachments"
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   render={({ field: { value, ref, onChange, ...field } }) => (
                     <AttachmentsUploader
                       attachments={value}

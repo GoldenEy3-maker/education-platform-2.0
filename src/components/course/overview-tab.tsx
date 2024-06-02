@@ -1,11 +1,12 @@
 import { type CourseAttachment } from "@prisma/client";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { handleAttachment } from "~/libs/utils";
+import { formatBytes, handleAttachment } from "~/libs/utils";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { type Descendant } from "slate";
 import { serializeHTML } from "../editor/utils";
+import { BiChevronRight } from "react-icons/bi";
 
 type CourseOverviewTabProps = {
   description?: string | null;
@@ -43,7 +44,7 @@ export const CourseOverviewTab: React.FC<CourseOverviewTabProps> = ({
             {attachments.length > 0 ? (
               <div className="flex flex-col gap-2">
                 {attachments.map((attachment) => {
-                  const [name, template] = handleAttachment({
+                  const [, template] = handleAttachment({
                     name: attachment.name,
                     isLink: !attachment.key,
                   });
@@ -52,17 +53,41 @@ export const CourseOverviewTab: React.FC<CourseOverviewTabProps> = ({
                     <Button
                       key={attachment.id}
                       asChild
-                      variant="link"
-                      className="group justify-normal gap-2 text-foreground hover:no-underline"
+                      variant="outline"
+                      className="group h-auto justify-normal gap-2 gap-x-3 p-2 text-foreground hover:no-underline"
                     >
-                      <Link href="#">
-                        <span className="text-2xl">{template.icon}</span>
+                      <Link href={attachment.url} target="_blank">
+                        <span className="row-span-2 text-4xl">
+                          {template.icon}
+                        </span>
+                        <div className="flex-1 overflow-hidden">
+                          <p className="mb-0.5 truncate font-medium">
+                            {attachment.name}
+                          </p>
+                          <p
+                            className="flex
+                           items-center gap-2 truncate text-sm text-muted-foreground"
+                          >
+                            {dayjs(attachment.uploadedAt).format(
+                              "DD MMM, YYYY HH:ss",
+                            )}{" "}
+                            {attachment.size ? (
+                              <>
+                                <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground"></span>
+                                <span>{formatBytes(attachment.size)}</span>
+                              </>
+                            ) : null}
+                          </p>
+                        </div>
+                        <BiChevronRight className="text-xl" />
+                        {/* <span className="text-2xl">{template.icon}</span>
                         <p className="grow truncate group-hover:underline">
                           {!attachment.key ? attachment.name : name}
                         </p>
                         <span className="text-sm text-muted-foreground">
-                          ({dayjs().format("DD MMMM YYYY")})
-                        </span>
+                          ({dayjs(attachment.uploadedAt).format("DD MMMM YYYY")}
+                          )
+                        </span> */}
                       </Link>
                     </Button>
                   );

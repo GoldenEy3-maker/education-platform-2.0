@@ -19,7 +19,6 @@ import { Skeleton } from "../ui/skeleton";
 
 type SubscriberItemProps = {
   isAuthor: boolean;
-  id: string;
   progress: number;
   user: Prisma.UserGetPayload<{
     select: {
@@ -35,7 +34,6 @@ type SubscriberItemProps = {
 };
 
 export const SubscriberItem: React.FC<SubscriberItemProps> = ({
-  id,
   isAuthor,
   progress,
   user,

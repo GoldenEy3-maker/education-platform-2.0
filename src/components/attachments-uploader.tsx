@@ -3,7 +3,7 @@ import { FileUploader, type UploadAttachments } from "./file-uploader";
 import { Label } from "./ui/label";
 import dayjs from "dayjs";
 import { CircularProgress } from "./circular-progress";
-import { BiCheck, BiSolidBadgeCheck, BiTrash, BiX } from "react-icons/bi";
+import { BiSolidBadgeCheck, BiTrash, BiX } from "react-icons/bi";
 import { Button } from "./ui/button";
 import { useId } from "react";
 import { Progress } from "./ui/progress";
@@ -62,7 +62,7 @@ export const AttachmentsUploader: React.FC<AttachmentsUploaderProps> = ({
                   key={attachment.id}
                   className="relative rounded-lg border border-border p-2"
                 >
-                  <div className="flex items-center gap-x-3">
+                  <div className="flex items-center gap-x-3 overflow-hidden">
                     <span className="row-span-2 text-4xl">{template.icon}</span>
                     <div>
                       <p className="mb-0.5 truncate font-medium">

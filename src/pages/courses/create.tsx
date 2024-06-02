@@ -131,7 +131,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
       try {
         uploadedBgImage = await uploadFiles("image", {
           files: values.bgImage.map((file) => {
-            const [_, ext] = handleFileName(file.name);
+            const [, ext] = handleFileName(file.name);
 
             return new File([file], crypto.randomUUID() + "." + ext, {
               type: file.type,
@@ -332,6 +332,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
               control={form.control}
               name="description"
               disabled={isLoading}
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               render={({ field: { ref, onChange, ...field } }) => (
                 <FormItem className="w-full">
                   <FormLabel
@@ -359,6 +360,7 @@ const CreateCoursePage: NextPageWithLayout = () => {
             <FormField
               control={form.control}
               name="attachments"
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               render={({ field: { value, ref, onChange, ...field } }) => (
                 <AttachmentsUploader
                   attachments={value}

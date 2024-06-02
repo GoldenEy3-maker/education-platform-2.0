@@ -173,7 +173,6 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
             filteredSubscribers.map((sub) => (
               <SubscriberItem
                 key={sub.id}
-                id={sub.id}
                 isAuthor={isAuthor}
                 progress={sub.progress}
                 user={sub.user}

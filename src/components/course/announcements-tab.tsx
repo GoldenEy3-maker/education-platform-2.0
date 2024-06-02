@@ -1,13 +1,12 @@
 import { type Prisma } from "@prisma/client";
 import dayjs from "dayjs";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useMemo } from "react";
 import {
+  BiConversation,
   BiExpandVertical,
   BiPlus,
   BiSearch,
-  BiSolidConversation,
   BiTrash,
 } from "react-icons/bi";
 import { handleAttachment, prepareSearchMatching } from "~/libs/utils";
@@ -41,8 +40,6 @@ type CourseAnnouncementsTabProps = {
   onSearchValueChange: (value: string) => void;
   isLoading: boolean;
   isAuthor: boolean;
-  isSubStudent: boolean;
-  isTeacher: boolean;
   announcements: Prisma.AnnouncementGetPayload<{
     include: { attachments: true };
   }>[];
@@ -54,11 +51,7 @@ export const CourseAnnouncementsTab: React.FC<CourseAnnouncementsTabProps> = ({
   isAuthor,
   isLoading,
   announcements,
-  isSubStudent,
-  isTeacher,
 }) => {
-  const { data: session } = useSession();
-
   const filteredAnnouncements = useMemo(
     () =>
       announcements.filter((announcement) => {
@@ -86,9 +79,7 @@ export const CourseAnnouncementsTab: React.FC<CourseAnnouncementsTabProps> = ({
   if (announcements.length === 0 && !isLoading)
     return (
       <CourseEmptyTab
-        icon={
-          <BiSolidConversation className="text-7xl text-muted-foreground" />
-        }
+        icon={<BiConversation className="text-7xl text-muted-foreground" />}
         text={
           isAuthor ? (
             <p>
@@ -203,7 +194,7 @@ export const CourseAnnouncementsTab: React.FC<CourseAnnouncementsTabProps> = ({
           ) : (
             <CourseEmptyTab
               icon={
-                <BiSolidConversation className="text-7xl text-muted-foreground" />
+                <BiConversation className="text-7xl text-muted-foreground" />
               }
               text={<p>Нет результатов.</p>}
             />

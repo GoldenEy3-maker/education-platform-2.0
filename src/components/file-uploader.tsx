@@ -60,6 +60,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     );
 
     onChange((attachments) => [...attachments, ...mappedAcceptedFiles]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { permittedFileInfo } = useUploadThing("uploader");

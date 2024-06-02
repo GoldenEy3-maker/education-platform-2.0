@@ -140,6 +140,11 @@ const CoursePage: NextPageWithLayout = () => {
             (fav) => fav.userId === session?.user.id,
           ) ?? false
         }
+        progress={
+          courseGetByIdQuery.data?.subscribers.find(
+            (sub) => sub.userId === session?.user.id,
+          )?.progress
+        }
       />
       <Tabs
         value={tabs}
@@ -203,8 +208,6 @@ const CoursePage: NextPageWithLayout = () => {
             onSearchValueChange={setSearchValueAnnouncements}
             isAuthor={isAuthor}
             isLoading={isLoading}
-            isSubStudent={isSubStudent}
-            isTeacher={isTeacher}
           />
         </TabsContent>
       </Tabs>

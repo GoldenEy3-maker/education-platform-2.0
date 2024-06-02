@@ -1,15 +1,4 @@
 import {
-  BiAlignJustify,
-  BiAlignLeft,
-  BiAlignMiddle,
-  BiAlignRight,
-  BiBold,
-  BiItalic,
-  BiListOl,
-  BiListUl,
-  BiUnderline,
-} from "react-icons/bi";
-import {
   TbAlignCenter,
   TbAlignJustified,
   TbAlignLeft,
@@ -20,16 +9,9 @@ import {
   TbListNumbers,
   TbUnderline,
 } from "react-icons/tb";
-import { ReactEditor, useSlate } from "slate-react";
+import { useSlate } from "slate-react";
 import { cn } from "~/libs/utils";
 import { Button } from "../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { isBlockActive, isMarkActive, toggleBlock, toggleMark } from "./utils";
 
 type ToolbarProps = {

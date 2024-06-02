@@ -232,6 +232,7 @@ const CreateLecPage: NextPageWithLayout = () => {
             <FormField
               control={form.control}
               name="attachments"
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               render={({ field: { value, ref, onChange, ...field } }) => (
                 <AttachmentsUploader
                   attachments={value}
@@ -245,6 +246,7 @@ const CreateLecPage: NextPageWithLayout = () => {
             <FormField
               control={form.control}
               name="content"
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               render={({ field: { ref, onChange, ...field } }) => (
                 <FormItem className="w-full">
                   <FormLabel

@@ -235,6 +235,7 @@ const CreateQuizPage: NextPageWithLayout = () => {
             <FormField
               control={form.control}
               name="description"
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               render={({ field: { ref, onChange, ...field } }) => (
                 <FormItem className="w-full">
                   <FormLabel
@@ -262,6 +263,7 @@ const CreateQuizPage: NextPageWithLayout = () => {
             <FormField
               control={form.control}
               name="attachments"
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               render={({ field: { value, ref, onChange, ...field } }) => (
                 <AttachmentsUploader
                   attachments={value}

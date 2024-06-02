@@ -1,13 +1,12 @@
 import { type Prisma } from "@prisma/client";
 import dayjs from "dayjs";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useMemo } from "react";
 import {
   BiExpandVertical,
   BiFilterAlt,
+  BiNotepad,
   BiSearch,
-  BiSolidNotepad,
   BiSortAlt2,
 } from "react-icons/bi";
 import { TaskTypeContentMap } from "~/libs/enums";
@@ -178,7 +177,7 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
   if (tasks.length === 0 && !isLoading)
     return (
       <CourseEmptyTab
-        icon={<BiSolidNotepad className="text-7xl text-muted-foreground" />}
+        icon={<BiNotepad className="text-7xl text-muted-foreground" />}
         text={
           isAuthor ? (
             <p>
@@ -347,9 +346,7 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
             ))
           ) : (
             <CourseEmptyTab
-              icon={
-                <BiSolidNotepad className="text-7xl text-muted-foreground" />
-              }
+              icon={<BiNotepad className="text-7xl text-muted-foreground" />}
               text={<p>Нет результатов.</p>}
             />
           )

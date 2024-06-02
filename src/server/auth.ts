@@ -1,4 +1,4 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { type Prisma, type User as PrismaUser } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { getCookie, setCookie } from "cookies-next";
@@ -18,14 +18,38 @@ import { db } from "~/server/db";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & PrismaUser;
+    user: DefaultSession["user"] &
+      Prisma.UserGetPayload<{ include: { group: true } }>;
   }
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface User extends PrismaUser {}
 }
 
-export const authOptions = (req: NextApiRequest, res: NextApiResponse) => {
+const ExtendedPrismaAdapter = () => {
   const adapter = PrismaAdapter(db);
+
+  return {
+    ...adapter,
+    async getSessionAndUser(sessionToken: string) {
+      const userAndSession = await db.session.findUnique({
+        where: { sessionToken },
+        include: {
+          user: {
+            include: {
+              group: true,
+            },
+          },
+        },
+      });
+      if (!userAndSession) return null;
+      const { user, ...session } = userAndSession;
+      return { user, session };
+    },
+  };
+};
+
+export const authOptions = (req: NextApiRequest, res: NextApiResponse) => {
+  const adapter = ExtendedPrismaAdapter();
 
   return [
     req,
@@ -45,10 +69,6 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse) => {
             const user = await db.user.findUnique({
               where: {
                 login: credentials.login,
-              },
-              include: {
-                favorites: true,
-                subscriptions: true,
               },
             });
 

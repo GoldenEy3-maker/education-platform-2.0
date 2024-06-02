@@ -32,10 +32,12 @@ import { Skeleton } from "../ui/skeleton";
 import { api } from "~/libs/api";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { TbUserCheck } from "react-icons/tb";
 
 type CourseHeadProps = {
   id: string;
   title: string;
+  progress?: number | null;
   author:
     | {
         id: string;
@@ -79,14 +81,70 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
   subscribers,
   title,
   id,
+  progress,
 }) => {
   const { data: session } = useSession();
   const status: StatusCourseMap = isArchived ? "Archived" : "Published";
 
   const utils = api.useUtils();
 
-  const courseToFavoriteMutation = api.course.toFavorite.useMutation({
+  const subscribeCourseMutation = api.course.subscribe.useMutation({
     onMutate: async ({ courseId }) => {
+      await utils.course.getById.cancel();
+
+      const prevData = utils.course.getById.getData();
+
+      utils.course.getById.setData({ id }, (old) => ({
+        ...old!,
+        subscribers: [
+          ...(old?.subscribers ?? []),
+          {
+            id: crypto.randomUUID(),
+            userId: session!.user.id,
+            progress: 0,
+            courseId: courseId,
+            user: { ...session!.user },
+          },
+        ],
+      }));
+
+      return { prevData };
+    },
+    onError: async (error, data, ctx) => {
+      utils.course.getById.setData({ id }, ctx?.prevData);
+      toast.error(error.message);
+    },
+    onSettled: () => {
+      void utils.course.getById.invalidate();
+    },
+  });
+
+  const unsubscribeCourseMutation = api.course.unsubscribe.useMutation({
+    onMutate: async () => {
+      await utils.course.getById.cancel();
+
+      const prevData = utils.course.getById.getData();
+
+      utils.course.getById.setData({ id }, (old) => ({
+        ...old!,
+        subscribers: (old?.subscribers ?? []).filter(
+          (sub) => sub.userId !== session?.user.id,
+        ),
+      }));
+
+      return { prevData };
+    },
+    onError: async (error, data, ctx) => {
+      utils.course.getById.setData({ id }, ctx?.prevData);
+      toast.error(error.message);
+    },
+    onSettled: () => {
+      void utils.course.getById.invalidate();
+    },
+  });
+
+  const courseToFavoriteMutation = api.course.toFavorite.useMutation({
+    onMutate: async () => {
       await utils.course.getById.cancel();
 
       const prevData = utils.course.getById.getData();
@@ -114,7 +172,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
   });
 
   const courseRemoveFavoriteMutation = api.course.removeFavorite.useMutation({
-    onMutate: async ({ courseId }) => {
+    onMutate: async () => {
       await utils.course.getById.cancel();
 
       const prevData = utils.course.getById.getData();
@@ -195,9 +253,9 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
 
         return (
           <div className="flex max-w-96 items-center gap-4">
-            <Progress value={40} />
+            <Progress value={progress} />
             <span className="whitespace-nowrap text-muted-foreground">
-              40% завершено
+              {progress}% завершено
             </span>
           </div>
         );
@@ -346,12 +404,19 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
           if (isSubStudent)
             return (
               <Button
-                variant="destructive"
+                variant="outline"
                 className="gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full max-[570px]:hidden"
+                disabled={
+                  unsubscribeCourseMutation.isLoading ||
+                  subscribeCourseMutation.isLoading
+                }
+                onClick={() =>
+                  unsubscribeCourseMutation.mutate({ courseId: id })
+                }
               >
-                <BiBookmarkMinus className="shrink-0 text-xl" />
-                <span className="max-lg:hidden">Отписаться</span>
-                <span className="sr-only">Отписаться</span>
+                <TbUserCheck className="hidden shrink-0 text-xl max-lg:inline-block" />
+                <span className="max-lg:hidden">Вы подписаны</span>
+                <span className="sr-only">Вы подписаны</span>
               </Button>
             );
 
@@ -359,7 +424,12 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
             <Button
               variant="default"
               className="gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full max-[570px]:hidden"
-              disabled={isTeacher && !isAuthor}
+              disabled={
+                (isTeacher && !isAuthor) ||
+                subscribeCourseMutation.isLoading ||
+                unsubscribeCourseMutation.isLoading
+              }
+              onClick={() => subscribeCourseMutation.mutate({ courseId: id })}
             >
               <BiBookmarkPlus className="shrink-0 text-xl" />
               <span className="max-lg:hidden">Подписаться</span>
@@ -378,10 +448,36 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-60">
-            <DropdownMenuItem asChild>
-              <Button variant="ghost" className="w-full justify-start">
-                <BiStar className="mr-2 text-xl text-warning" />
-                <span>Добавить в избранное</span>
+            <DropdownMenuItem
+              onSelect={(event) => event.preventDefault()}
+              asChild
+            >
+              <Button
+                variant="ghost"
+                disabled={
+                  courseToFavoriteMutation.isLoading ||
+                  courseRemoveFavoriteMutation.isLoading
+                }
+                onClick={() => {
+                  if (isFavorite) {
+                    courseRemoveFavoriteMutation.mutate({ courseId: id });
+                  } else {
+                    courseToFavoriteMutation.mutate({ courseId: id });
+                  }
+                }}
+                className="w-full justify-start"
+              >
+                {isFavorite ? (
+                  <>
+                    <BiSolidStar className="mr-2 text-xl text-warning" />
+                    <span>Убрать из избранного</span>
+                  </>
+                ) : (
+                  <>
+                    <BiStar className="mr-2 text-xl text-warning" />
+                    <span>Добавить в избранное</span>
+                  </>
+                )}
               </Button>
             </DropdownMenuItem>
             <ShareDialogDrawer>
@@ -427,10 +523,20 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
 
               if (isSubStudent)
                 return (
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem
+                    onSelect={(event) => event.preventDefault()}
+                    asChild
+                  >
                     <Button
-                      variant="ghost-destructive"
-                      className="w-full justify-start"
+                      variant={"ghost-destructive"}
+                      className="w-full justify-start hover:!bg-destructive/15 hover:!text-destructive"
+                      disabled={
+                        unsubscribeCourseMutation.isLoading ||
+                        subscribeCourseMutation.isLoading
+                      }
+                      onClick={() =>
+                        unsubscribeCourseMutation.mutate({ courseId: id })
+                      }
                     >
                       <BiBookmarkMinus className="mr-2 text-xl" />
                       <span>Отписаться</span>
@@ -439,8 +545,22 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
                 );
 
               return (
-                <DropdownMenuItem asChild disabled={!isAuthor && isTeacher}>
-                  <Button variant="ghost" className="w-full justify-start">
+                <DropdownMenuItem
+                  asChild
+                  onSelect={(event) => event.preventDefault()}
+                >
+                  <Button
+                    variant="ghost"
+                    disabled={
+                      (!isAuthor && isTeacher) ||
+                      subscribeCourseMutation.isLoading ||
+                      unsubscribeCourseMutation.isLoading
+                    }
+                    className="w-full justify-start"
+                    onClick={() =>
+                      subscribeCourseMutation.mutate({ courseId: id })
+                    }
+                  >
                     <BiBookmarkPlus className="mr-2 text-xl" />
                     <span>Подписаться</span>
                   </Button>
