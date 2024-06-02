@@ -1,39 +1,39 @@
-import { type Prisma } from "@prisma/client"
-import dayjs from "dayjs"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
-import { useMemo } from "react"
+import { type Prisma } from "@prisma/client";
+import dayjs from "dayjs";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useMemo } from "react";
 import {
   BiExpandVertical,
   BiFilterAlt,
   BiSearch,
   BiSolidNotepad,
   BiSortAlt2,
-} from "react-icons/bi"
-import { TaskTypeContentMap } from "~/libs/enums"
-import { cn, prepareSearchMatching, type ValueOf } from "~/libs/utils"
-import { Badge } from "../ui/badge"
-import { Button } from "../ui/button"
+} from "react-icons/bi";
+import { TaskTypeContentMap } from "~/libs/enums";
+import { cn, prepareSearchMatching, type ValueOf } from "~/libs/utils";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../ui/collapsible"
-import { Input } from "../ui/input"
-import { Label } from "../ui/label"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+} from "../ui/collapsible";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select"
-import { Separator } from "../ui/separator"
-import { Skeleton } from "../ui/skeleton"
-import { Switch } from "../ui/switch"
-import { CourseEmptyTab } from "./empty-tab"
-import { TaskItem, TaskItemSkeleton } from "./task-item"
+} from "../ui/select";
+import { Separator } from "../ui/separator";
+import { Skeleton } from "../ui/skeleton";
+import { Switch } from "../ui/switch";
+import { CourseEmptyTab } from "./empty-tab";
+import { TaskItem, TaskItemSkeleton } from "./task-item";
 
 const SortValueTasksMap = {
   Recent: "Recent",
@@ -112,8 +112,6 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
   isSubStudent,
   isTeacher,
 }) => {
-  const { data: session } = useSession();
-
   const activeFilters = Object.values(filters).filter((val) => val === true);
 
   const filteredTasks = useMemo(
@@ -147,24 +145,22 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
 
     if (!firstTask) return {};
 
-    const newTasks = filteredTasks
-      .slice(1)
-      .reduce(
-        (acc, task) => {
-          const lastTasks = acc.at(-1)!;
-          const lastTask = lastTasks.at(-1)!;
+    const newTasks = filteredTasks.slice(1).reduce(
+      (acc, task) => {
+        const lastTasks = acc.at(-1)!;
+        const lastTask = lastTasks.at(-1)!;
 
-          if (task.section === lastTask.section) {
-            lastTasks.push(task);
-            acc[acc.length - 1] = lastTasks;
-          } else {
-            acc.push([task]);
-          }
+        if (task.section === lastTask.section) {
+          lastTasks.push(task);
+          acc[acc.length - 1] = lastTasks;
+        } else {
+          acc.push([task]);
+        }
 
-          return acc;
-        },
-        [[firstTask]],
-      );
+        return acc;
+      },
+      [[firstTask]],
+    );
 
     const groups = newTasks.reduce<Record<string, typeof tasks>>(
       (acc, section) => {
@@ -179,7 +175,7 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
     return groups;
   }, [filteredTasks]);
 
-  if (tasks.length === 0)
+  if (tasks.length === 0 && !isLoading)
     return (
       <CourseEmptyTab
         icon={<BiSolidNotepad className="text-7xl text-muted-foreground" />}
@@ -215,14 +211,14 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
           className="max-w-64"
           value={searchValue}
           onChange={(event) => onSearchValueChange(event.target.value)}
-          disabled={!session?.user}
+          disabled={isLoading}
         />
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               className="gap-2 bg-transparent max-[1100px]:h-10 max-[1100px]:w-10 max-[1100px]:border-none max-[1100px]:shadow-none"
-              disabled={!session?.user}
+              disabled={isLoading}
             >
               <BiFilterAlt className="shrink-0 text-xl" />
               <span className="max-[1100px]:hidden">Фильтры</span>
@@ -284,7 +280,7 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
             asChild
             variant="outline"
             className="w-auto justify-between gap-2 bg-transparent max-[1100px]:border-none max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
-            disabled={!session?.user}
+            disabled={isLoading}
           >
             <SelectTrigger>
               <BiSortAlt2 className="shrink-0 text-xl min-[1100px]:hidden" />

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { handleAttachment } from "~/libs/utils";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
+import { type Descendant } from "slate";
+import { serializeHTML } from "../editor/utils";
 
 type CourseOverviewTabProps = {
   description?: string | null;
@@ -22,7 +24,17 @@ export const CourseOverviewTab: React.FC<CourseOverviewTabProps> = ({
         <>
           <section>
             <h3 className="mb-2 border-b py-2 text-xl font-medium">Описание</h3>
-            {description ? <p>{description}</p> : <p>Описание отсутствует.</p>}
+            {description ? (
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: (JSON.parse(description) as Descendant[])
+                    .map((node) => serializeHTML(node))
+                    .join(""),
+                }}
+              />
+            ) : (
+              <p>Описание отсутствует.</p>
+            )}
           </section>
           <section>
             <h3 className="mb-2 border-b py-2 text-xl font-medium">

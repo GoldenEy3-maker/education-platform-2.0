@@ -57,7 +57,7 @@ export const InviteDialogDrawer: React.FC<React.PropsWithChildren> = ({
           />
           <div>
             <p className="mb-2 font-medium">Список студентов</p>
-            <div className="custom-scrollbar max-h-[min(calc(100vh-25rem),14.5rem)] space-y-3 overflow-auto">
+            <div className="custom-scrollbar h-[14.5rem] space-y-3 overflow-auto">
               <div className="grid grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] gap-x-3 overflow-hidden">
                 <Avatar
                   className="row-span-2"

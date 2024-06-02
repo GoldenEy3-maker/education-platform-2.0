@@ -83,7 +83,7 @@ export const CourseAnnouncementsTab: React.FC<CourseAnnouncementsTabProps> = ({
     [announcements, searchValue],
   );
 
-  if (announcements.length === 0)
+  if (announcements.length === 0 && !isLoading)
     return (
       <CourseEmptyTab
         icon={
@@ -122,7 +122,7 @@ export const CourseAnnouncementsTab: React.FC<CourseAnnouncementsTabProps> = ({
           value={searchValue}
           className="max-w-64"
           onChange={(event) => onSearchValueChange(event.target.value)}
-          disabled={!session?.user}
+          disabled={isLoading}
         />
         {isAuthor ? (
           <Button className="gap-2 max-md:w-10 max-md:rounded-full">

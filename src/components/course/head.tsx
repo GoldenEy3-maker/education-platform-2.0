@@ -7,6 +7,7 @@ import {
   BiDotsVerticalRounded,
   BiShareAlt,
   BiSliderAlt,
+  BiSolidStar,
   BiStar,
   BiUserPlus,
 } from "react-icons/bi";
@@ -28,18 +29,23 @@ import {
 } from "../ui/dropdown-menu";
 import { Progress } from "../ui/progress";
 import { Skeleton } from "../ui/skeleton";
+import { api } from "~/libs/api";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 type CourseHeadProps = {
   id: string;
   title: string;
-  author: {
-    id: string;
-    fathername: string | null;
-    surname: string;
-    name: string;
-    status: string | null;
-    image: string | null;
-  };
+  author:
+    | {
+        id: string;
+        fathername: string | null;
+        surname: string;
+        name: string;
+        status: string | null;
+        image: string | null;
+      }
+    | undefined;
   subscribers: Prisma.SubscriptionGetPayload<{
     include: {
       user: {
@@ -59,6 +65,7 @@ type CourseHeadProps = {
   isTeacher: boolean;
   isLoading: boolean;
   isArchived: boolean;
+  isFavorite: boolean;
 };
 
 export const CourseHead: React.FC<CourseHeadProps> = ({
@@ -67,12 +74,68 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
   isTeacher,
   isArchived,
   isLoading,
+  isFavorite,
   author,
   subscribers,
   title,
   id,
 }) => {
+  const { data: session } = useSession();
   const status: StatusCourseMap = isArchived ? "Archived" : "Published";
+
+  const utils = api.useUtils();
+
+  const courseToFavoriteMutation = api.course.toFavorite.useMutation({
+    onMutate: async ({ courseId }) => {
+      await utils.course.getById.cancel();
+
+      const prevData = utils.course.getById.getData();
+
+      utils.course.getById.setData({ id }, (old) => ({
+        ...old!,
+        favoritedBy: [
+          ...(old?.favoritedBy ?? []),
+          {
+            id: crypto.randomUUID(),
+            userId: session!.user.id,
+          },
+        ],
+      }));
+
+      return { prevData };
+    },
+    onError: async (error, data, ctx) => {
+      utils.course.getById.setData({ id }, ctx?.prevData);
+      toast.error(error.message);
+    },
+    onSettled: () => {
+      void utils.course.getById.invalidate();
+    },
+  });
+
+  const courseRemoveFavoriteMutation = api.course.removeFavorite.useMutation({
+    onMutate: async ({ courseId }) => {
+      await utils.course.getById.cancel();
+
+      const prevData = utils.course.getById.getData();
+
+      utils.course.getById.setData({ id }, (old) => ({
+        ...old!,
+        favoritedBy: (old?.favoritedBy ?? []).filter(
+          (fav) => fav.userId !== session?.user.id,
+        ),
+      }));
+
+      return { prevData };
+    },
+    onError: async (error, data, ctx) => {
+      utils.course.getById.setData({ id }, ctx?.prevData);
+      toast.error(error.message);
+    },
+    onSettled: () => {
+      void utils.course.getById.invalidate();
+    },
+  });
 
   return !isLoading ? (
     <>
@@ -155,13 +218,13 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
             variant="ghost"
             className="grid h-auto max-w-fit grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3"
           >
-            <Link href="#">
+            <Link href={PagePathMap.Profile + author?.id}>
               <Avatar fallback="ДЛ" className="row-span-2 h-10 w-10" />
               <p className="truncate font-medium">
-                {author.surname} {author.name} {author.fathername}
+                {author?.surname} {author?.name} {author?.fathername}
               </p>
               <span className="truncate text-sm text-muted-foreground">
-                {author.status}
+                {author?.status}
               </span>
             </Link>
           </Button>
@@ -171,10 +234,31 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
           variant="ghost"
           className="rounded-full max-[570px]:hidden"
           size="icon"
+          onClick={() => {
+            if (isFavorite) {
+              courseRemoveFavoriteMutation.mutate({ courseId: id });
+            } else {
+              courseToFavoriteMutation.mutate({ courseId: id });
+            }
+          }}
+          disabled={
+            courseRemoveFavoriteMutation.isLoading ||
+            courseToFavoriteMutation.isLoading
+          }
         >
-          <BiStar className="text-xl text-warning" />
-          <span className="sr-only">Добавь в избранное</span>
+          {isFavorite ? (
+            <>
+              <BiSolidStar className="text-xl text-warning" />
+              <span className="sr-only">Убрать из избранного</span>
+            </>
+          ) : (
+            <>
+              <BiStar className="text-xl text-warning" />
+              <span className="sr-only">Добавь в избранное</span>
+            </>
+          )}
         </Button>
+
         <ShareDialogDrawer>
           <Button
             type="button"

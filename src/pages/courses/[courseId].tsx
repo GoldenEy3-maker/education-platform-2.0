@@ -1,12 +1,6 @@
-import { type Prisma } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import {
-  BiSolidConversation,
-  BiSolidGroup,
-  BiSolidNotepad,
-  BiSolidWidget,
-} from "react-icons/bi";
+import { BiConversation, BiGroup, BiHive, BiNotepad } from "react-icons/bi";
 import { CourseAnnouncementsTab } from "~/components/course/announcements-tab";
 import { CourseHead } from "~/components/course/head";
 import { CourseOverviewTab } from "~/components/course/overview-tab";
@@ -36,6 +30,8 @@ import { ScaffoldLayout } from "~/layouts/scaffold";
 import { PagePathMap } from "~/libs/enums";
 import { type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "../_app";
+import { api } from "~/libs/api";
+import { useRouter } from "next/router";
 
 const TabsMap = {
   Overview: "Overview",
@@ -50,603 +46,33 @@ const TabsTriggerMap: Record<TabsMap, { icon: React.ReactNode; text: string }> =
   {
     Overview: {
       icon: (
-        <BiSolidWidget className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiHive className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Введение",
     },
     Tasks: {
       icon: (
-        <BiSolidNotepad className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiNotepad className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Задания",
     },
     Subscribers: {
       icon: (
-        <BiSolidGroup className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiGroup className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Участники",
     },
     Announcements: {
       icon: (
-        <BiSolidConversation className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiConversation className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Объявления",
     },
   };
 
-const MOK_DATA: Prisma.CourseGetPayload<{
-  include: {
-    subscribers: {
-      include: {
-        user: {
-          select: {
-            id: true;
-            fathername: true;
-            name: true;
-            surname: true;
-            image: true;
-            email: true;
-            group: true;
-          };
-        };
-      };
-    };
-    author: {
-      select: {
-        id: true;
-        fathername: true;
-        surname: true;
-        name: true;
-        status: true;
-        image: true;
-      };
-    };
-    attachments: true;
-    tasks: {
-      include: {
-        attachments: true;
-        restrictedGroups: true;
-        restrictedUsers: true;
-        attempts: {
-          include: {
-            user: {
-              select: {
-                id: true;
-                group: true;
-                image: true;
-                name: true;
-                surname: true;
-                fathername: true;
-              };
-            };
-          };
-        };
-      };
-    };
-    announcements: {
-      include: {
-        attachments: true;
-      };
-    };
-  };
-}> = {
-  id: crypto.randomUUID(),
-  author: {
-    id: "user_1",
-    fathername: "Михайловна",
-    image: null,
-    name: "Любовь",
-    status: "Преподаватель английского языка",
-    surname: "Демкина",
-  },
-  authorId: "user_1",
-  createdAt: new Date(),
-  description:
-    "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam, quisquam? Accusamus dicta eum nesciunt ut, cumque corporis nulla explicabo reiciendis quisquam, pariatur odio id unde sapiente repudiandae. Nihil, hic dicta. Aliquid illo dignissimos quod odio. Omnis repellendus saepe cupiditate aliquam ratione, nemo vel repellat sapiente illum fuga labore cum suscipit iusto, reiciendis voluptas totam beatae repudiandae, reprehenderit et quod porro! Expedita blanditiis ea dolor itaque, hic reiciendis optio mollitia obcaecati recusandae neque vero soluta. Odit consequuntur soluta, sed voluptatibus ipsa itaque enim quas qui blanditiis modi, accusantium quod temporibus ullam.",
-  isArchived: false,
-  fullTitle: "Иностранный язык в профессиональной деятельности",
-  shortTitle: "ИЯПД",
-  image: "/bg-abstract-1.jpg",
-  updatedAt: new Date(),
-  subscribers: [
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      progress: 40,
-      user: {
-        id: crypto.randomUUID(),
-        fathername: "Николаевич",
-        name: "Данил",
-        surname: "Королев",
-        image: null,
-        email: "danil-danil-korolev@bk.ru",
-        group: {
-          id: "123",
-          name: "К.105с11-5",
-        },
-      },
-      userId: crypto.randomUUID(),
-    },
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      progress: 40,
-      user: {
-        id: crypto.randomUUID(),
-        fathername: "Николаевич",
-        name: "Данил",
-        surname: "Королев",
-        image: null,
-        email: "danil-danil-korolev@bk.ru",
-        group: {
-          id: "123",
-          name: "К.105с11-5",
-        },
-      },
-      userId: crypto.randomUUID(),
-    },
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      progress: 40,
-      user: {
-        id: crypto.randomUUID(),
-        fathername: "Николаевич",
-        name: "Данил",
-        surname: "Королев",
-        image: null,
-        email: "danil-danil-korolev@bk.ru",
-        group: {
-          id: "123",
-          name: "К.105с11-5",
-        },
-      },
-      userId: crypto.randomUUID(),
-    },
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      progress: 40,
-      user: {
-        id: crypto.randomUUID(),
-        fathername: "Николаевич",
-        name: "Данил",
-        surname: "Королев",
-        image: null,
-        email: "danil-danil-korolev@bk.ru",
-        group: {
-          id: "123",
-          name: "К.105с11-5",
-        },
-      },
-      userId: crypto.randomUUID(),
-    },
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      progress: 40,
-      user: {
-        id: crypto.randomUUID(),
-        fathername: "Николаевич",
-        name: "Данил",
-        surname: "Королев",
-        image: null,
-        email: "danil-danil-korolev@bk.ru",
-        group: {
-          id: "123",
-          name: "К.105с11-5",
-        },
-      },
-      userId: crypto.randomUUID(),
-    },
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      progress: 40,
-      user: {
-        id: crypto.randomUUID(),
-        fathername: "Николаевич",
-        name: "Данил",
-        surname: "Королев",
-        image: null,
-        email: "danil-danil-korolev@bk.ru",
-        group: {
-          id: "123",
-          name: "К.105с11-5",
-        },
-      },
-      userId: crypto.randomUUID(),
-    },
-  ],
-  attachments: [
-    {
-      id: "1",
-      name: "Ссылка №1",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "5",
-      name: "Таблица №1.csv",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "9",
-      name: "Таблица №2.xls",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "2",
-      name: "Документ №1.pdf",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "3",
-      name: "Документ №2.doc",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "4",
-      name: "Документ №3.docx",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "6",
-      name: "Архив №1.rar",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "11",
-      name: "Изображение №3.jpg",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "7",
-      name: "Изображение №1.png",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "10",
-      name: "Изображение №2.svg",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "12",
-      name: "Изображение №4.webp",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "13",
-      name: "Изображение №5.xcf",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "14",
-      name: "Изображение №6.gif",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "8",
-      name: "Файл №1.bat",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "15",
-      name: "Файл №2.ai",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "16",
-      name: "Файл №3.xml",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "17",
-      name: "Файл №4.html",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "18",
-      name: "Файл №5.css",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "19",
-      name: "Файл №6.js",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "20",
-      name: "Файл №7.jsx",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "21",
-      name: "Файл №8.ts",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "22",
-      name: "Файл №9.tsx",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "24",
-      name: "Файл №10.db",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "25",
-      name: "Файл №11.sql",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "26",
-      name: "Файл №12.php",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "27",
-      name: "Файл №13.txt",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-    {
-      id: "23",
-      name: "Презентация №1.ppt",
-      url: "",
-      courseId: crypto.randomUUID(),
-      key: "123",
-      size: null,
-      uploadedAt: new Date(),
-    },
-  ],
-  tasks: [
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      attachments: [
-        {
-          url: "",
-          id: "123",
-          name: "Презентация №1.ppt",
-          taskId: "123",
-          key: "123",
-          size: null,
-          uploadedAt: new Date(),
-        },
-      ],
-      attempts: [],
-      availableAttempts: null,
-      availableTime: null,
-      createdAt: new Date(),
-      restrictedGroups: [],
-      restrictedUsers: [],
-      deadline: null,
-      isHidden: false,
-      section:
-        "Unit 1.1. The United Kingdom of Great Britain and Northern Ireland",
-      title: "The surfce of the USA",
-      type: "Lec",
-      updatedAt: new Date(),
-    },
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      attachments: [],
-      attempts: [],
-      availableAttempts: 3,
-      availableTime: 1000 * 60 * 30,
-      createdAt: new Date(),
-      restrictedGroups: [],
-      restrictedUsers: [],
-      deadline: null,
-      isHidden: false,
-      section:
-        "Unit 1.1. The United Kingdom of Great Britain and Northern Ireland",
-      title: "The surfce of the USA",
-      type: "Quiz",
-      updatedAt: new Date(),
-    },
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      attachments: [],
-      attempts: [],
-      availableAttempts: null,
-      availableTime: null,
-      createdAt: new Date(),
-      restrictedGroups: [],
-      restrictedUsers: [],
-      deadline: new Date("04/25/2024 23:59:59"),
-      isHidden: false,
-      section:
-        "Unit 1.1. The United Kingdom of Great Britain and Northern Ireland",
-      title: "The surfce of the USA",
-      type: "Pract",
-      updatedAt: new Date(),
-    },
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      attachments: [],
-      attempts: [],
-      availableAttempts: null,
-      availableTime: null,
-      createdAt: new Date(),
-      restrictedGroups: [],
-      restrictedUsers: [],
-      deadline: null,
-      isHidden: false,
-      section:
-        "Unit 1.2. The United Kingdom of Great Britain and Northern Ireland",
-      title: "The surfce of the USA",
-      type: "Quiz",
-      updatedAt: new Date(),
-    },
-    {
-      id: crypto.randomUUID(),
-      courseId: crypto.randomUUID(),
-      attachments: [],
-      attempts: [],
-      availableAttempts: 3,
-      availableTime: 1000 * 60 * 30,
-      createdAt: new Date(),
-      restrictedGroups: [],
-      restrictedUsers: [],
-      deadline: null,
-      isHidden: false,
-      section:
-        "Unit 1.2. The United Kingdom of Great Britain and Northern Ireland",
-      title: "The surfce of the USA",
-      type: "Quiz",
-      updatedAt: new Date(),
-    },
-  ],
-  announcements: [
-    {
-      id: crypto.randomUUID(),
-      courseId: "course_1",
-      title: "Карьерная гостинная",
-      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit expedita voluptatibus temporibus quibusdam voluptates quae repellendus voluptate nobis hic, quam beatae esse fugiat vero, natus reiciendis minus odio eveniet alias.",
-      createdAt: new Date(),
-      attachments: [
-        {
-          id: crypto.randomUUID(),
-          name: "Таблица №1.csv",
-          url: "",
-          announcementId: crypto.randomUUID(),
-          key: "123",
-          size: null,
-          uploadedAt: new Date(),
-        },
-        {
-          id: crypto.randomUUID(),
-          name: "Документ №1.pdf",
-          url: "",
-          announcementId: crypto.randomUUID(),
-          key: "123",
-          size: null,
-          uploadedAt: new Date(),
-        },
-        {
-          id: crypto.randomUUID(),
-          name: "Документ №2.doc",
-          url: "",
-          announcementId: crypto.randomUUID(),
-          key: "123",
-          size: null,
-          uploadedAt: new Date(),
-        },
-      ],
-    },
-  ],
-};
-
 const CoursePage: NextPageWithLayout = () => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "Tasks");
   const [searchValueSubscribers, setSearchValueSubscribers] = useState("");
   const [sortValueSubscribers, setSortValueSubscribers] =
@@ -664,10 +90,21 @@ const CoursePage: NextPageWithLayout = () => {
     HideTest: false,
   });
 
-  const isAuthor = true;
-  const isSubStudent = false;
-  const isTeacher = false;
-  const isLoading = false;
+  const courseGetByIdQuery = api.course.getById.useQuery({
+    id: router.query.courseId as string,
+  });
+
+  const isLoading = !session?.user || courseGetByIdQuery.isLoading;
+
+  const isAuthor =
+    courseGetByIdQuery.data && session?.user
+      ? courseGetByIdQuery.data.authorId === session.user.id
+      : false;
+  const isSubStudent =
+    courseGetByIdQuery.data?.subscribers.some(
+      (sub) => sub.userId === session?.user.id,
+    ) ?? false;
+  const isTeacher = session?.user.role === "Teacher";
 
   return (
     <main>
@@ -679,7 +116,9 @@ const CoursePage: NextPageWithLayout = () => {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             {!isLoading ? (
-              <BreadcrumbPage>{MOK_DATA.fullTitle}</BreadcrumbPage>
+              <BreadcrumbPage>
+                {courseGetByIdQuery.data?.fullTitle}
+              </BreadcrumbPage>
             ) : (
               <Skeleton className="h-5 w-52 rounded-full sm:w-72" />
             )}
@@ -687,15 +126,20 @@ const CoursePage: NextPageWithLayout = () => {
         </BreadcrumbList>
       </Breadcrumb>
       <CourseHead
-        id={MOK_DATA.id}
+        id={courseGetByIdQuery.data?.id ?? ""}
         isAuthor={isAuthor}
         isSubStudent={isSubStudent}
         isTeacher={isTeacher}
         isLoading={isLoading}
-        author={MOK_DATA.author}
-        isArchived={MOK_DATA.isArchived}
-        subscribers={MOK_DATA.subscribers}
-        title={MOK_DATA.fullTitle}
+        author={courseGetByIdQuery.data?.author}
+        isArchived={courseGetByIdQuery.data?.isArchived ?? false}
+        subscribers={courseGetByIdQuery.data?.subscribers ?? []}
+        title={courseGetByIdQuery.data?.fullTitle ?? ""}
+        isFavorite={
+          courseGetByIdQuery.data?.favoritedBy.some(
+            (fav) => fav.userId === session?.user.id,
+          ) ?? false
+        }
       />
       <Tabs
         value={tabs}
@@ -720,13 +164,13 @@ const CoursePage: NextPageWithLayout = () => {
         <TabsContent value={TabsMap.Overview}>
           <CourseOverviewTab
             isLoading={isLoading}
-            description={MOK_DATA.description}
-            attachments={MOK_DATA.attachments}
+            description={courseGetByIdQuery.data?.description}
+            attachments={courseGetByIdQuery.data?.attachments ?? []}
           />
         </TabsContent>
         <TabsContent value={TabsMap.Tasks}>
           <CourseTasksTab
-            tasks={MOK_DATA.tasks}
+            tasks={courseGetByIdQuery.data?.tasks ?? []}
             searchValue={searchValueTasks}
             onSearchValueChange={setSearchValueTasks}
             sortValue={sortValueTasks}
@@ -747,14 +191,14 @@ const CoursePage: NextPageWithLayout = () => {
             onSortValueChange={setSortValueSubscribers}
             searchValue={searchValueSubscribers}
             onSearchValueChange={setSearchValueSubscribers}
-            subscribers={MOK_DATA.subscribers}
+            subscribers={courseGetByIdQuery.data?.subscribers ?? []}
             isAuthor={isAuthor}
             isLoading={isLoading}
           />
         </TabsContent>
         <TabsContent value={TabsMap.Announcements}>
           <CourseAnnouncementsTab
-            announcements={MOK_DATA.announcements}
+            announcements={courseGetByIdQuery.data?.announcements ?? []}
             searchValue={searchValueAnnouncements}
             onSearchValueChange={setSearchValueAnnouncements}
             isAuthor={isAuthor}

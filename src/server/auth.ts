@@ -1,6 +1,5 @@
-// import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { type User as PrismaUser } from "@prisma/client";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { type Prisma, type User as PrismaUser } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { getCookie, setCookie } from "cookies-next";
 import {
@@ -19,10 +18,10 @@ import { db } from "~/server/db";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & Omit<PrismaUser, "password">;
+    user: DefaultSession["user"] & PrismaUser;
   }
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface User extends Omit<PrismaUser, "password"> {}
+  interface User extends PrismaUser {}
 }
 
 export const authOptions = (req: NextApiRequest, res: NextApiResponse) => {
@@ -47,6 +46,10 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse) => {
               where: {
                 login: credentials.login,
               },
+              include: {
+                favorites: true,
+                subscriptions: true,
+              },
             });
 
             if (!user) throw new Error("Неверный логин или пароль!");
@@ -64,7 +67,7 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse) => {
         }),
       ],
       callbacks: {
-        session({ user, session }) {
+        async session({ user, session }) {
           return { ...session, user: user };
         },
         async redirect({ url }) {

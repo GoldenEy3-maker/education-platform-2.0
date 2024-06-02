@@ -42,13 +42,61 @@ export const courseRouter = createTRPCRouter({
           id: opts.input.id,
         },
         include: {
-          tasks: {
+          favoritedBy: {
+            select: {
+              userId: true,
+            },
+          },
+          subscribers: {
             include: {
-              attempts: {
-                where: {
-                  userId: opts.ctx.session.user.id,
+              user: {
+                select: {
+                  id: true,
+                  fathername: true,
+                  name: true,
+                  surname: true,
+                  image: true,
+                  email: true,
+                  group: true,
                 },
               },
+            },
+          },
+          author: {
+            select: {
+              id: true,
+              fathername: true,
+              surname: true,
+              name: true,
+              status: true,
+              image: true,
+            },
+          },
+          attachments: true,
+          tasks: {
+            include: {
+              attachments: true,
+              restrictedGroups: true,
+              restrictedUsers: true,
+              attempts: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      group: true,
+                      image: true,
+                      name: true,
+                      surname: true,
+                      fathername: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          announcements: {
+            include: {
+              attachments: true,
             },
           },
         },

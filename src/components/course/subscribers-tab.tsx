@@ -86,7 +86,7 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
     [searchValue, subscribers],
   );
 
-  if (subscribers.length === 0)
+  if (subscribers.length === 0 && !isLoading)
     return (
       <CourseEmptyTab
         icon={<BiGroup className="text-7xl text-muted-foreground" />}
@@ -134,7 +134,7 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
           className="max-w-64"
           value={searchValue}
           onChange={(event) => onSearchValueChange(event.target.value)}
-          disabled={!session?.user}
+          disabled={isLoading}
         />
         <Select
           defaultValue={SortValueSubscribersMap.Recent}
@@ -145,7 +145,7 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
             asChild
             variant="outline"
             className="w-auto justify-between gap-2 bg-transparent max-[1100px]:border-none max-[1100px]:px-2 max-[1100px]:shadow-none min-[1100px]:min-w-[15.5rem]"
-            disabled={!session?.user}
+            disabled={isLoading}
           >
             <SelectTrigger>
               <BiSortAlt2 className="shrink-0 text-xl min-[1100px]:hidden" />

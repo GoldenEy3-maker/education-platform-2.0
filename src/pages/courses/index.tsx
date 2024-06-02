@@ -175,8 +175,7 @@ const CoursesPage: NextPageWithLayout = () => {
             Похоже, что на данный момент на портале нет курсов... Есть риск
             проблем с сервером на нашей стороне. Либо же преподаватели в скором
             времени подготовят для вас новый и интересный материал. В любом
-            случае, оставайтесь на связи и попробуйте вернуться позже. Мы вас
-            всегда ждем!
+            случае, оставайтесь на связи и попробуйте вернуться позже.
           </p>
         }
       />
@@ -197,17 +196,17 @@ const CoursesPage: NextPageWithLayout = () => {
               или же воспользуетесь инструментами поиска на старнице, чтобы
               найти необходимый курс. В случае если вы подписывались на курс, но
               тут его нет, тогда проблема остается на нашей стороне. Попробуйте
-              вернуться позже. Мы вас всегда ждем!
+              вернуться позже.
             </p>
           ) : session?.user.role === "Teacher" ? (
             <p>
               Похоже, что вы все еще не опубликовали ни одного курса.{" "}
               <Link href="#" className="text-primary">
-                Скорее перейдите к созданию нового.
+                Скорее перейдите к созданию нового курса.
               </Link>{" "}
               В случае если у вас уже есть опубликованные курсы, но тут они не
               появляются, тогда проблема остается на нашей стороне. Попробуйте
-              вернуться позже. Мы вас всегда ждем!
+              вернуться позже.
             </p>
           ) : null
         }
@@ -222,8 +221,7 @@ const CoursesPage: NextPageWithLayout = () => {
             поможет вам быстрее ориентироваться на портале при поиске
             необходимых материалов. В случае если вы все же добавляли уже в
             избранное какие-то материалы, но тут ничего нет, тогда проблема
-            остается на нашей стороне. Попробуйте вернуться позже. Мы вас всегда
-            ждем!
+            остается на нашей стороне. Попробуйте вернуться позже.
           </p>
         }
       />
@@ -236,8 +234,7 @@ const CoursesPage: NextPageWithLayout = () => {
             Похоже, что на данный момент нам нечего вам предложить... Есть риск
             проблем с сервером на нашей стороне. Либо же преподаватели в скором
             времени подготовят для вас новый и интересный материал. В любом
-            случае, оставайтесь на связи и попробуйте вернуться позже. Мы вас
-            всегда ждем!
+            случае, оставайтесь на связи и попробуйте вернуться позже.
           </p>
         }
       />
@@ -411,45 +408,64 @@ const CoursesPage: NextPageWithLayout = () => {
           ))}
         </TabsList>
         {Object.entries(coursesDataMap).map(([key, data]) => {
-          const filteredData = data.filter((course) => {
-            const value = prepareSearchMatching(searchValue);
-            const creatdAt = dayjs(course.createdAt);
-            const fullTitle = prepareSearchMatching(course.fullTitle).includes(
-              value,
-            );
-            const shortTitle = course.shortTitle
-              ? prepareSearchMatching(course.shortTitle).includes(value)
-              : true;
-            const description = course.description
-              ? prepareSearchMatching(
-                  serializeText(JSON.parse(course.description) as Descendant[]),
-                ).includes(value)
-              : true;
-            const status = prepareSearchMatching(
-              StatusCourseContentMap[
-                course.isArchived ? "Archived" : "Published"
-              ],
-            ).includes(value);
-            const formatedCreatedAt = prepareSearchMatching(
-              creatdAt.format("DD MMM YYYY"),
-            ).includes(value);
-            const isoCreatdAt = prepareSearchMatching(
-              creatdAt.toISOString(),
-            ).includes(value);
-            const dateCreatedAt = prepareSearchMatching(
-              creatdAt.toString(),
-            ).includes(value);
+          const filteredData = data
+            .filter((course) => {
+              const value = prepareSearchMatching(searchValue);
+              const creatdAt = dayjs(course.createdAt);
+              const fullTitle = prepareSearchMatching(
+                course.fullTitle,
+              ).includes(value);
+              const shortTitle = course.shortTitle
+                ? prepareSearchMatching(course.shortTitle).includes(value)
+                : true;
+              const description = course.description
+                ? prepareSearchMatching(
+                    serializeText(
+                      JSON.parse(course.description) as Descendant[],
+                    ),
+                  ).includes(value)
+                : true;
+              const status = prepareSearchMatching(
+                StatusCourseContentMap[
+                  course.isArchived ? "Archived" : "Published"
+                ],
+              ).includes(value);
+              const formatedCreatedAt = prepareSearchMatching(
+                creatdAt.format("DD MMM YYYY"),
+              ).includes(value);
+              const isoCreatdAt = prepareSearchMatching(
+                creatdAt.toISOString(),
+              ).includes(value);
+              const dateCreatedAt = prepareSearchMatching(
+                creatdAt.toString(),
+              ).includes(value);
 
-            return (
-              fullTitle ||
-              shortTitle ||
-              status ||
-              description ||
-              formatedCreatedAt ||
-              isoCreatdAt ||
-              dateCreatedAt
-            );
-          });
+              return (
+                fullTitle ||
+                shortTitle ||
+                status ||
+                description ||
+                formatedCreatedAt ||
+                isoCreatdAt ||
+                dateCreatedAt
+              );
+            })
+            .filter((course) => {
+              if (filters.HideArchived) return course.isArchived !== true;
+
+              return true;
+            })
+            .filter((course) => {
+              if (filters.HidePublished) return course.isArchived !== false;
+
+              return true;
+            })
+            .sort((a, b) => {
+              if (sortValue === "Alphabet")
+                return a.fullTitle.localeCompare(b.fullTitle);
+
+              return +b.createdAt.getTime() - +a.createdAt.getTime();
+            });
 
           return (
             <TabsContent

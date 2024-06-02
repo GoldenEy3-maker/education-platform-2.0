@@ -72,7 +72,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
 
       return { prevData };
     },
-    onError: (error, data, ctx) => {
+    onError: async (error, data, ctx) => {
       utils.course.getAll.setData(undefined, ctx?.prevData);
       toast.error(error.message);
     },
@@ -104,7 +104,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
 
       return { prevData };
     },
-    onError: (error, data, ctx) => {
+    onError: async (error, data, ctx) => {
       utils.course.getAll.setData(undefined, ctx?.prevData);
       toast.error(error.message);
     },
@@ -195,7 +195,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
               .map((node) => serializeHTML(node))
               .join(""),
           }}
-        ></div>
+        />
       ) : null}
       {progress ? (
         <div className="mt-auto pt-1">
