@@ -188,7 +188,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
       {description ? (
         <div
           className={cn("mb-auto line-clamp-2 text-muted-foreground", {
-            "line-clamp-4": !progress,
+            "line-clamp-4": progress === undefined,
           })}
           dangerouslySetInnerHTML={{
             __html: (JSON.parse(description) as Descendant[])
@@ -197,7 +197,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
           }}
         />
       ) : null}
-      {progress ? (
+      {progress !== undefined ? (
         <div className="mt-auto pt-1">
           <div className="mb-2 flex items-center justify-between gap-2">
             <span className="text-muted-foreground">Прогресс</span>
@@ -210,7 +210,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
         className={cn(
           "flex items-center justify-between gap-2 overflow-hidden pt-3",
           {
-            "mt-auto": !progress,
+            "mt-auto": progress === undefined,
           },
         )}
       >
