@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,7 +9,7 @@ import { UploadThingError } from "uploadthing/server";
 import { type ClientUploadedFileData } from "uploadthing/types";
 import { z } from "zod";
 import { AttachmentsUploader } from "~/components/attachments-uploader";
-import { SelectBgImage } from "~/components/create-course/select-bg-image";
+import { SelectBgImage } from "~/components/course-mutation/select-bg-image";
 import { Editor } from "~/components/editor";
 import { type UploadAttachments } from "~/components/file-uploader";
 import {
@@ -250,7 +251,9 @@ const CreateCoursePage: NextPageWithLayout = () => {
       <Breadcrumb className="mb-4 overflow-hidden">
         <BreadcrumbList className="overflow-hidden">
           <BreadcrumbItem>
-            <BreadcrumbLink href={PagePathMap.Courses}>Курсы</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link href={PagePathMap.Courses}>Курсы</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

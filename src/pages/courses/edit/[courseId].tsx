@@ -1,12 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { BiSolidCog, BiSolidNotepad, BiSolidWidget } from "react-icons/bi";
+import { BiCog, BiHive, BiNotepad } from "react-icons/bi";
 import { z } from "zod";
 import { AttachmentsUploader } from "~/components/attachments-uploader";
-import { SelectBgImage } from "~/components/create-course/select-bg-image";
+import { SelectBgImage } from "~/components/course-mutation/select-bg-image";
 import { Editor } from "~/components/editor";
 import { type UploadAttachments } from "~/components/file-uploader";
 import {
@@ -27,13 +28,14 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Skeleton } from "~/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
-import { getRandomInt, type ValueOf } from "~/libs/utils";
+import { type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
 
 const formSchema = z.object({
@@ -58,19 +60,19 @@ const TabsTriggerMap: Record<TabsMap, { text: string; icon: React.ReactNode }> =
   {
     Info: {
       icon: (
-        <BiSolidWidget className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiHive className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Основная информация",
     },
     Tasks: {
       icon: (
-        <BiSolidNotepad className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiNotepad className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Задания",
     },
     Settings: {
       icon: (
-        <BiSolidCog className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <BiCog className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Настройки",
     },
@@ -93,9 +95,17 @@ const EditCoursePage: NextPageWithLayout = () => {
 
   const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "Info");
 
-  const [preloadedImage, setPreloadedImage] = useState(
-    () => preloadedBgImages[getRandomInt(0, preloadedBgImages.length - 1)]!,
+  const courseGetByIdQuery = api.course.getById.useQuery(
+    {
+      id: router.query.courseId as string,
+    },
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
   );
+
+  const [preloadedImage, setPreloadedImage] = useState(preloadedBgImages[0]!);
 
   const [bgImageLoadingProgress, setBgImageLoadingProgress] = useState<
     boolean | number
@@ -130,7 +140,8 @@ const EditCoursePage: NextPageWithLayout = () => {
   const isLoading =
     typeof bgImageLoadingProgress === "number" ||
     createCourseMutation.isLoading ||
-    form.watch("attachments").some((attachment) => attachment.isUploading);
+    form.watch("attachments").some((attachment) => attachment.isUploading) ||
+    courseGetByIdQuery.isLoading;
 
   const onSubmit = async (values: FormSchema) => {
     console.log(values);
@@ -138,16 +149,39 @@ const EditCoursePage: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (session?.user && session?.user.role !== "Teacher") {
-      void router.push(PagePathMap.Courses);
+      void router.push(PagePathMap.Course + +router.query.courseId!);
     }
   }, [router, session]);
+
+  useEffect(() => {
+    if (courseGetByIdQuery.data) {
+      setPreloadedImage(courseGetByIdQuery.data.image);
+      form.setValue("fullTitle", courseGetByIdQuery.data.fullTitle);
+      form.setValue("shortTitle", courseGetByIdQuery.data.shortTitle ?? "");
+      form.setValue("description", courseGetByIdQuery.data.description ?? "");
+    }
+  }, [courseGetByIdQuery.data, form]);
 
   return (
     <main>
       <Breadcrumb className="mb-4 overflow-hidden">
         <BreadcrumbList className="overflow-hidden">
           <BreadcrumbItem>
-            <BreadcrumbLink href={PagePathMap.Courses}>Курсы</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link href={PagePathMap.Courses}>Курсы</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            {!courseGetByIdQuery.isLoading ? (
+              <BreadcrumbLink asChild>
+                <Link href={PagePathMap.Course + courseGetByIdQuery.data?.id}>
+                  {courseGetByIdQuery.data?.fullTitle}
+                </Link>
+              </BreadcrumbLink>
+            ) : (
+              <Skeleton className="h-5 w-52 rounded-full sm:w-72" />
+            )}
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -194,7 +228,9 @@ const EditCoursePage: NextPageWithLayout = () => {
                     name="bgImage"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Фоновое изображение</FormLabel>
+                        <FormLabel htmlFor="bg-course">
+                          Фоновое изображение
+                        </FormLabel>
                         <FormControl>
                           <SelectBgImage
                             isImageUploaded={field.value.length > 0}
@@ -203,6 +239,9 @@ const EditCoursePage: NextPageWithLayout = () => {
                             onUploadImage={(image) => field.onChange([image])}
                             preloadedImage={preloadedImage}
                             preloadedImages={preloadedBgImages}
+                            isPreloadedImageLoading={
+                              courseGetByIdQuery.isLoading
+                            }
                             onSelectPreloadedImage={(image) => {
                               setPreloadedImage(image);
                               field.onChange([]);
@@ -266,10 +305,17 @@ const EditCoursePage: NextPageWithLayout = () => {
                         Описание
                       </FormLabel>
                       <FormControl>
-                        <Editor
-                          placeholder="Расскажите студентам, какая цель курса, что будет изучаться и в каком формате..."
-                          {...field}
-                        />
+                        {!courseGetByIdQuery.isLoading ? (
+                          <Editor
+                            defaultValue={
+                              courseGetByIdQuery.data?.description ?? ""
+                            }
+                            placeholder="Расскажите студентам, какая цель курса, что будет изучаться и в каком формате..."
+                            {...field}
+                          />
+                        ) : (
+                          <Skeleton className="h-36 w-full rounded-md" />
+                        )}
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -290,10 +336,15 @@ const EditCoursePage: NextPageWithLayout = () => {
                   )}
                 />
                 <footer className="flex items-center justify-end gap-2">
-                  <Button type="button" variant="outline" disabled={isLoading}>
-                    Сохранить в черновик
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => void router.back()}
+                    disabled={isLoading}
+                  >
+                    Отменить
                   </Button>
-                  <Button disabled={isLoading}>Опубликовать</Button>
+                  <Button disabled={isLoading}>Сохранить</Button>
                 </footer>
               </form>
             </Form>

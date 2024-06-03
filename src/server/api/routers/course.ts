@@ -148,7 +148,20 @@ export const courseRouter = createTRPCRouter({
       return newCourse;
     }),
 
-  removeFavorite: protectedProcedure
+  favorite: protectedProcedure
+    .input(z.object({ courseId: z.string() }))
+    .mutation(async (opts) => {
+      const favoritedCourse = await opts.ctx.db.favorite.create({
+        data: {
+          courseId: opts.input.courseId,
+          userId: opts.ctx.session.user.id,
+        },
+      });
+
+      return favoritedCourse;
+    }),
+
+  unfavorite: protectedProcedure
     .input(z.object({ courseId: z.string() }))
     .mutation(async (opts) => {
       const removedFavoriteCourse = await opts.ctx.db.favorite.deleteMany({
@@ -186,19 +199,6 @@ export const courseRouter = createTRPCRouter({
       });
 
       return unsubscribedCourse;
-    }),
-
-  toFavorite: protectedProcedure
-    .input(z.object({ courseId: z.string() }))
-    .mutation(async (opts) => {
-      const favoritedCourse = await opts.ctx.db.favorite.create({
-        data: {
-          courseId: opts.input.courseId,
-          userId: opts.ctx.session.user.id,
-        },
-      });
-
-      return favoritedCourse;
     }),
 
   deleteAttachment: protectedProcedure

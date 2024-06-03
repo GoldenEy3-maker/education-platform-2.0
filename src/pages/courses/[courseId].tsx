@@ -32,6 +32,7 @@ import { type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "../_app";
 import { api } from "~/libs/api";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const TabsMap = {
   Overview: "Overview",
@@ -111,7 +112,9 @@ const CoursePage: NextPageWithLayout = () => {
       <Breadcrumb className="mb-4 overflow-hidden">
         <BreadcrumbList className="overflow-hidden">
           <BreadcrumbItem>
-            <BreadcrumbLink href={PagePathMap.Courses}>Курсы</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link href={PagePathMap.Courses}>Курсы</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

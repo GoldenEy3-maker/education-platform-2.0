@@ -143,7 +143,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
     },
   });
 
-  const courseToFavoriteMutation = api.course.toFavorite.useMutation({
+  const favoriteCourseMutation = api.course.favorite.useMutation({
     onMutate: async () => {
       await utils.course.getById.cancel();
 
@@ -171,7 +171,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
     },
   });
 
-  const courseRemoveFavoriteMutation = api.course.removeFavorite.useMutation({
+  const unfavoriteCourseMutation = api.course.unfavorite.useMutation({
     onMutate: async () => {
       await utils.course.getById.cancel();
 
@@ -294,14 +294,14 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
           size="icon"
           onClick={() => {
             if (isFavorite) {
-              courseRemoveFavoriteMutation.mutate({ courseId: id });
+              unfavoriteCourseMutation.mutate({ courseId: id });
             } else {
-              courseToFavoriteMutation.mutate({ courseId: id });
+              favoriteCourseMutation.mutate({ courseId: id });
             }
           }}
           disabled={
-            courseRemoveFavoriteMutation.isLoading ||
-            courseToFavoriteMutation.isLoading
+            unfavoriteCourseMutation.isLoading ||
+            favoriteCourseMutation.isLoading
           }
         >
           {isFavorite ? (
@@ -375,7 +375,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
                 className={cn(
                   "rounded-full border-dashed border-primary bg-transparent text-primary hover:bg-primary/10 hover:text-primary lg:ml-3",
                   {
-                    "ml-0": subscribers.length < 3,
+                    "!ml-0": subscribers.length < 3,
                   },
                 )}
               >
@@ -455,14 +455,14 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
               <Button
                 variant="ghost"
                 disabled={
-                  courseToFavoriteMutation.isLoading ||
-                  courseRemoveFavoriteMutation.isLoading
+                  favoriteCourseMutation.isLoading ||
+                  unfavoriteCourseMutation.isLoading
                 }
                 onClick={() => {
                   if (isFavorite) {
-                    courseRemoveFavoriteMutation.mutate({ courseId: id });
+                    unfavoriteCourseMutation.mutate({ courseId: id });
                   } else {
-                    courseToFavoriteMutation.mutate({ courseId: id });
+                    favoriteCourseMutation.mutate({ courseId: id });
                   }
                 }}
                 className="w-full justify-start"

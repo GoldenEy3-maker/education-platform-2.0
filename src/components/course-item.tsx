@@ -54,7 +54,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
 
   const utils = api.useUtils();
 
-  const courseToFavoriteMutation = api.course.toFavorite.useMutation({
+  const favoriteCourseMutation = api.course.favorite.useMutation({
     onMutate: async ({ courseId }) => {
       await utils.course.getAll.cancel();
 
@@ -81,7 +81,7 @@ export const CourseItem: React.FC<CourseItemProps> = ({
     },
   });
 
-  const courseRemoveFavoriteMutation = api.course.removeFavorite.useMutation({
+  const unfavoriteCourseMutation = api.course.unfavorite.useMutation({
     onMutate: async ({ courseId }) => {
       await utils.course.getAll.cancel();
 
@@ -159,14 +159,14 @@ export const CourseItem: React.FC<CourseItemProps> = ({
             variant="ghost"
             size="icon"
             disabled={
-              courseToFavoriteMutation.isLoading ||
-              courseRemoveFavoriteMutation.isLoading
+              favoriteCourseMutation.isLoading ||
+              unfavoriteCourseMutation.isLoading
             }
             onClick={() => {
               if (isFavorited) {
-                courseRemoveFavoriteMutation.mutate({ courseId: id });
+                unfavoriteCourseMutation.mutate({ courseId: id });
               } else {
-                courseToFavoriteMutation.mutate({ courseId: id });
+                favoriteCourseMutation.mutate({ courseId: id });
               }
             }}
             className={cn(

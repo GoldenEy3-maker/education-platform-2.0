@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { createEditor, type Descendant } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, Slate, withReact } from "slate-react";
@@ -10,17 +10,6 @@ import {
 import { cn } from "~/libs/utils";
 import { Toolbar } from "./toolbar";
 import { toggleMark } from "./utils";
-
-const initialValue: Descendant[] = [
-  {
-    type: "paragraph",
-    children: [
-      {
-        text: "",
-      },
-    ],
-  },
-];
 
 const Leaf: React.FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   return (
@@ -116,8 +105,21 @@ const Element: React.FC<RenderElementProps> = ({
 
 export const Editor: React.FC<
   Omit<EditableProps, "onChange"> & { onChange?: (value: Descendant[]) => void }
-> = ({ className, onBlur, onChange, ...props }) => {
-  const [editor] = useState(() => withHistory(withReact(createEditor())));
+> = ({ className, onBlur, onChange, defaultValue, ...props }) => {
+  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+
+  const initialValue = useMemo<Descendant[]>(() => {
+    if (defaultValue && typeof defaultValue === "string") {
+      return JSON.parse(defaultValue) as Descendant[];
+    }
+
+    return [
+      {
+        type: "paragraph",
+        children: [{ text: "" }],
+      },
+    ];
+  }, [defaultValue]);
 
   return (
     <Slate

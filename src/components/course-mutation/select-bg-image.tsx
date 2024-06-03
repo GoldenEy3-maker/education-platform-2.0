@@ -5,12 +5,14 @@ import { CircularProgress } from "../circular-progress";
 import { BiCheck } from "react-icons/bi";
 import { ChooseBgCourseDialogDrawer } from "../choose-bg-course-dialog-drawer";
 import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 
 type SelectBgImageProps = {
   preloadedImage: string;
   loadingProgress: boolean | number;
   preloadedImages: string[];
   isLoading?: boolean;
+  isPreloadedImageLoading?: boolean;
   isImageUploaded: boolean;
   onUploadImage: (image: File) => void;
   onSelectPreloadedImage?: (image: string) => void;
@@ -21,6 +23,7 @@ export const SelectBgImage: React.FC<SelectBgImageProps> = ({
   loadingProgress,
   isLoading,
   isImageUploaded,
+  isPreloadedImageLoading,
   preloadedImages,
   onSelectPreloadedImage,
   onUploadImage,
@@ -30,43 +33,50 @@ export const SelectBgImage: React.FC<SelectBgImageProps> = ({
   return (
     <div className="space-y-2">
       <div className="relative h-56 w-full overflow-hidden rounded-md shadow-sm xs:w-80">
-        <Image
-          src={
-            fileReader.previews
-              ? fileReader.previews[0]!.base64
-              : preloadedImage
-          }
-          fill
-          alt="Фон курса"
-          sizes="33vw"
-        />
-        <div
-          className={cn(
-            "invisible absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-all",
-            {
-              "visible opacity-100": loadingProgress !== false,
-            },
-          )}
-        >
-          <span className="rounded-full bg-background/70 p-1">
-            {loadingProgress !== true ? (
-              <CircularProgress
-                variant={
-                  loadingProgress === 100 ? "indeterminate" : "determinate"
-                }
-                value={
-                  typeof loadingProgress === "number" && loadingProgress !== 100
-                    ? loadingProgress
-                    : undefined
-                }
-                strokeWidth={5}
-                className="text-5xl text-primary"
-              />
-            ) : (
-              <BiCheck className="text-5xl text-primary" />
-            )}
-          </span>
-        </div>
+        {!isPreloadedImageLoading ? (
+          <>
+            <Image
+              src={
+                fileReader.previews
+                  ? fileReader.previews[0]!.base64
+                  : preloadedImage
+              }
+              fill
+              alt="Фон курса"
+              sizes="33vw"
+            />
+            <div
+              className={cn(
+                "invisible absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-all",
+                {
+                  "visible opacity-100": loadingProgress !== false,
+                },
+              )}
+            >
+              <span className="rounded-full bg-background/70 p-1">
+                {loadingProgress !== true ? (
+                  <CircularProgress
+                    variant={
+                      loadingProgress === 100 ? "indeterminate" : "determinate"
+                    }
+                    value={
+                      typeof loadingProgress === "number" &&
+                      loadingProgress !== 100
+                        ? loadingProgress
+                        : undefined
+                    }
+                    strokeWidth={5}
+                    className="text-5xl text-primary"
+                  />
+                ) : (
+                  <BiCheck className="text-5xl text-primary" />
+                )}
+              </span>
+            </div>
+          </>
+        ) : (
+          <Skeleton className="absolute inset-0" />
+        )}
       </div>
       <div className="flex items-center justify-between gap-2">
         <ChooseBgCourseDialogDrawer
