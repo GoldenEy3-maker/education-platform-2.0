@@ -119,15 +119,6 @@ const CreateCoursePage: NextPageWithLayout = () => {
       url: string;
     }>[] = [];
 
-    // let uploadedAttachments: ClientUploadedFileData<{
-    //   name: string;
-    //   size: number;
-    //   type: string;
-    //   customId: string | null;
-    //   key: string;
-    //   url: string;
-    // }>[] = [];
-
     if (values.bgImage.length > 0) {
       try {
         uploadedBgImage = await uploadFiles("image", {
@@ -158,6 +149,8 @@ const CreateCoursePage: NextPageWithLayout = () => {
         }
 
         setBgImageLoadingProgress(false);
+
+        return;
       }
     }
 
@@ -221,6 +214,8 @@ const CreateCoursePage: NextPageWithLayout = () => {
               "Возникла неожиданная ошибка во время загрузки дополнительного материала! Повторите попытку позже.",
           });
         }
+
+        return;
       }
     }
 

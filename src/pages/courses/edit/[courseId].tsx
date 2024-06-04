@@ -5,6 +5,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiCog, BiHive, BiNotepad } from "react-icons/bi";
+import { toast } from "sonner";
+import { UploadThingError } from "uploadthing/server";
+import { type ClientUploadedFileData } from "uploadthing/types";
 import { z } from "zod";
 import { AttachmentsUploader } from "~/components/attachments-uploader";
 import { SelectBgImage } from "~/components/course-mutation/select-bg-image";
@@ -35,12 +38,17 @@ import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
-import { type ValueOf } from "~/libs/utils";
+import {
+  handleFileName,
+  isValidUrl,
+  uploadFiles,
+  type ValueOf,
+} from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
 
 const formSchema = z.object({
   fullTitle: z.string().min(1, "Обязательное поле!"),
-  shortTitle: z.string().min(1, "Обязательное поле!"),
+  shortTitle: z.string(),
   description: z.string(),
   bgImage: z.array(z.custom<File>()),
   attachments: z.array(z.custom<UploadAttachments>()),
@@ -131,27 +139,184 @@ const EditCoursePage: NextPageWithLayout = () => {
     );
   };
 
-  const createCourseMutation = api.course.create.useMutation({
-    // onSettled: () => {
-    // setBgImageLoadingProgress(false);
-    // },
+  const editCourseMutation = api.course.edit.useMutation({
+    onSuccess: () => {
+      toast.success("Все изменения успешно сохранены!");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSettled: () => {
+      setBgImageLoadingProgress(false);
+    },
   });
 
-  const isLoading =
-    typeof bgImageLoadingProgress === "number" ||
-    createCourseMutation.isLoading ||
-    form.watch("attachments").some((attachment) => attachment.isUploading) ||
-    courseGetByIdQuery.isLoading;
+  const isLoading = form.formState.isSubmitting || courseGetByIdQuery.isLoading;
 
   const onSubmit = async (values: FormSchema) => {
-    console.log(values);
+    let uploadedBgImage: ClientUploadedFileData<{
+      name: string;
+      size: number;
+      type: string;
+      customId: string | null;
+      key: string;
+      url: string;
+    }>[] = [];
+
+    if (values.bgImage.length > 0) {
+      try {
+        uploadedBgImage = await uploadFiles("image", {
+          files: values.bgImage.map((file) => {
+            const [, ext] = handleFileName(file.name);
+
+            return new File([file], crypto.randomUUID() + "." + ext, {
+              type: file.type,
+            });
+          }),
+          onUploadBegin: () => {
+            setBgImageLoadingProgress(0);
+          },
+          onUploadProgress: (opts) => {
+            setBgImageLoadingProgress(opts.progress);
+          },
+        });
+
+        setBgImageLoadingProgress(true);
+      } catch (error) {
+        if (error instanceof UploadThingError) {
+          form.setError("bgImage", { message: error.message });
+        } else {
+          form.setError("bgImage", {
+            message:
+              "Возникла неожиданная ошибка во время загрузки изображения! Повторите попытку позже.",
+          });
+        }
+
+        setBgImageLoadingProgress(false);
+
+        return;
+      }
+    }
+
+    const attachedFiles = values.attachments.filter(
+      (attachment) => attachment.file,
+    );
+
+    if (attachedFiles.length > 0) {
+      try {
+        const uploadedAttachments = await uploadFiles("uploader", {
+          files: attachedFiles.map((attachment) => attachment.file!),
+          onUploadBegin(opts) {
+            setAttachments((attachments) =>
+              attachments.map((attachment) => {
+                if (opts.file === attachment.file?.name) {
+                  return {
+                    ...attachment,
+                    isUploading: true,
+                  };
+                }
+
+                return attachment;
+              }),
+            );
+          },
+          onUploadProgress(opts) {
+            setAttachments((attachments) =>
+              attachments.map((attachment) => {
+                if (opts.file === attachment.file?.name) {
+                  return {
+                    ...attachment,
+                    progress: opts.progress,
+                  };
+                }
+
+                return attachment;
+              }),
+            );
+          },
+        });
+
+        setAttachments((attachments) =>
+          attachments.map((attachment) => {
+            const upFile = uploadedAttachments.find(
+              (upFile) => upFile.name === attachment.file?.name,
+            );
+            if (upFile) {
+              return {
+                ...attachment,
+                key: upFile.key,
+                url: upFile.url,
+                isUploading: false,
+              };
+            }
+
+            return attachment;
+          }),
+        );
+      } catch (error) {
+        if (error instanceof UploadThingError) {
+          form.setError("attachments", { message: error.message });
+        } else {
+          form.setError("attachments", {
+            message:
+              "Возникла неожиданная ошибка во время загрузки дополнительного материала! Повторите попытку позже.",
+          });
+        }
+
+        return;
+      }
+    }
+
+    const isPrevBgImageDeleting =
+      isValidUrl(courseGetByIdQuery.data!.image) &&
+      (uploadedBgImage.length > 0 || preloadedImage.startsWith("/"));
+
+    editCourseMutation.mutate({
+      id: courseGetByIdQuery.data!.id,
+      fullTitle: values.fullTitle,
+      shortTitle: values.shortTitle,
+      description: values.description,
+      image:
+        uploadedBgImage.length > 0 ? uploadedBgImage[0]!.url : preloadedImage,
+      imageToDelete: isPrevBgImageDeleting
+        ? courseGetByIdQuery.data?.image
+        : undefined,
+      attachments: form
+        .getValues("attachments")
+        .filter((attachment) => attachment.file!)
+        .map((attachment) => ({
+          key: attachment.key,
+          originalName: attachment.originalName,
+          uploadedAt: attachment.uploadedAt,
+          url: attachment.url!,
+          size: attachment.size,
+        })),
+      attachmentsToDelete: courseGetByIdQuery.data?.attachments
+        .filter((dataAttachment) => {
+          return values.attachments.every(
+            (attachment) => attachment.id !== dataAttachment.id,
+          );
+        })
+        .map((attachment) => ({
+          id: attachment.id,
+          key: attachment.key,
+        })),
+    });
   };
 
   useEffect(() => {
-    if (session?.user && session?.user.role !== "Teacher") {
-      void router.push(PagePathMap.Course + +router.query.courseId!);
+    if (
+      session?.user &&
+      courseGetByIdQuery.data &&
+      courseGetByIdQuery.data.authorId !== session.user.id
+    ) {
+      void router.push(
+        typeof router.query.courseId === "string"
+          ? PagePathMap.Course + router.query.courseId
+          : PagePathMap.Courses,
+      );
     }
-  }, [router, session]);
+  }, [router, session, courseGetByIdQuery.data]);
 
   useEffect(() => {
     if (courseGetByIdQuery.data) {
@@ -159,6 +324,21 @@ const EditCoursePage: NextPageWithLayout = () => {
       form.setValue("fullTitle", courseGetByIdQuery.data.fullTitle);
       form.setValue("shortTitle", courseGetByIdQuery.data.shortTitle ?? "");
       form.setValue("description", courseGetByIdQuery.data.description ?? "");
+      form.setValue(
+        "attachments",
+        courseGetByIdQuery.data.attachments.map((attachment) => {
+          return {
+            id: attachment.id,
+            isUploading: false,
+            originalName: attachment.name,
+            progress: 0,
+            uploadedAt: attachment.uploadedAt,
+            key: attachment.key ?? undefined,
+            size: attachment.size ?? undefined,
+            url: attachment.url,
+          };
+        }),
+      );
     }
   }, [courseGetByIdQuery.data, form]);
 
@@ -236,7 +416,9 @@ const EditCoursePage: NextPageWithLayout = () => {
                             isImageUploaded={field.value.length > 0}
                             loadingProgress={bgImageLoadingProgress}
                             isLoading={isLoading}
-                            onUploadImage={(image) => field.onChange([image])}
+                            onUploadImage={(image) => {
+                              field.onChange([image]);
+                            }}
                             preloadedImage={preloadedImage}
                             preloadedImages={preloadedBgImages}
                             isPreloadedImageLoading={
@@ -291,7 +473,7 @@ const EditCoursePage: NextPageWithLayout = () => {
                   name="description"
                   disabled={isLoading}
                   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  render={({ field: { ref, ...field } }) => (
+                  render={({ field: { ref, onChange, ...field } }) => (
                     <FormItem className="w-full">
                       <FormLabel
                         onClick={(event) => {
@@ -311,6 +493,9 @@ const EditCoursePage: NextPageWithLayout = () => {
                               courseGetByIdQuery.data?.description ?? ""
                             }
                             placeholder="Расскажите студентам, какая цель курса, что будет изучаться и в каком формате..."
+                            onChange={(value) =>
+                              onChange(JSON.stringify(value))
+                            }
                             {...field}
                           />
                         ) : (
@@ -331,6 +516,7 @@ const EditCoursePage: NextPageWithLayout = () => {
                       onChange={setAttachments}
                       isLoading={isLoading}
                       multiple
+                      isLoadingSkeleton={courseGetByIdQuery.isLoading}
                       {...field}
                     />
                   )}

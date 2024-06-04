@@ -85,3 +85,21 @@ export const formatBytes = (bytes: number, decimals = 2) => {
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
+
+export const getUploadUrlKey = (url: string) => {
+  const lastIndex = url.lastIndexOf("/");
+
+  return url.substring(lastIndex + 1);
+};
+
+export const isValidUrl = (str: string) => {
+  let url;
+
+  try {
+    url = new URL(str);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+};

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { utapi } from "~/server/uploadthing";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { getUploadUrlKey } from "~/libs/utils";
 
 export const courseRouter = createTRPCRouter({
   getAll: publicProcedure.query(async (opts) => {
@@ -146,6 +147,86 @@ export const courseRouter = createTRPCRouter({
       });
 
       return newCourse;
+    }),
+
+  edit: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        fullTitle: z.string(),
+        shortTitle: z.string().optional(),
+        image: z.string(),
+        imageToDelete: z.string().optional(),
+        description: z.string().optional(),
+        attachments: z.array(
+          z.object({
+            originalName: z.string(),
+            key: z.string().optional(),
+            url: z.string(),
+            size: z.number().optional(),
+            uploadedAt: z.date(),
+          }),
+        ),
+        attachmentsToDelete: z
+          .array(
+            z.object({
+              id: z.string(),
+              key: z.string().nullable(),
+            }),
+          )
+          .optional(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const updatedCourse = await opts.ctx.db.course.update({
+        where: {
+          id: opts.input.id,
+        },
+        data: {
+          fullTitle: opts.input.fullTitle,
+          shortTitle: opts.input.shortTitle,
+          description: opts.input.description,
+          image: opts.input.image,
+          attachments: {
+            createMany: {
+              data: opts.input.attachments.map((attachment) => ({
+                name: attachment.originalName,
+                url: attachment.url,
+                size: attachment.size,
+                uploadedAt: attachment.uploadedAt,
+                key: attachment.key,
+              })),
+            },
+          },
+        },
+      });
+
+      if (opts.input.imageToDelete) {
+        await utapi.deleteFiles(getUploadUrlKey(opts.input.imageToDelete));
+      }
+
+      if (
+        opts.input.attachmentsToDelete &&
+        opts.input.attachmentsToDelete.length > 0
+      ) {
+        await utapi.deleteFiles(
+          opts.input.attachmentsToDelete
+            .filter((attachemnt) => attachemnt.key)
+            .map((attachment) => attachment.key!),
+        );
+
+        await opts.ctx.db.courseAttachment.deleteMany({
+          where: {
+            id: {
+              in: opts.input.attachmentsToDelete.map(
+                (attachment) => attachment.id,
+              ),
+            },
+          },
+        });
+      }
+
+      return updatedCourse;
     }),
 
   favorite: protectedProcedure
