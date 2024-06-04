@@ -202,7 +202,7 @@ export const InviteDialogDrawer: React.FC<React.PropsWithChildren> = ({
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent className="p-6 pt-0">
+      <DrawerContent className="p-4 pt-0">
         <DrawerHeader>
           <DrawerTitle>Отправить приглашение</DrawerTitle>
           <DrawerDescription>

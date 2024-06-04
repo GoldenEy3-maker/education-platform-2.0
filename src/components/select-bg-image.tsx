@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { useFileReader } from "~/hooks/fileReader";
 import { cn } from "~/libs/utils";
-import { CircularProgress } from "../circular-progress";
+import { CircularProgress } from "./circular-progress";
 import { BiCheck } from "react-icons/bi";
-import { ChooseBgCourseDialogDrawer } from "../choose-bg-course-dialog-drawer";
-import { Button } from "../ui/button";
-import { Skeleton } from "../ui/skeleton";
+import { ChooseBgCourseDialogDrawer } from "./choose-bg-course-dialog-drawer";
+import { Button } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 
 type SelectBgImageProps = {
   preloadedImage: string;

@@ -9,7 +9,7 @@ import { UploadThingError } from "uploadthing/server";
 import { type ClientUploadedFileData } from "uploadthing/types";
 import { z } from "zod";
 import { AttachmentsUploader } from "~/components/attachments-uploader";
-import { SelectBgImage } from "~/components/course-mutation/select-bg-image";
+import { SelectBgImage } from "~/components/select-bg-image";
 import { Editor } from "~/components/editor";
 import { type UploadAttachments } from "~/components/file-uploader";
 import {

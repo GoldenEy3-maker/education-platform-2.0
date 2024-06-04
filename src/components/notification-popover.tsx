@@ -2,7 +2,7 @@ import { type User } from "@prisma/client";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { BiBell, BiCog } from "react-icons/bi";
+import { BiBell, BiCheckDouble, BiCog } from "react-icons/bi";
 import { TbBellZFilled } from "react-icons/tb";
 import { cn, type ValueOf } from "~/libs/utils";
 import { Avatar } from "./avatar";
@@ -122,10 +122,11 @@ export const NotificationPopover = () => {
           <Button
             size="sm"
             variant="ghost"
-            className="text-muted-foreground"
+            className="gap-2 text-muted-foreground"
             disabled={isLoading}
           >
-            Прочитать все
+            <span>Прочитать все</span>
+            <BiCheckDouble className="text-base" />
           </Button>
         </header>
         {session?.user ? (

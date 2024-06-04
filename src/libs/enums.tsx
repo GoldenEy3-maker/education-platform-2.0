@@ -43,6 +43,9 @@ export const PagePathMap = {
   Settings: "/settings",
   CreateCourse: "/courses/create",
   EditCourse: "/courses/edit/",
+  CreateLec: "/tasks/lec/create",
+  CreateQuiz: "/tasks/quiz/create",
+  CreatePract: "/tasks/pract/create",
 } as const;
 
 export const RoleContentMap: Record<Role, string> = {

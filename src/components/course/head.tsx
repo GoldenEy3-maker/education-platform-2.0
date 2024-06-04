@@ -5,6 +5,7 @@ import {
   BiBookmarkMinus,
   BiBookmarkPlus,
   BiDotsVerticalRounded,
+  BiPlus,
   BiShareAlt,
   BiSliderAlt,
   BiSolidStar,
@@ -24,7 +25,14 @@ import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Progress } from "../ui/progress";
@@ -32,7 +40,7 @@ import { Skeleton } from "../ui/skeleton";
 import { api } from "~/libs/api";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { TbUserCheck } from "react-icons/tb";
+import { TbBallpen, TbBook2, TbListDetails, TbUserCheck } from "react-icons/tb";
 
 type CourseHeadProps = {
   id: string;
@@ -448,65 +456,117 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-60">
-            <DropdownMenuItem
-              onSelect={(event) => event.preventDefault()}
-              asChild
-            >
-              <Button
-                variant="ghost"
-                disabled={
-                  favoriteCourseMutation.isLoading ||
-                  unfavoriteCourseMutation.isLoading
-                }
-                onClick={() => {
-                  if (isFavorite) {
-                    unfavoriteCourseMutation.mutate({ courseId: id });
-                  } else {
-                    favoriteCourseMutation.mutate({ courseId: id });
-                  }
-                }}
-                className="w-full justify-start"
-              >
-                {isFavorite ? (
-                  <>
-                    <BiSolidStar className="mr-2 text-xl text-warning" />
-                    <span>Убрать из избранного</span>
-                  </>
-                ) : (
-                  <>
-                    <BiStar className="mr-2 text-xl text-warning" />
-                    <span>Добавить в избранное</span>
-                  </>
-                )}
-              </Button>
-            </DropdownMenuItem>
-            <ShareDialogDrawer>
+            <DropdownMenuLabel>Дополнительное меню</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
               <DropdownMenuItem
-                asChild
                 onSelect={(event) => event.preventDefault()}
+                asChild
               >
-                <Button variant="ghost" className="w-full justify-start">
-                  <BiShareAlt className="mr-2 text-xl" />
-                  <span>Поделиться</span>
+                <Button
+                  variant="ghost"
+                  disabled={
+                    favoriteCourseMutation.isLoading ||
+                    unfavoriteCourseMutation.isLoading
+                  }
+                  onClick={() => {
+                    if (isFavorite) {
+                      unfavoriteCourseMutation.mutate({ courseId: id });
+                    } else {
+                      favoriteCourseMutation.mutate({ courseId: id });
+                    }
+                  }}
+                  className="w-full justify-start"
+                >
+                  {isFavorite ? (
+                    <>
+                      <BiSolidStar className="mr-2 text-lg text-warning" />
+                      <span>Убрать из избранного</span>
+                    </>
+                  ) : (
+                    <>
+                      <BiStar className="mr-2 text-lg text-warning" />
+                      <span>Добавить в избранное</span>
+                    </>
+                  )}
                 </Button>
               </DropdownMenuItem>
-            </ShareDialogDrawer>
-            {isAuthor ? (
-              <InviteDialogDrawer>
+              <ShareDialogDrawer>
                 <DropdownMenuItem
                   asChild
                   onSelect={(event) => event.preventDefault()}
                 >
-                  <Button className="w-full justify-start" variant="ghost">
-                    <BiUserPlus className="mr-2 text-xl" />
-                    <span>Пригласить</span>
+                  <Button variant="ghost" className="w-full justify-start">
+                    <BiShareAlt className="mr-2 text-lg" />
+                    <span>Поделиться</span>
                   </Button>
                 </DropdownMenuItem>
-              </InviteDialogDrawer>
-            ) : null}
-            {(() => {
-              if (isAuthor)
-                return (
+              </ShareDialogDrawer>
+              {isAuthor ? (
+                <>
+                  <InviteDialogDrawer>
+                    <DropdownMenuItem
+                      asChild
+                      onSelect={(event) => event.preventDefault()}
+                    >
+                      <Button className="w-full justify-start" variant="ghost">
+                        <BiUserPlus className="mr-2 text-lg" />
+                        <span>Пригласить</span>
+                      </Button>
+                    </DropdownMenuItem>
+                  </InviteDialogDrawer>
+                  <DropdownMenuSub>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className="w-full justify-start rounded-sm px-2"
+                    >
+                      <DropdownMenuSubTrigger>
+                        <BiPlus className="mr-2 text-lg" />
+                        <span>Новое задание</span>
+                      </DropdownMenuSubTrigger>
+                    </Button>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent sideOffset={-130}>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            asChild
+                          >
+                            <Link href={PagePathMap.CreateLec}>
+                              <TbBook2 className="mr-2 text-lg" />
+                              <span>Лекционный материал</span>
+                            </Link>
+                          </Button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            asChild
+                          >
+                            <Link href={PagePathMap.CreateQuiz}>
+                              <TbListDetails className="mr-2 text-lg" />
+                              <span>Тестирование</span>
+                            </Link>
+                          </Button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            asChild
+                          >
+                            <Link href={PagePathMap.CreatePract}>
+                              <TbBallpen className="mr-2 text-lg" />
+                              <span>Практическая работа</span>
+                            </Link>
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
                   <DropdownMenuItem asChild>
                     <Button
                       variant="ghost"
@@ -514,37 +574,33 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
                       asChild
                     >
                       <Link href={PagePathMap.EditCourse + id}>
-                        <BiSliderAlt className="mr-2 text-xl" />
+                        <BiSliderAlt className="mr-2 text-lg" />
                         <span>Редактировать</span>
                       </Link>
                     </Button>
                   </DropdownMenuItem>
-                );
-
-              if (isSubStudent)
-                return (
-                  <DropdownMenuItem
-                    onSelect={(event) => event.preventDefault()}
-                    asChild
+                </>
+              ) : isSubStudent ? (
+                <DropdownMenuItem
+                  onSelect={(event) => event.preventDefault()}
+                  asChild
+                >
+                  <Button
+                    variant={"ghost-destructive"}
+                    className="w-full justify-start hover:!bg-destructive/15 hover:!text-destructive"
+                    disabled={
+                      unsubscribeCourseMutation.isLoading ||
+                      subscribeCourseMutation.isLoading
+                    }
+                    onClick={() =>
+                      unsubscribeCourseMutation.mutate({ courseId: id })
+                    }
                   >
-                    <Button
-                      variant={"ghost-destructive"}
-                      className="w-full justify-start hover:!bg-destructive/15 hover:!text-destructive"
-                      disabled={
-                        unsubscribeCourseMutation.isLoading ||
-                        subscribeCourseMutation.isLoading
-                      }
-                      onClick={() =>
-                        unsubscribeCourseMutation.mutate({ courseId: id })
-                      }
-                    >
-                      <BiBookmarkMinus className="mr-2 text-xl" />
-                      <span>Отписаться</span>
-                    </Button>
-                  </DropdownMenuItem>
-                );
-
-              return (
+                    <BiBookmarkMinus className="mr-2 text-lg" />
+                    <span>Отписаться</span>
+                  </Button>
+                </DropdownMenuItem>
+              ) : (
                 <DropdownMenuItem
                   asChild
                   onSelect={(event) => event.preventDefault()}
@@ -561,12 +617,12 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
                       subscribeCourseMutation.mutate({ courseId: id })
                     }
                   >
-                    <BiBookmarkPlus className="mr-2 text-xl" />
+                    <BiBookmarkPlus className="mr-2 text-lg" />
                     <span>Подписаться</span>
                   </Button>
                 </DropdownMenuItem>
-              );
-            })()}
+              )}
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

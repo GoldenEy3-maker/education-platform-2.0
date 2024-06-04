@@ -9,7 +9,7 @@ import {
   BiSearch,
   BiSortAlt2,
 } from "react-icons/bi";
-import { TaskTypeContentMap } from "~/libs/enums";
+import { PagePathMap, TaskTypeContentMap } from "~/libs/enums";
 import { cn, prepareSearchMatching, type ValueOf } from "~/libs/utils";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -33,6 +33,13 @@ import { Skeleton } from "../ui/skeleton";
 import { Switch } from "../ui/switch";
 import { CourseEmptyTab } from "./empty-tab";
 import { TaskItem, TaskItemSkeleton } from "./task-item";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { TbBallpen, TbBook2, TbListDetails } from "react-icons/tb";
 
 const SortValueTasksMap = {
   Recent: "Recent",
@@ -182,19 +189,59 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
           isAuthor ? (
             <p>
               Похоже, что на вашем курсе все еще нет заданий.{" "}
-              <Link href="#" className="text-primary">
-                Давайте создадим новое вместе
-              </Link>
-              . В случае если вы уже это сделали, но тут ничего не появилось,
+              <DropdownMenu>
+                <DropdownMenuTrigger className="inline-block text-primary">
+                  Давайте создадим новое вместе.
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link href={PagePathMap.CreateLec}>
+                        <TbBook2 className="mr-2 text-xl" />
+                        <span>Лекционный материал</span>
+                      </Link>
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link href={PagePathMap.CreateQuiz}>
+                        <TbListDetails className="mr-2 text-xl" />
+                        <span>Тестирование</span>
+                      </Link>
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link href={PagePathMap.CreatePract}>
+                        <TbBallpen className="mr-2 text-xl" />
+                        <span>Практическая работа</span>
+                      </Link>
+                    </Button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>{" "}
+              В случае если вы уже это сделали, но тут ничего не появилось,
               тогда проблема остается на нашей стороне. Попробуйте вернуться
-              позже. Мы вас всегда ждем!
+              позже.
             </p>
           ) : (
             <p>
               Похоже, что на курсе еще нет заданий. Есть риск проблем с сервером
               на нашей стороне. Либо в скором времени преподаватель опубликует
               тут новый материал. В любом случае, оставайтесь на связи и
-              попробуйте вернуться позже. Мы вас всегда ждем!
+              попробуйте вернуться позже.
             </p>
           )
         }
