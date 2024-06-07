@@ -35,7 +35,12 @@ import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
-import { handleFileName, isValidUrl, uploadFiles } from "~/libs/utils";
+import {
+  handleFileName,
+  isValidUrl,
+  uploadAttachments,
+  uploadFiles,
+} from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
 
 const formSchema = z.object({
@@ -164,55 +169,10 @@ const EditCoursePage: NextPageWithLayout = () => {
 
     if (attachedFiles.length > 0) {
       try {
-        const uploadedAttachments = await uploadFiles("uploader", {
+        await uploadAttachments({
           files: attachedFiles.map((attachment) => attachment.file!),
-          onUploadBegin(opts) {
-            setAttachments((attachments) =>
-              attachments.map((attachment) => {
-                if (opts.file === attachment.file?.name) {
-                  return {
-                    ...attachment,
-                    isUploading: true,
-                  };
-                }
-
-                return attachment;
-              }),
-            );
-          },
-          onUploadProgress(opts) {
-            setAttachments((attachments) =>
-              attachments.map((attachment) => {
-                if (opts.file === attachment.file?.name) {
-                  return {
-                    ...attachment,
-                    progress: opts.progress,
-                  };
-                }
-
-                return attachment;
-              }),
-            );
-          },
+          setAttachments,
         });
-
-        setAttachments((attachments) =>
-          attachments.map((attachment) => {
-            const upFile = uploadedAttachments.find(
-              (upFile) => upFile.name === attachment.file?.name,
-            );
-            if (upFile) {
-              return {
-                ...attachment,
-                key: upFile.key,
-                url: upFile.url,
-                isUploading: false,
-              };
-            }
-
-            return attachment;
-          }),
-        );
       } catch (error) {
         if (error instanceof UploadThingError) {
           form.setError("attachments", { message: error.message });

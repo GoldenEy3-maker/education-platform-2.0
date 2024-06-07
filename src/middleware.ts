@@ -1,6 +1,6 @@
-import { withAuth } from "next-auth/middleware"
-import { env } from "./env"
-import { PagePathMap } from "./libs/enums"
+import { withAuth } from "next-auth/middleware";
+import { env } from "./env.js";
+import { PagePathMap } from "./libs/enums";
 
 export default withAuth({
   pages: {

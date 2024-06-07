@@ -1,12 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { BiCheck, BiExpandVertical } from "react-icons/bi";
+import {
+  BiCheck,
+  BiCheckSquare,
+  BiExpandVertical,
+  BiGitCompare,
+  BiTrash,
+} from "react-icons/bi";
+import { TbBook2, TbListDetails, TbMist } from "react-icons/tb";
 import { z } from "zod";
 import { AttachmentsUploader } from "~/components/attachments-uploader";
-import { AutoComplete } from "~/components/autocomplete";
 import { Editor } from "~/components/editor";
 import { type UploadAttachments } from "~/components/file-uploader";
 import {
@@ -27,6 +34,19 @@ import {
   CommandList,
 } from "~/components/ui/command";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -36,41 +56,111 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { Skeleton } from "~/components/ui/skeleton";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
+import { api } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
-import { cn } from "~/libs/utils";
+import { cn, uploadAttachments, type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
+import { type Descendant } from "slate";
+import { UploadThingError } from "uploadthing/server";
+import { toast } from "sonner";
 
-const createdCourses = [
-  {
-    id: "1",
-    label: "Иностранный язык в профессиональной деятельности",
-  },
-  {
-    id: "2",
-    label: "Разработка кода и информационных систем",
-  },
-  {
-    id: "3",
-    label: "Высшая математика",
-  },
-  {
-    id: "4",
-    label: "Проектирование и дизайн информационных систем",
-  },
-];
+const LectureEditorNodeTypesMap = {
+  TextEditor: "text-editor",
+  Quiz: "quiz",
+} as const;
+
+type LectureEditorContent = (
+  | { id: string; label: string; type: "text-editor"; children: Descendant[] }
+  | {
+      id: string;
+      label: string;
+      type: "quiz";
+      variant: "right-answer";
+      options: { isRight: boolean; label: string }[];
+      question: string;
+    }
+  | {
+      id: string;
+      label: string;
+      type: "quiz";
+      variant: "comparison";
+      options: { id: string; label: string }[];
+      questions: { id: string; label: string }[];
+    }
+)[];
+
+type LectureEditorElementProps =
+  | { id: string; type: "text-editor"; children: Descendant[] }
+  | {
+      id: string;
+      type: "quiz";
+      variant: "right-answer";
+      options: { isRight: boolean; label: string }[];
+      question: string;
+    }
+  | {
+      id: string;
+      type: "quiz";
+      variant: "comparison";
+      options: { id: string; label: string }[];
+      questions: { id: string; label: string }[];
+    };
+
+const LectureEditorElement: React.FC<LectureEditorElementProps> = ({
+  id,
+  type,
+  ...props
+}) => {
+  switch (type) {
+    case "text-editor":
+      return (
+        <>
+          <div className="space-y-2 overflow-hidden">
+            <Label
+              htmlFor={id}
+              onClick={(event) => {
+                document.getElementById(event.currentTarget.htmlFor)?.focus();
+              }}
+            >
+              Лекционный материал
+            </Label>
+            <Editor
+              placeholder="Весь лекционный материал размещается тут..."
+              id={id}
+            />
+          </div>
+          <Button
+            className="absolute -top-1 right-2 rounded-full"
+            variant="ghost-destructive"
+            size="icon"
+          >
+            <BiTrash className="text-xl" />
+            <span className="sr-only">Удалить этап лекции</span>
+          </Button>
+        </>
+      );
+
+    default:
+      break;
+  }
+
+  return null;
+};
 
 const formSchema = z.object({
   courseId: z.string(),
   section: z.string(),
   title: z.string(),
-  content: z.string(),
+  content: z.custom<LectureEditorContent>(),
   attachments: z.array(z.custom<UploadAttachments>()),
 });
 
@@ -86,10 +176,56 @@ const CreateLecPage: NextPageWithLayout = () => {
       courseId: "",
       section: "",
       title: "",
-      content: "",
+      content: [
+        {
+          id: "123",
+          label: "Этап №1",
+          type: "text-editor",
+          children: [{ type: "paragraph", children: [{ text: "" }] }],
+        },
+      ],
       attachments: [],
     },
   });
+
+  const [customSection, setCustomSection] = useState<string>("");
+
+  const getCreatedCoursesQuery = api.user.getCreatedCourses.useQuery();
+  const createLectureMutation = api.lecture.create.useMutation({
+    onSuccess: (data) => {
+      toast.success(
+        "Новый лекционный материал успешно опубликован на ваш курс!",
+      );
+      void router.push(PagePathMap.Course + data.courseId);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const createdCourseByRouterQuery = useMemo(() => {
+    if (router.query.courseId && getCreatedCoursesQuery.data) {
+      return getCreatedCoursesQuery.data.find(
+        (course) => course.id === router.query.courseId,
+      );
+    }
+
+    return undefined;
+  }, [router, getCreatedCoursesQuery.data]);
+
+  const selectedCreatedCourse = getCreatedCoursesQuery.data?.find(
+    (course) => course.id === form.watch("courseId"),
+  );
+
+  const selectedCourseSections = useMemo(() => {
+    return selectedCreatedCourse?.tasks.reduce<string[]>((acc, task) => {
+      if (!acc.includes(task.section)) {
+        acc.push(task.section);
+      }
+
+      return acc;
+    }, []);
+  }, [selectedCreatedCourse]);
 
   const setAttachments = (value: React.SetStateAction<UploadAttachments[]>) => {
     form.setValue(
@@ -100,8 +236,41 @@ const CreateLecPage: NextPageWithLayout = () => {
     );
   };
 
-  const onSubmit = (values: FormSchema) => {
-    console.log(values);
+  const isFormSubmitting = form.formState.isSubmitting;
+  const isSessionLoading = !session?.user;
+
+  const onSubmit = async (values: FormSchema) => {
+    if (values.attachments.filter((attachment) => attachment.file).length > 0) {
+      try {
+        await uploadAttachments({
+          files: values.attachments.map(({ file }) => file!),
+          setAttachments,
+        });
+      } catch (error) {
+        if (error instanceof UploadThingError) {
+          form.setError("attachments", { message: error.message });
+        } else {
+          form.setError("attachments", {
+            message:
+              "Возникла неожиданная ошибка во время загрузки дополнительного материала! Повторите попытку позже.",
+          });
+        }
+
+        return;
+      }
+    }
+
+    await createLectureMutation.mutateAsync({
+      ...values,
+      content: JSON.stringify(values.content),
+      attachments: form.getValues("attachments").map((attachment) => ({
+        key: attachment.key,
+        originalName: attachment.originalName,
+        uploadedAt: attachment.uploadedAt,
+        url: attachment.url!,
+        size: attachment.size,
+      })),
+    });
   };
 
   useEffect(() => {
@@ -109,6 +278,12 @@ const CreateLecPage: NextPageWithLayout = () => {
       void router.push(PagePathMap.Courses);
     }
   }, [router, session]);
+
+  useEffect(() => {
+    if (createdCourseByRouterQuery) {
+      form.setValue("courseId", createdCourseByRouterQuery.id);
+    }
+  }, [createdCourseByRouterQuery, form]);
 
   return (
     <main>
@@ -118,6 +293,29 @@ const CreateLecPage: NextPageWithLayout = () => {
             <BreadcrumbLink href={PagePathMap.Courses}>Курсы</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
+          {!getCreatedCoursesQuery.isLoading ? (
+            createdCourseByRouterQuery ? (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link
+                      href={PagePathMap.Course + createdCourseByRouterQuery.id}
+                    >
+                      {createdCourseByRouterQuery.fullTitle}
+                    </Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+              </>
+            ) : null
+          ) : (
+            <>
+              <BreadcrumbItem>
+                <Skeleton className="h-5 w-52 rounded-full sm:w-72" />
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+            </>
+          )}
           <BreadcrumbItem>
             <BreadcrumbPage>Размещение лекционного материала</BreadcrumbPage>
           </BreadcrumbItem>
@@ -138,53 +336,60 @@ const CreateLecPage: NextPageWithLayout = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Разместить на курсе</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className="flex w-full justify-between"
-                        >
-                          {field.value
-                            ? createdCourses.find(
-                                (course) => course.id === field.value,
-                              )?.label
-                            : "Выберите курс..."}
-                          <BiExpandVertical className="ml-2 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent align="start" className="w-full p-0">
-                      <Command>
-                        <CommandInput placeholder="Поиск курса..." />
-                        <CommandList>
-                          <CommandEmpty>Не найдено такого курса.</CommandEmpty>
-                          <CommandGroup>
-                            {createdCourses.map((course) => (
-                              <CommandItem
-                                value={course.label}
-                                key={course.id}
-                                onSelect={() => {
-                                  field.onChange(course.id);
-                                }}
-                              >
-                                <BiCheck
-                                  className={cn(
-                                    "mr-2",
-                                    course.id === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0",
-                                  )}
-                                />
-                                {course.label}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  {!getCreatedCoursesQuery.isLoading ? (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className="flex w-full justify-between"
+                            disabled={isFormSubmitting || isSessionLoading}
+                          >
+                            {field.value
+                              ? getCreatedCoursesQuery.data?.find(
+                                  (course) => course.id === field.value,
+                                )?.fullTitle
+                              : "Выберите курс..."}
+                            <BiExpandVertical className="ml-2 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent align="start" className="w-full p-0">
+                        <Command>
+                          <CommandInput placeholder="Поиск курса..." />
+                          <CommandList>
+                            <CommandEmpty>
+                              Не найдено такого курса.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {getCreatedCoursesQuery.data?.map((course) => (
+                                <CommandItem
+                                  value={course.id}
+                                  key={course.id}
+                                  onSelect={() => {
+                                    field.onChange(course.id);
+                                  }}
+                                >
+                                  <BiCheck
+                                    className={cn(
+                                      "mr-2",
+                                      course.id === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0",
+                                    )}
+                                  />
+                                  {course.fullTitle}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  ) : (
+                    <Skeleton className="h-10 w-full rounded-md" />
+                  )}
                   <FormDescription>
                     Выберите один из своих курсов, на котором будет размещено
                     задание.
@@ -193,31 +398,102 @@ const CreateLecPage: NextPageWithLayout = () => {
                 </FormItem>
               )}
             />
-            <div className="flex flex-wrap gap-5">
+            <div className="flex flex-wrap items-center gap-5">
               <FormField
                 control={form.control}
                 name="section"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Раздел</FormLabel>
-                    <FormControl>
-                      <AutoComplete
-                        emptyMessage="Не найдено такого раздела."
-                        options={[
-                          { label: "1.1 Unit", value: "1.1 Unit" },
-                          { label: "1.2 Unit", value: "1.2 Unit" },
-                        ]}
-                        placeholder="Выберите раздел курса..."
-                        onValueChange={field.onChange}
-                        disabled={field.disabled}
-                      />
-                    </FormControl>
+                    <FormLabel>Раздел курса</FormLabel>
+                    {!getCreatedCoursesQuery.isLoading ? (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className="flex w-full justify-between"
+                              disabled={isFormSubmitting || isSessionLoading}
+                            >
+                              {field.value !== ""
+                                ? field.value
+                                : "Выберите раздел..."}
+                              <BiExpandVertical className="ml-2 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          align="start"
+                          className="w-full max-w-[43rem] p-0"
+                        >
+                          <Command>
+                            <CommandInput
+                              placeholder="Поиск разделов..."
+                              onValueChange={(value) => setCustomSection(value)}
+                            />
+                            <CommandList>
+                              <CommandEmpty className="whitespace-pre-wrap px-6">
+                                {form.getValues("courseId") === ""
+                                  ? "Необходими выбрать курс, чтобы увидеть разделы заданий."
+                                  : "На выбранном курсе все еще нет разделов.\n Вы можете вписать название нового раздела тут, чтобы его создать."}
+                              </CommandEmpty>
+                              <CommandGroup>
+                                {selectedCourseSections?.map((section) => (
+                                  <CommandItem
+                                    value={section}
+                                    key={section}
+                                    onSelect={() => {
+                                      field.onChange(section);
+                                    }}
+                                  >
+                                    <BiCheck
+                                      className={cn(
+                                        "mr-2",
+                                        section === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                    {section}
+                                  </CommandItem>
+                                ))}
+                                {customSection &&
+                                !selectedCourseSections?.includes(
+                                  customSection,
+                                ) ? (
+                                  <CommandItem
+                                    value={customSection}
+                                    key={customSection}
+                                    onSelect={() => {
+                                      field.onChange(customSection);
+                                    }}
+                                  >
+                                    <BiCheck
+                                      className={cn(
+                                        "mr-2",
+                                        customSection === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                    {customSection}
+                                  </CommandItem>
+                                ) : null}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <Skeleton className="h-11 w-full rounded-md" />
+                    )}
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="title"
+                disabled={isFormSubmitting || isSessionLoading}
                 render={({ field }) => (
                   <FormItem className="flex-1">
                     <FormLabel>Заголовок</FormLabel>
@@ -237,7 +513,7 @@ const CreateLecPage: NextPageWithLayout = () => {
                 <AttachmentsUploader
                   attachments={value}
                   onChange={setAttachments}
-                  // isLoading={isLoading}
+                  isLoading={isFormSubmitting || isSessionLoading}
                   multiple
                   {...field}
                 />
@@ -246,32 +522,186 @@ const CreateLecPage: NextPageWithLayout = () => {
             <FormField
               control={form.control}
               name="content"
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              render={({ field: { ref, onChange, ...field } }) => (
-                <FormItem className="w-full">
-                  <FormLabel
-                    onClick={(event) => {
-                      document
-                        .getElementById(
-                          event.currentTarget.getAttribute("for") ?? "",
-                        )
-                        ?.focus();
-                    }}
-                  >
-                    Лекционный материал
-                  </FormLabel>
+              render={({ field }) => (
+                <FormItem>
                   <FormControl>
-                    <Editor
-                      className="!min-h-60"
-                      placeholder="Весь лекционный материал размещается тут..."
-                      onChange={(value) => onChange(JSON.stringify(value))}
-                      {...field}
-                    />
+                    <div className="space-y-4">
+                      {field.value.map((element) => (
+                        <fieldset
+                          key={element.id}
+                          className="relative rounded-lg border-2 border-input p-4"
+                        >
+                          <legend
+                            contentEditable={
+                              !isFormSubmitting || !isSessionLoading
+                            }
+                            suppressContentEditableWarning
+                            className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            onBlur={(event) => {
+                              const value = event.currentTarget.textContent;
+
+                              if (value === "") {
+                                event.currentTarget.focus();
+                                return;
+                              }
+
+                              field.onChange(
+                                field.value.map((el) => {
+                                  if (el.id === element.id) {
+                                    return {
+                                      ...el,
+                                      label: event.currentTarget.textContent,
+                                    };
+                                  }
+
+                                  return el;
+                                }),
+                              );
+                            }}
+                          >
+                            {element.label}
+                          </legend>
+                          {(() => {
+                            switch (element.type) {
+                              case "text-editor":
+                                return (
+                                  <>
+                                    <div className="space-y-2 overflow-hidden">
+                                      <Label
+                                        htmlFor={element.id}
+                                        onClick={(event) => {
+                                          document
+                                            .getElementById(
+                                              event.currentTarget.htmlFor,
+                                            )
+                                            ?.focus();
+                                        }}
+                                      >
+                                        Лекционный материал
+                                      </Label>
+                                      <Editor
+                                        placeholder="Лекционный материал этапа размещается тут..."
+                                        id={element.id}
+                                        disabled={
+                                          isFormSubmitting || isSessionLoading
+                                        }
+                                        onChange={(value) => {
+                                          field.onChange(
+                                            field.value.map((el) => {
+                                              if (
+                                                el.id === element.id &&
+                                                element.type === "text-editor"
+                                              ) {
+                                                return {
+                                                  ...el,
+                                                  children: value,
+                                                };
+                                              }
+
+                                              return el;
+                                            }),
+                                          );
+                                        }}
+                                      />
+                                    </div>
+                                    <Button
+                                      className="absolute -top-1 right-2 rounded-full"
+                                      variant="ghost-destructive"
+                                      size="icon"
+                                      disabled={
+                                        field.value.length === 1 ||
+                                        isFormSubmitting ||
+                                        isSessionLoading
+                                      }
+                                      onClick={() =>
+                                        field.onChange(
+                                          field.value.filter(
+                                            (el) => el.id !== element.id,
+                                          ),
+                                        )
+                                      }
+                                    >
+                                      <BiTrash className="text-xl" />
+                                      <span className="sr-only">
+                                        Удалить этап лекции
+                                      </span>
+                                    </Button>
+                                  </>
+                                );
+
+                              default:
+                                return null;
+                            }
+                          })()}
+                        </fieldset>
+                      ))}
+                    </div>
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
+            <footer className="flex items-center justify-end gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isFormSubmitting || isSessionLoading}
+                  >
+                    Добавить новый этап
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Этапы лекции</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      onSelect={() => {
+                        form.setValue("content", [
+                          ...form.getValues("content"),
+                          {
+                            id: crypto.randomUUID(),
+                            label: `Этап №${form.getValues("content").length + 1}`,
+                            type: "text-editor",
+                            children: [
+                              { type: "paragraph", children: [{ text: "" }] },
+                            ],
+                          },
+                        ]);
+                      }}
+                    >
+                      <TbBook2 className="mr-2 text-lg" />
+                      <span>Лекционный материал</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>
+                        <TbListDetails className="mr-2 text-lg" />
+                        <span>Тестирование</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                          <DropdownMenuItem>
+                            <BiCheckSquare className="mr-2 text-lg" />
+                            <span>Выбрать правильный вариант</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <BiGitCompare className="mr-2 text-lg" />
+                            <span>Сопоставление</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <TbMist className="mr-2 text-lg" />
+                            <span>Вставить пропущенное</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button disabled={isFormSubmitting || isSessionLoading}>
+                Опубликовать
+              </Button>
+            </footer>
           </form>
         </Form>
       </div>

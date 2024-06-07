@@ -63,6 +63,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -108,30 +109,19 @@
   .container-grid {
     --padding-inline: 1rem;
     --container-max-widht: 1400px;
-    --breakout-max-width: calc(
-      var(--container-max-widht) * 0.15 + var(--container-max-widht)
-    );
+    --breakout-max-width: calc(var(--container-max-widht) * 0.15 + var(--container-max-widht));
 
-    --breakout-size: calc(
-      (var(--breakout-max-width) - var(--container-max-widht)) / 2
-    );
+    --breakout-size: calc((var(--breakout-max-width) - var(--container-max-widht)) / 2);
 
     display: grid;
     grid-template-columns:
-      [full-width-start] minmax(var(--padding-inline), 1fr)
-      [breakout-start] minmax(0, var(--breakout-size)) [container-start] min(
-        100% - var(--padding-inline) * 2,
-        var(--container-max-widht)
-      )
-      [container-end] minmax(0, var(--breakout-size)) [breakout-end] minmax(
-        var(--padding-inline),
-        1fr
-      )
-      [full-width-end];
+      [full-width-start] minmax(var(--padding-inline), 1fr) [breakout-start] minmax(0, var(--breakout-size)) [container-start] min(100% - var(--padding-inline) * 2,
+        var(--container-max-widht)) [container-end] minmax(0, var(--breakout-size)) [breakout-end] minmax(var(--padding-inline),
+        1fr) [full-width-end];
   }
 
-  .container-grid > :not(.breakout, .full-width),
-  .full-width > :not(.breakout, .full-width) {
+  .container-grid> :not(.breakout, .full-width),
+  .full-width> :not(.breakout, .full-width) {
     grid-column: container;
   }
 

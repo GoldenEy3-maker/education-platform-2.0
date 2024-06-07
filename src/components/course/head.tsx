@@ -41,6 +41,7 @@ import { api } from "~/libs/api";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { TbBallpen, TbBook2, TbListDetails, TbUserCheck } from "react-icons/tb";
+import { useRouter } from "next/router";
 
 type CourseHeadProps = {
   id: string;
@@ -91,6 +92,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
   id,
   progress,
 }) => {
+  const router = useRouter();
   const { data: session } = useSession();
   const status: StatusCourseMap = isArchived ? "Archived" : "Published";
 
@@ -534,8 +536,17 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
                             className="w-full justify-start"
                             asChild
                           >
-                            <Link href={PagePathMap.CreateLec}>
-                              <TbBook2 className="mr-2 text-lg" />
+                            <Link
+                              href={
+                                router.query.courseId &&
+                                typeof router.query.courseId === "string"
+                                  ? PagePathMap.CreateLec +
+                                    "?courseId=" +
+                                    router.query.courseId
+                                  : PagePathMap.CreateLec
+                              }
+                            >
+                              <TbBook2 className="mr-2 text-xl" />
                               <span>Лекционный материал</span>
                             </Link>
                           </Button>
@@ -546,8 +557,17 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
                             className="w-full justify-start"
                             asChild
                           >
-                            <Link href={PagePathMap.CreateQuiz}>
-                              <TbListDetails className="mr-2 text-lg" />
+                            <Link
+                              href={
+                                router.query.courseId &&
+                                typeof router.query.courseId === "string"
+                                  ? PagePathMap.CreateQuiz +
+                                    "?courseId=" +
+                                    router.query.courseId
+                                  : PagePathMap.CreateQuiz
+                              }
+                            >
+                              <TbListDetails className="mr-2 text-xl" />
                               <span>Тестирование</span>
                             </Link>
                           </Button>
@@ -558,8 +578,17 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
                             className="w-full justify-start"
                             asChild
                           >
-                            <Link href={PagePathMap.CreatePract}>
-                              <TbBallpen className="mr-2 text-lg" />
+                            <Link
+                              href={
+                                router.query.courseId &&
+                                typeof router.query.courseId === "string"
+                                  ? PagePathMap.CreatePract +
+                                    "?courseId=" +
+                                    router.query.courseId
+                                  : PagePathMap.CreatePract
+                              }
+                            >
+                              <TbBallpen className="mr-2 text-xl" />
                               <span>Практическая работа</span>
                             </Link>
                           </Button>

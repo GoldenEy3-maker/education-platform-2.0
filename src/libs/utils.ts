@@ -3,6 +3,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { FileRouter } from "~/server/uploadthing";
 import { AttachmentsMap, type AttachmentExtensionsMap } from "./enums";
+import { UploadAttachments } from "~/components/file-uploader";
 
 export type ValueOf<T> = T[keyof T];
 
@@ -102,4 +103,61 @@ export const isValidUrl = (str: string) => {
   }
 
   return url.protocol === "http:" || url.protocol === "https:";
+};
+
+export const uploadAttachments = async (opts: {
+  files: File[];
+  setAttachments: (value: React.SetStateAction<UploadAttachments[]>) => void;
+}) => {
+  const { setAttachments, files } = opts;
+
+  const uploadedAttachments = await uploadFiles("uploader", {
+    files: files,
+    onUploadBegin(opts) {
+      setAttachments((attachments) =>
+        attachments.map((attachment) => {
+          if (opts.file === attachment.file?.name) {
+            return {
+              ...attachment,
+              isUploading: true,
+            };
+          }
+
+          return attachment;
+        }),
+      );
+    },
+    onUploadProgress(opts) {
+      setAttachments((attachments) =>
+        attachments.map((attachment) => {
+          if (opts.file === attachment.file?.name) {
+            return {
+              ...attachment,
+              progress: opts.progress,
+            };
+          }
+
+          return attachment;
+        }),
+      );
+    },
+  });
+
+  setAttachments((attachments) =>
+    attachments.map((attachment) => {
+      const upFile = uploadedAttachments.find(
+        (upFile) => upFile.name === attachment.file?.name,
+      );
+      if (upFile) {
+        return {
+          ...attachment,
+          key: upFile.key,
+          url: upFile.url,
+          isUploading: false,
+        };
+      }
+
+      return attachment;
+    }),
+  );
 };

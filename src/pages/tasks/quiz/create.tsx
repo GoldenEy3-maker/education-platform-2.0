@@ -337,15 +337,15 @@ const CreateQuizPage: NextPageWithLayout = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem>
-                      <BiCheckSquare className="mr-2 text-base" />
+                      <BiCheckSquare className="mr-2 text-lg" />
                       <span>Выбрать правильный вариант</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <BiGitCompare className="mr-2 text-base" />
+                      <BiGitCompare className="mr-2 text-lg" />
                       <span>Сопоставление</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <TbMist className="mr-2 text-base" />
+                      <TbMist className="mr-2 text-lg" />
                       <span>Вставить пропущенное</span>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>

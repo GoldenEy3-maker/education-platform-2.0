@@ -6,6 +6,7 @@ import {
   BiExpandVertical,
   BiFilterAlt,
   BiNotepad,
+  BiPlus,
   BiSearch,
   BiSortAlt2,
 } from "react-icons/bi";
@@ -40,6 +41,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { TbBallpen, TbBook2, TbListDetails } from "react-icons/tb";
+import { useRouter } from "next/router";
 
 const SortValueTasksMap = {
   Recent: "Recent",
@@ -118,6 +120,7 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
   isSubStudent,
   isTeacher,
 }) => {
+  const router = useRouter();
   const activeFilters = Object.values(filters).filter((val) => val === true);
 
   const filteredTasks = useMemo(
@@ -158,7 +161,9 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
 
         if (task.section === lastTask.section) {
           lastTasks.push(task);
-          acc[acc.length - 1] = lastTasks;
+          acc[acc.length - 1] = lastTasks.sort(
+            (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+          );
         } else {
           acc.push([task]);
         }
@@ -200,7 +205,16 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
                       className="w-full justify-start"
                       asChild
                     >
-                      <Link href={PagePathMap.CreateLec}>
+                      <Link
+                        href={
+                          router.query.courseId &&
+                          typeof router.query.courseId === "string"
+                            ? PagePathMap.CreateLec +
+                              "?courseId=" +
+                              router.query.courseId
+                            : PagePathMap.CreateLec
+                        }
+                      >
                         <TbBook2 className="mr-2 text-xl" />
                         <span>Лекционный материал</span>
                       </Link>
@@ -212,7 +226,16 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
                       className="w-full justify-start"
                       asChild
                     >
-                      <Link href={PagePathMap.CreateQuiz}>
+                      <Link
+                        href={
+                          router.query.courseId &&
+                          typeof router.query.courseId === "string"
+                            ? PagePathMap.CreateQuiz +
+                              "?courseId=" +
+                              router.query.courseId
+                            : PagePathMap.CreateQuiz
+                        }
+                      >
                         <TbListDetails className="mr-2 text-xl" />
                         <span>Тестирование</span>
                       </Link>
@@ -224,7 +247,16 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
                       className="w-full justify-start"
                       asChild
                     >
-                      <Link href={PagePathMap.CreatePract}>
+                      <Link
+                        href={
+                          router.query.courseId &&
+                          typeof router.query.courseId === "string"
+                            ? PagePathMap.CreatePract +
+                              "?courseId=" +
+                              router.query.courseId
+                            : PagePathMap.CreatePract
+                        }
+                      >
                         <TbBallpen className="mr-2 text-xl" />
                         <span>Практическая работа</span>
                       </Link>
@@ -250,7 +282,14 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
 
   return (
     <div>
-      <div className="mb-4 grid grid-cols-[1fr_repeat(2,minmax(0,auto))] items-center gap-2">
+      <div
+        className={cn(
+          "mb-4 grid grid-cols-[1fr_repeat(2,minmax(0,auto))] items-center gap-2",
+          {
+            "min-[570px]:grid-cols-[1fr_repeat(3,minmax(0,auto))]": isAuthor,
+          },
+        )}
+      >
         <Input
           leadingIcon={<BiSearch className="text-xl" />}
           placeholder="Поиск заданий..."
@@ -345,6 +384,67 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
             ))}
           </SelectContent>
         </Select>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button type="button" className="gap-2 max-[570px]:hidden">
+              <BiPlus className="text-xl" />
+              <span>Новое задание</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem asChild>
+              <Button variant="ghost" className="w-full justify-start" asChild>
+                <Link
+                  href={
+                    router.query.courseId &&
+                    typeof router.query.courseId === "string"
+                      ? PagePathMap.CreateLec +
+                        "?courseId=" +
+                        router.query.courseId
+                      : PagePathMap.CreateLec
+                  }
+                >
+                  <TbBook2 className="mr-2 text-xl" />
+                  <span>Лекционный материал</span>
+                </Link>
+              </Button>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Button variant="ghost" className="w-full justify-start" asChild>
+                <Link
+                  href={
+                    router.query.courseId &&
+                    typeof router.query.courseId === "string"
+                      ? PagePathMap.CreateQuiz +
+                        "?courseId=" +
+                        router.query.courseId
+                      : PagePathMap.CreateQuiz
+                  }
+                >
+                  <TbListDetails className="mr-2 text-xl" />
+                  <span>Тестирование</span>
+                </Link>
+              </Button>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Button variant="ghost" className="w-full justify-start" asChild>
+                <Link
+                  href={
+                    router.query.courseId &&
+                    typeof router.query.courseId === "string"
+                      ? PagePathMap.CreatePract +
+                        "?courseId=" +
+                        router.query.courseId
+                      : PagePathMap.CreatePract
+                  }
+                >
+                  <TbBallpen className="mr-2 text-xl" />
+                  <span>Практическая работа</span>
+                </Link>
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>{" "}
       </div>
       <div className="space-y-2">
         {!isLoading ? (
