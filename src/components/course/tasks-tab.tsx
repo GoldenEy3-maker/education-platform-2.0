@@ -42,6 +42,7 @@ import {
 } from "../ui/dropdown-menu";
 import { TbBallpen, TbBook2, TbListDetails } from "react-icons/tb";
 import { useRouter } from "next/router";
+import { RouterOutputs } from "~/libs/api";
 
 const SortValueTasksMap = {
   Recent: "Recent",
@@ -77,8 +78,8 @@ type CourseTasksTabProps = {
   tasks: Prisma.TaskGetPayload<{
     include: {
       attachments: true;
-      restrictedGroups: true;
-      restrictedUsers: true;
+      strictViewGroups: true;
+      strictViewUsers: true;
       attempts: {
         include: {
           user: {
@@ -384,67 +385,81 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
             ))}
           </SelectContent>
         </Select>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button type="button" className="gap-2 max-[570px]:hidden">
-              <BiPlus className="text-xl" />
-              <span>Новое задание</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem asChild>
-              <Button variant="ghost" className="w-full justify-start" asChild>
-                <Link
-                  href={
-                    router.query.courseId &&
-                    typeof router.query.courseId === "string"
-                      ? PagePathMap.CreateLec +
-                        "?courseId=" +
-                        router.query.courseId
-                      : PagePathMap.CreateLec
-                  }
-                >
-                  <TbBook2 className="mr-2 text-xl" />
-                  <span>Лекционный материал</span>
-                </Link>
+        {isAuthor ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button type="button" className="gap-2 max-[570px]:hidden">
+                <BiPlus className="text-xl" />
+                <span>Новое задание</span>
               </Button>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Button variant="ghost" className="w-full justify-start" asChild>
-                <Link
-                  href={
-                    router.query.courseId &&
-                    typeof router.query.courseId === "string"
-                      ? PagePathMap.CreateQuiz +
-                        "?courseId=" +
-                        router.query.courseId
-                      : PagePathMap.CreateQuiz
-                  }
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  asChild
                 >
-                  <TbListDetails className="mr-2 text-xl" />
-                  <span>Тестирование</span>
-                </Link>
-              </Button>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Button variant="ghost" className="w-full justify-start" asChild>
-                <Link
-                  href={
-                    router.query.courseId &&
-                    typeof router.query.courseId === "string"
-                      ? PagePathMap.CreatePract +
-                        "?courseId=" +
-                        router.query.courseId
-                      : PagePathMap.CreatePract
-                  }
+                  <Link
+                    href={
+                      router.query.courseId &&
+                      typeof router.query.courseId === "string"
+                        ? PagePathMap.CreateLec +
+                          "?courseId=" +
+                          router.query.courseId
+                        : PagePathMap.CreateLec
+                    }
+                  >
+                    <TbBook2 className="mr-2 text-xl" />
+                    <span>Лекционный материал</span>
+                  </Link>
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  asChild
                 >
-                  <TbBallpen className="mr-2 text-xl" />
-                  <span>Практическая работа</span>
-                </Link>
-              </Button>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>{" "}
+                  <Link
+                    href={
+                      router.query.courseId &&
+                      typeof router.query.courseId === "string"
+                        ? PagePathMap.CreateQuiz +
+                          "?courseId=" +
+                          router.query.courseId
+                        : PagePathMap.CreateQuiz
+                    }
+                  >
+                    <TbListDetails className="mr-2 text-xl" />
+                    <span>Тестирование</span>
+                  </Link>
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  asChild
+                >
+                  <Link
+                    href={
+                      router.query.courseId &&
+                      typeof router.query.courseId === "string"
+                        ? PagePathMap.CreatePract +
+                          "?courseId=" +
+                          router.query.courseId
+                        : PagePathMap.CreatePract
+                    }
+                  >
+                    <TbBallpen className="mr-2 text-xl" />
+                    <span>Практическая работа</span>
+                  </Link>
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
       </div>
       <div className="space-y-2">
         {!isLoading ? (
@@ -480,8 +495,8 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
                         totalStep={5}
                         currentStep={2}
                         isViewRestrictions={
-                          task.restrictedGroups.length > 0 ||
-                          task.restrictedUsers.length > 0
+                          task.strictViewGroups.length > 0 ||
+                          task.strictViewUsers.length > 0
                         }
                         isHidden={task.isHidden}
                         deadline={task.deadline}

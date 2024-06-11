@@ -77,8 +77,8 @@ export const courseRouter = createTRPCRouter({
           tasks: {
             include: {
               attachments: true,
-              restrictedGroups: true,
-              restrictedUsers: true,
+              strictViewGroups: true,
+              strictViewUsers: true,
               attempts: {
                 include: {
                   user: {

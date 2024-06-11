@@ -127,7 +127,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ disabled }) => {
         variant="ghost"
         size="icon"
         disabled={disabled}
-        className={cn("mr-2 shrink-0", {
+        className={cn("shrink-0", {
           "bg-muted": isBlockActive(editor, "numbered-list"),
         })}
         onClick={() => toggleBlock(editor, "numbered-list")}

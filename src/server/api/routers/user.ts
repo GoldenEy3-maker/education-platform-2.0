@@ -17,4 +17,16 @@ export const userRouter = createTRPCRouter({
 
     return courses;
   }),
+  getStudents: protectedProcedure.query(async (opts) => {
+    const students = await opts.ctx.db.user.findMany({
+      where: {
+        role: "Student",
+      },
+      include: {
+        group: true,
+      },
+    });
+
+    return students;
+  }),
 });

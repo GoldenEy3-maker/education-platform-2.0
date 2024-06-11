@@ -9,26 +9,26 @@ datasource db {
 }
 
 model User {
-  id              String         @id @default(cuid())
+  id              String               @id @default(cuid())
   name            String
   surname         String
   fathername      String?
-  email           String         @unique
-  emailVerified   DateTime?      @map("email_verified")
+  email           String               @unique
+  emailVerified   DateTime?            @map("email_verified")
   image           String?
-  login           String         @unique
+  login           String               @unique
   password        String
-  group           Group?         @relation(fields: [groupId], references: [id])
+  group           Group?               @relation(fields: [groupId], references: [id])
   groupId         String?
   role            Role
   status          String?
   lessions        Lession[]
-  createdCourses  Course[]       @relation("author")
+  createdCourses  Course[]             @relation("author")
   subscriptions   Subscription[]
   favorites       Favorite[]
   attempts        Attempt[]
-  restrictedTasks Task[]
   sessions        Session[]
+  strictViewTasks StrictViewTaskUser[]
 
   @@map("users")
 }
@@ -44,11 +44,11 @@ model Session {
 }
 
 model Group {
-  id              String    @id @default(cuid())
+  id              String                @id @default(cuid())
   name            String
   user            User[]
-  restrictedTasks Task[]
   lessions        Lession[]
+  strictViewTasks StrictViewTaskGroup[]
 
   @@map("groups")
 }
@@ -116,22 +116,22 @@ model CourseAttachment {
 }
 
 model Task {
-  id                String           @id @default(cuid())
+  id                String                @id @default(cuid())
   title             String
   section           String
   type              TaskType
-  availableAttempts Int?             @map("available_attempts")
+  availableAttempts Int?                  @map("available_attempts")
   attachments       TaskAttachment[]
-  availableTime     Int?             @map("available_time")
+  availableTime     Int?                  @map("available_time")
   deadline          DateTime?
-  isHidden          Boolean          @default(false) @map("is_hidden")
-  restrictedGroups  Group[]
-  restrictedUsers   User[]
+  isHidden          Boolean               @default(false) @map("is_hidden")
   attempts          Attempt[]
-  course            Course           @relation(fields: [courseId], references: [id])
-  courseId          String           @map("course_id")
-  createdAt         DateTime         @default(now()) @map("created_at")
-  updatedAt         DateTime         @updatedAt @map("updated_at")
+  course            Course                @relation(fields: [courseId], references: [id])
+  courseId          String                @map("course_id")
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+  strictViewUsers   StrictViewTaskUser[]
+  strictViewGroups  StrictViewTaskGroup[]
 
   @@map("tasks")
 }
@@ -205,6 +205,22 @@ model Favorite {
   userId   String @map("user_id")
 
   @@map("favorites")
+}
+
+model StrictViewTaskUser {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+  task   Task   @relation(fields: [taskId], references: [id])
+  taskId String @map("task_id")
+}
+
+model StrictViewTaskGroup {
+  id      String @id @default(cuid())
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String @map("group_id")
+  task    Task   @relation(fields: [taskId], references: [id])
+  taskId  String @map("task_id")
 }
 
 enum Role {

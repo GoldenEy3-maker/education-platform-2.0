@@ -175,7 +175,6 @@ export const Editor: React.FC<
         />
         <Toolbar disabled={props.disabled} />
       </div>
-      {/* <HoveringToolbar /> */}
     </Slate>
   );
 };

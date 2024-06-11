@@ -65,13 +65,19 @@ import {
 import { Skeleton } from "~/components/ui/skeleton";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
-import { api } from "~/libs/api";
+import { api, type RouterOutputs } from "~/libs/api";
 import { PagePathMap } from "~/libs/enums";
-import { cn, uploadAttachments, type ValueOf } from "~/libs/utils";
+import {
+  cn,
+  getPersonInitials,
+  uploadAttachments,
+  type ValueOf,
+} from "~/libs/utils";
 import { type NextPageWithLayout } from "~/pages/_app";
 import { type Descendant } from "slate";
 import { UploadThingError } from "uploadthing/server";
 import { toast } from "sonner";
+import { FancyMultiSelect } from "~/components/fancy-multi-select";
 
 const LectureEditorNodeTypesMap = {
   TextEditor: "text-editor",
@@ -157,9 +163,16 @@ const LectureEditorElement: React.FC<LectureEditorElementProps> = ({
 };
 
 const formSchema = z.object({
-  courseId: z.string(),
-  section: z.string(),
-  title: z.string(),
+  courseId: z.string().min(1, "Обязательно поле!"),
+  section: z.string().min(1, "Обязательное поле!"),
+  title: z.string().min(1, "Обязательное поле!"),
+  strictViewUsers: z.array(z.object({ value: z.string(), label: z.string() })),
+  strictViewGroups: z.array(
+    z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
+  ),
   content: z.custom<LectureEditorContent>(),
   attachments: z.array(z.custom<UploadAttachments>()),
 });
@@ -176,6 +189,8 @@ const CreateLecPage: NextPageWithLayout = () => {
       courseId: "",
       section: "",
       title: "",
+      strictViewUsers: [],
+      strictViewGroups: [],
       content: [
         {
           id: "123",
@@ -191,6 +206,7 @@ const CreateLecPage: NextPageWithLayout = () => {
   const [customSection, setCustomSection] = useState<string>("");
 
   const getCreatedCoursesQuery = api.user.getCreatedCourses.useQuery();
+  const getStudentsQuery = api.user.getStudents.useQuery();
   const createLectureMutation = api.lecture.create.useMutation({
     onSuccess: (data) => {
       toast.success(
@@ -270,6 +286,8 @@ const CreateLecPage: NextPageWithLayout = () => {
         url: attachment.url!,
         size: attachment.size,
       })),
+      strictViewGroups: values.strictViewGroups.map((opt) => opt.value),
+      strictViewUsers: values.strictViewUsers.map((opt) => opt.value),
     });
   };
 
@@ -343,22 +361,24 @@ const CreateLecPage: NextPageWithLayout = () => {
                           <Button
                             variant="outline"
                             role="combobox"
-                            className="flex w-full justify-between"
+                            className="flex h-11 w-full justify-between"
                             disabled={isFormSubmitting || isSessionLoading}
                           >
-                            {field.value
-                              ? getCreatedCoursesQuery.data?.find(
-                                  (course) => course.id === field.value,
-                                )?.fullTitle
-                              : "Выберите курс..."}
+                            <span className="truncate">
+                              {field.value
+                                ? getCreatedCoursesQuery.data?.find(
+                                    (course) => course.id === field.value,
+                                  )?.fullTitle
+                                : "Выберите курс..."}
+                            </span>
                             <BiExpandVertical className="ml-2 shrink-0 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent align="start" className="w-full p-0">
+                      <PopoverContent align="start" className="p-0">
                         <Command>
                           <CommandInput placeholder="Поиск курса..." />
-                          <CommandList>
+                          <CommandList className="custom-scrollbar max-h-60 overflow-auto">
                             <CommandEmpty>
                               Не найдено такого курса.
                             </CommandEmpty>
@@ -370,16 +390,23 @@ const CreateLecPage: NextPageWithLayout = () => {
                                   onSelect={() => {
                                     field.onChange(course.id);
                                   }}
+                                  asChild
                                 >
-                                  <BiCheck
-                                    className={cn(
-                                      "mr-2",
-                                      course.id === field.value
-                                        ? "opacity-100"
-                                        : "opacity-0",
-                                    )}
-                                  />
-                                  {course.fullTitle}
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className="h-auto min-h-10 w-full justify-start whitespace-normal text-left"
+                                  >
+                                    <BiCheck
+                                      className={cn(
+                                        "mr-2 shrink-0",
+                                        course.id === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                    {course.fullTitle}
+                                  </Button>
                                 </CommandItem>
                               ))}
                             </CommandGroup>
@@ -398,7 +425,7 @@ const CreateLecPage: NextPageWithLayout = () => {
                 </FormItem>
               )}
             />
-            <div className="flex flex-wrap items-center gap-5">
+            <div className="flex flex-wrap gap-5">
               <FormField
                 control={form.control}
                 name="section"
@@ -412,12 +439,14 @@ const CreateLecPage: NextPageWithLayout = () => {
                             <Button
                               variant="outline"
                               role="combobox"
-                              className="flex w-full justify-between"
+                              className="flex h-11 w-full justify-between"
                               disabled={isFormSubmitting || isSessionLoading}
                             >
-                              {field.value !== ""
-                                ? field.value
-                                : "Выберите раздел..."}
+                              <span className="truncate">
+                                {field.value !== ""
+                                  ? field.value
+                                  : "Выберите раздел..."}
+                              </span>
                               <BiExpandVertical className="ml-2 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
@@ -431,7 +460,7 @@ const CreateLecPage: NextPageWithLayout = () => {
                               placeholder="Поиск разделов..."
                               onValueChange={(value) => setCustomSection(value)}
                             />
-                            <CommandList>
+                            <CommandList className="max-h-60 overflow-auto">
                               <CommandEmpty className="whitespace-pre-wrap px-6">
                                 {form.getValues("courseId") === ""
                                   ? "Необходими выбрать курс, чтобы увидеть разделы заданий."
@@ -445,19 +474,26 @@ const CreateLecPage: NextPageWithLayout = () => {
                                     onSelect={() => {
                                       field.onChange(section);
                                     }}
+                                    asChild
                                   >
-                                    <BiCheck
-                                      className={cn(
-                                        "mr-2",
-                                        section === field.value
-                                          ? "opacity-100"
-                                          : "opacity-0",
-                                      )}
-                                    />
-                                    {section}
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      className="h-auto min-h-10 w-full justify-start whitespace-normal text-left"
+                                    >
+                                      <BiCheck
+                                        className={cn(
+                                          "mr-2 shrink-0",
+                                          section === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0",
+                                        )}
+                                      />
+                                      {section}
+                                    </Button>
                                   </CommandItem>
                                 ))}
-                                {customSection &&
+                                {customSection !== "" &&
                                 !selectedCourseSections?.includes(
                                   customSection,
                                 ) ? (
@@ -487,6 +523,7 @@ const CreateLecPage: NextPageWithLayout = () => {
                     ) : (
                       <Skeleton className="h-11 w-full rounded-md" />
                     )}
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -519,6 +556,94 @@ const CreateLecPage: NextPageWithLayout = () => {
                 />
               )}
             />
+            <div className="flex flex-wrap items-start gap-5">
+              <FormField
+                control={form.control}
+                name="strictViewUsers"
+                disabled={isFormSubmitting || isSessionLoading}
+                render={({ field: { value, onChange, ...field } }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Ограничения просмотра для студентов</FormLabel>
+                    {!getStudentsQuery.isLoading ? (
+                      <FormControl>
+                        <FancyMultiSelect
+                          placeholder="Выберите студента..."
+                          value={value}
+                          onValueChange={onChange}
+                          options={
+                            getStudentsQuery.data?.map((user) => ({
+                              value: user.id,
+                              label: getPersonInitials(
+                                user.surname,
+                                user.name,
+                                user.fathername,
+                              ),
+                            })) ?? []
+                          }
+                          {...field}
+                        />
+                      </FormControl>
+                    ) : (
+                      <Skeleton className="h-9 w-full rounded-md" />
+                    )}
+
+                    <FormDescription className="whitespace-pre-wrap">
+                      {
+                        "Укажите студентов, которые будут иметь доступ до этого задания. \n*Если ничего не указывать, доступ будет у всех."
+                      }
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="strictViewGroups"
+                disabled={isFormSubmitting || isSessionLoading}
+                render={({ field: { value, onChange, ...field } }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Ограничения просмотра для групп</FormLabel>
+                    {!getStudentsQuery.isLoading ? (
+                      <FormControl>
+                        <FancyMultiSelect
+                          placeholder="Выберите группу..."
+                          value={value}
+                          onValueChange={onChange}
+                          options={
+                            getStudentsQuery.data
+                              ?.reduce<RouterOutputs["user"]["getStudents"]>(
+                                (acc, user) => {
+                                  if (
+                                    acc.find(
+                                      (u) => u.groupId === user.groupId,
+                                    ) === undefined
+                                  ) {
+                                    acc.push(user);
+                                  }
+
+                                  return acc;
+                                },
+                                [],
+                              )
+                              .map((user) => ({
+                                value: user.groupId!,
+                                label: user.group!.name,
+                              })) ?? []
+                          }
+                          {...field}
+                        />
+                      </FormControl>
+                    ) : (
+                      <Skeleton className="h-9 w-full rounded-md" />
+                    )}
+                    <FormDescription className="whitespace-pre-wrap">
+                      {
+                        "Укажите группы, которые будут иметь доступ до этого задания. \n*Если ничего не указывать, доступ будет у всех."
+                      }
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="content"
@@ -529,7 +654,7 @@ const CreateLecPage: NextPageWithLayout = () => {
                       {field.value.map((element) => (
                         <fieldset
                           key={element.id}
-                          className="relative rounded-lg border-2 border-input p-4"
+                          className="relative rounded-lg border-2 border-input p-4 [min-inline-size:unset]"
                         >
                           <legend
                             contentEditable={
@@ -566,7 +691,7 @@ const CreateLecPage: NextPageWithLayout = () => {
                               case "text-editor":
                                 return (
                                   <>
-                                    <div className="space-y-2 overflow-hidden">
+                                    <div className="space-y-2">
                                       <Label
                                         htmlFor={element.id}
                                         onClick={(event) => {

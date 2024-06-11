@@ -3,7 +3,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { FileRouter } from "~/server/uploadthing";
 import { AttachmentsMap, type AttachmentExtensionsMap } from "./enums";
-import { UploadAttachments } from "~/components/file-uploader";
+import { type UploadAttachments } from "~/components/file-uploader";
 
 export type ValueOf<T> = T[keyof T];
 

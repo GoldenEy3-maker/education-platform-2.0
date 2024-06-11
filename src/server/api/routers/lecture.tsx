@@ -9,6 +9,8 @@ export const lectureRouter = createTRPCRouter({
         section: z.string(),
         title: z.string(),
         content: z.string(),
+        strictViewUsers: z.array(z.string()),
+        strictViewGroups: z.array(z.string()),
         attachments: z.array(
           z.object({
             originalName: z.string(),
@@ -27,6 +29,16 @@ export const lectureRouter = createTRPCRouter({
           section: opts.input.section,
           title: opts.input.title,
           type: "Lec",
+          strictViewUsers: {
+            createMany: {
+              data: opts.input.strictViewUsers.map((userId) => ({ userId })),
+            },
+          },
+          strictViewGroups: {
+            createMany: {
+              data: opts.input.strictViewGroups.map((groupId) => ({ groupId })),
+            },
+          },
           attachments: {
             createMany: {
               data: opts.input.attachments.map((attachment) => ({

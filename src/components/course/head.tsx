@@ -400,7 +400,7 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
             return (
               <Button
                 asChild
-                variant="default"
+                variant="outline"
                 className="gap-2 max-lg:h-10 max-lg:w-10 max-lg:rounded-full max-[570px]:hidden"
               >
                 <Link href={PagePathMap.EditCourse + id}>
