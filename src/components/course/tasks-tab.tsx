@@ -42,7 +42,6 @@ import {
 } from "../ui/dropdown-menu";
 import { TbBallpen, TbBook2, TbListDetails } from "react-icons/tb";
 import { useRouter } from "next/router";
-import { RouterOutputs } from "~/libs/api";
 
 const SortValueTasksMap = {
   Recent: "Recent",
@@ -126,28 +125,44 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
 
   const filteredTasks = useMemo(
     () =>
-      tasks.filter((task) => {
-        const value = prepareSearchMatching(searchValue);
-        const creatdAt = dayjs(task.createdAt);
-        const section = prepareSearchMatching(task.section);
-        const title = prepareSearchMatching(task.title);
-        const type = prepareSearchMatching(TaskTypeContentMap[task.type]);
-        const formatedCreatedAt = prepareSearchMatching(
-          creatdAt.format("DD MMM YYYY"),
-        );
-        const isoCreatdAt = prepareSearchMatching(creatdAt.toISOString());
-        const dateCreatedAt = prepareSearchMatching(creatdAt.toString());
+      tasks
+        .filter((task) => {
+          const value = prepareSearchMatching(searchValue);
+          const creatdAt = dayjs(task.createdAt);
+          const section = prepareSearchMatching(task.section);
+          const title = prepareSearchMatching(task.title);
+          const type = prepareSearchMatching(TaskTypeContentMap[task.type]);
+          const formatedCreatedAt = prepareSearchMatching(
+            creatdAt.format("DD MMM YYYY"),
+          );
+          const isoCreatdAt = prepareSearchMatching(creatdAt.toISOString());
+          const dateCreatedAt = prepareSearchMatching(creatdAt.toString());
 
-        return (
-          section.includes(value) ||
-          title.includes(value) ||
-          type.includes(value) ||
-          formatedCreatedAt.includes(value) ||
-          isoCreatdAt.includes(value) ||
-          dateCreatedAt.includes(value)
-        );
-      }),
-    [tasks, searchValue],
+          return (
+            section.includes(value) ||
+            title.includes(value) ||
+            type.includes(value) ||
+            formatedCreatedAt.includes(value) ||
+            isoCreatdAt.includes(value) ||
+            dateCreatedAt.includes(value)
+          );
+        })
+        .filter((task) => {
+          if (filters.HideLec) return task.type !== "Lec";
+
+          return true;
+        })
+        .filter((task) => {
+          if (filters.HidePract) return task.type !== "Pract";
+
+          return true;
+        })
+        .filter((task) => {
+          if (filters.HideTest) return task.type !== "Quiz";
+
+          return true;
+        }),
+    [tasks, searchValue, filters],
   );
 
   const groupedTasksBySection = useMemo(() => {
@@ -178,14 +193,18 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
       (acc, section) => {
         const lastSectionTask = section.at(-1)!;
 
-        acc[lastSectionTask.section] = section;
+        acc[lastSectionTask.section] = section.sort((a, b) => {
+          if (sortValue === "Alphabet") return a.title.localeCompare(b.title);
+
+          return b.createdAt.getTime() - a.createdAt.getTime();
+        });
         return acc;
       },
       {},
     );
 
     return groups;
-  }, [filteredTasks]);
+  }, [filteredTasks, sortValue]);
 
   if (tasks.length === 0 && !isLoading)
     return (
@@ -335,25 +354,33 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
             </div>
             <Separator className="my-2" />
             <div className="space-y-1">
-              {Object.entries(FiltersTasksContentMap).map(([key, value]) => (
-                <Button
-                  key={key}
-                  asChild
-                  variant="ghost"
-                  className="w-full cursor-pointer justify-between gap-3"
-                  onClick={() => onFiltersChange(key as FiltersTasksMap)}
-                >
-                  <div>
-                    <Label htmlFor={key} className="pointer-events-none">
-                      {value}
-                    </Label>
-                    <Switch
-                      id={key}
-                      checked={filters[key as FiltersTasksMap]}
-                    />
-                  </div>
-                </Button>
-              ))}
+              {Object.entries(FiltersTasksContentMap)
+                .filter(([key]) => {
+                  if (key === FiltersTasksMap.HideCompleted && isAuthor) {
+                    return false;
+                  }
+
+                  return true;
+                })
+                .map(([key, value]) => (
+                  <Button
+                    key={key}
+                    asChild
+                    variant="ghost"
+                    className="w-full cursor-pointer justify-between gap-3"
+                    onClick={() => onFiltersChange(key as FiltersTasksMap)}
+                  >
+                    <div>
+                      <Label htmlFor={key} className="pointer-events-none">
+                        {value}
+                      </Label>
+                      <Switch
+                        id={key}
+                        checked={filters[key as FiltersTasksMap]}
+                      />
+                    </div>
+                  </Button>
+                ))}
             </div>
           </PopoverContent>
         </Popover>
@@ -378,11 +405,19 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
             </SelectTrigger>
           </Button>
           <SelectContent>
-            {Object.entries(SortValueTasksContentMap).map(([key, value]) => (
-              <SelectItem key={key} value={key}>
-                {value}
-              </SelectItem>
-            ))}
+            {Object.entries(SortValueTasksContentMap)
+              .filter(([key]) => {
+                if (key === SortValueTasksMap.Progress && isAuthor) {
+                  return false;
+                }
+
+                return true;
+              })
+              .map(([key, value]) => (
+                <SelectItem key={key} value={key}>
+                  {value}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
         {isAuthor ? (
