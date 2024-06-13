@@ -80,7 +80,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     <div
       {...getRootProps()}
       className={cn(
-        "flex h-72 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-foreground/20 px-6 py-2 shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring xs:w-96",
+        "flex h-72 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-foreground/20 px-6 py-2 text-center shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring xs:w-96",
         className,
         {
           "border-primary": isDragActive,
