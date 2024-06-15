@@ -8,7 +8,7 @@ import {
   BiSmile,
   BiUser,
 } from "react-icons/bi";
-import { useNavigatorUserAgent } from "~/hooks/navigatorUserAgent";
+import { useNavigatorUserAgent } from "~/hooks/user-navigator";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";
 import {

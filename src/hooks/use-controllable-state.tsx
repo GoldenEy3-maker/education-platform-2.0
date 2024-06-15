@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCallbackRef } from "./callbackRef";
+import { useCallbackRef } from "./use-callback-ref";
 
 type UseControllableStateParams<T> = {
   prop?: T;

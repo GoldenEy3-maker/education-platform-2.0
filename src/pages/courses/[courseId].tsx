@@ -24,7 +24,6 @@ import {
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { PagePathMap } from "~/libs/enums";
@@ -33,6 +32,7 @@ import { type NextPageWithLayout } from "../_app";
 import { api } from "~/libs/api";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { parseAsStringEnum, useQueryState } from "nuqs";
 
 const TabsMap = {
   Overview: "Overview",
@@ -74,7 +74,10 @@ const TabsTriggerMap: Record<TabsMap, { icon: React.ReactNode; text: string }> =
 const CoursePage: NextPageWithLayout = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "Tasks");
+  const [tabs, setTabs] = useQueryState(
+    "tab",
+    parseAsStringEnum<TabsMap>(Object.values(TabsMap)).withDefault("Tasks"),
+  );
   const [searchValueSubscribers, setSearchValueSubscribers] = useState("");
   const [sortValueSubscribers, setSortValueSubscribers] =
     useState<SortValueSubscribersMap>("Recent");

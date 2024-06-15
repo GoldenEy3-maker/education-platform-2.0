@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useFileReader } from "~/hooks/fileReader";
+import { useFileReader } from "~/hooks/use-fille-reader";
 import { cn } from "~/libs/utils";
 import { CircularProgress } from "./circular-progress";
 import { BiCheck } from "react-icons/bi";

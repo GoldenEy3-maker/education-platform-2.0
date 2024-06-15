@@ -473,7 +473,7 @@ const CreateQuizPage: NextPageWithLayout = () => {
                 name="title"
                 disabled={isFormSubmitting || isSessionLoading}
                 render={({ field }) => (
-                  <FormItem className="flex-1">
+                  <FormItem className="flex-1 basis-52">
                     <FormLabel>Заголовок</FormLabel>
                     <FormControl>
                       <Input
@@ -624,7 +624,7 @@ const CreateQuizPage: NextPageWithLayout = () => {
                     Добавить вопрос
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
+                <DropdownMenuContent align="start">
                   <DropdownMenuLabel>Варианты тестирования</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>

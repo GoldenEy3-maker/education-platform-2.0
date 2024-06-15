@@ -117,10 +117,16 @@ export const CourseItem: React.FC<CourseItemProps> = ({
     <div className={cn("flex flex-col", className)} {...props}>
       <Link
         href={PagePathMap.Course + id}
-        className="relative mb-3 h-56 w-full  overflow-hidden rounded-lg "
+        className="relative mb-3 h-56 w-full overflow-hidden rounded-lg "
       >
         <Skeleton className="absolute inset-0" />
-        <Image src={image} alt="Фоновое изображение" className="z-10" fill />
+        <Image
+          src={image}
+          alt="Фоновое изображение"
+          className="z-10"
+          fill
+          sizes="33vw"
+        />
       </Link>
       {status ? (
         <div className="mb-1 flex items-center justify-between gap-2">

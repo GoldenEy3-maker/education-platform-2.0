@@ -10,8 +10,8 @@ datasource db {
 
 model User {
   id              String               @id @default(cuid())
-  name            String
   surname         String
+  name            String
   fathername      String?
   email           String               @unique
   emailVerified   DateTime?            @map("email_verified")
@@ -120,6 +120,7 @@ model Task {
   title             String
   section           String
   type              TaskType
+  content           String
   availableAttempts Int?                  @map("available_attempts")
   attachments       TaskAttachment[]
   availableTime     Int?                  @map("available_time")

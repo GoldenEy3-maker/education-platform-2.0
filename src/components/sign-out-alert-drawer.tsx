@@ -35,7 +35,7 @@ export const SignOutAlertDrawer: React.FC<SignOutAlertDrawerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const textContent =
-    "Вы перейдете в режим гостя, потеряете доступ к своим данным и многому функционалу портала.";
+    "Это действие нельзя отменить. Вы потеряете полный доступ ко всем ресурсам портала. Вам придется заново авторизоваться, чтобы продолжить работу.";
 
   if (isDesktop) {
     return (

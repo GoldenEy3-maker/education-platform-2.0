@@ -6,17 +6,8 @@ export const useRippleEffect = () => {
 
   const rippleEffectEvent = (event: React.PointerEvent<HTMLElement>) => {
     const target = event.currentTarget;
-    // const nestedInteractionNodes = target.querySelectorAll("button, input, a");
 
     if ((target as HTMLButtonElement | HTMLInputElement).disabled) return;
-
-    // if (nestedInteractionNodes.length) {
-    //   const isClickedOnNestedInteractionNode = Array.from(
-    //     nestedInteractionNodes
-    //   ).some((node) => (event.target as HTMLElement).closest(node.tagName));
-
-    //   if (isClickedOnNestedInteractionNode) return;
-    // }
 
     const targetWidth = target.getBoundingClientRect().width;
     const targetHeight = target.getBoundingClientRect().height;

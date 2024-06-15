@@ -29,12 +29,12 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { PagePathMap } from "~/libs/enums";
 import { type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "./_app";
+import { parseAsStringEnum, useQueryState } from "nuqs";
 
 const TabsMap = {
   All: "All",
@@ -79,7 +79,10 @@ const SelectValueContentMap: Record<SelectValueMap, string> = {
 };
 
 const SchedulePage: NextPageWithLayout = () => {
-  const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "All");
+  const [tabs, setTabs] = useQueryState(
+    "tab",
+    parseAsStringEnum<TabsMap>(Object.values(TabsMap)).withDefault("All"),
+  );
   const [selectValue, setSelectValue] = useState<SelectValueMap>("LastWeek");
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),

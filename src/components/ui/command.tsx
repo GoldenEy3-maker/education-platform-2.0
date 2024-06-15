@@ -4,7 +4,7 @@ import * as React from "react";
 import { BiSearch } from "react-icons/bi";
 
 import { Dialog, DialogContent } from "~/components/ui/dialog";
-import { useRippleEffect } from "~/hooks/rippleEffect";
+import { useRippleEffect } from "~/hooks/use-ripple-effect";
 import { cn } from "~/libs/utils";
 
 const Command = React.forwardRef<

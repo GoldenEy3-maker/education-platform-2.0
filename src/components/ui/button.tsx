@@ -1,7 +1,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import { useRippleEffect } from "~/hooks/rippleEffect";
+import { useRippleEffect } from "~/hooks/use-ripple-effect";
 
 import { cn } from "~/libs/utils";
 

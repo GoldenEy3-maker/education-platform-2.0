@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -20,28 +20,393 @@ import { Input } from "~/components/ui/input";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { PagePathMap } from "~/libs/enums";
 import { type NextPageWithLayout } from "./_app";
+import { Step, Stepper, useStepper } from "~/components/stepper";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "~/components/ui/input-otp";
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
+import { TbArrowLeft, TbArrowRight } from "react-icons/tb";
+import { useInterval, useMediaQuery } from "usehooks-ts";
+import { api } from "~/libs/api";
+import { create } from "zustand";
+import FlipNumbers from "react-flip-numbers";
 
-const formSchema = z.object({
-  email: z.string().email("Невалидный email!").min(1, "Обязательное поле!"),
+type ResetPasswordStore = {
+  id: string;
+  login: string;
+  code: string;
+  setId: (value: string) => void;
+  setLogin: (value: string) => void;
+  setCode: (value: string) => void;
+  reset: () => void;
+};
+
+const useResetPasswordStore = create<ResetPasswordStore>((set) => ({
+  id: "",
+  login: "",
+  code: "",
+  setId: (value) => set({ id: value }),
+  setLogin: (value) => set({ login: value }),
+  setCode: (value) => set({ code: value }),
+  reset: () => set({ id: "", code: "", login: "" }),
+}));
+
+const loginFormSchema = z.object({
+  login: z.string().min(1, "Обязательное поле!"),
 });
 
-type FormSchema = z.infer<typeof formSchema>;
+const codeFormSchema = z.object({
+  code: z
+    .string()
+    .min(6, "Код восставновления всегда состоит минимум из 6 символов!"),
+});
 
-const ResetPasswordPage: NextPageWithLayout = () => {
-  const isLoading = false;
+const resetPasswordFormSchema = z
+  .object({
+    password: z.string().min(8, "Пароль должен быть миниму 8 символов!"),
+    confirmPassword: z.string().min(1, "Обязательное поле!"),
+  })
+  .refine((val) => val.password === val.confirmPassword, {
+    message: "Пароли не совпадают!",
+    path: ["confirmPassword"],
+  });
 
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
+type LoginFormSchema = z.infer<typeof loginFormSchema>;
+type CodeFormSchema = z.infer<typeof codeFormSchema>;
+type ResetPasswordFormSchema = z.infer<typeof resetPasswordFormSchema>;
+
+const LoginForm: React.FC = () => {
+  const resetPasswordStore = useResetPasswordStore();
+  const { nextStep } = useStepper();
+
+  const form = useForm<LoginFormSchema>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: "",
+      login: resetPasswordStore.login,
     },
   });
 
-  const onSubmit = async (values: FormSchema) => {
-    toast.success("Вы успешно сменили пароль!");
-    form.reset();
+  const sendMailMutation = api.mailer.resetPassword.useMutation({
+    onSuccess: (data) => {
+      nextStep();
+      toast.success("Сообщение успешно отправлено!");
+      resetPasswordStore.setId(data.id);
+      resetPasswordStore.setCode(data.code);
+      resetPasswordStore.setLogin(data.login);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const onSubmit = (values: LoginFormSchema) => {
+    sendMailMutation.mutate(values);
   };
 
+  return (
+    <Form {...form}>
+      <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="login"
+          disabled={sendMailMutation.isLoading}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Логин</FormLabel>
+              <FormControl>
+                <Input placeholder="ivanon.105s1" {...field} />
+              </FormControl>
+              <FormDescription>
+                Если письмо долго не приходить, проверьте папку спам, или
+                обратитесь в тех. отдел.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <footer className="flex flex-wrap items-center justify-between gap-2">
+          <Button asChild variant="link">
+            <Link href={PagePathMap.Auth}>Авторизация</Link>
+          </Button>
+          <Button disabled={sendMailMutation.isLoading}>
+            {sendMailMutation.isLoading ? (
+              <CircularProgress
+                variant="indeterminate"
+                className="mr-2 text-xl"
+                strokeWidth={5}
+              />
+            ) : null}
+            Дальше
+          </Button>
+        </footer>
+      </form>
+    </Form>
+  );
+};
+
+const CodeForm: React.FC = () => {
+  const resetPasswordStore = useResetPasswordStore();
+  const { nextStep, prevStep } = useStepper();
+  const isXsMobile = useMediaQuery("(max-width: 425px)");
+
+  const [timer, setTimer] = useState(59);
+  const [isCodeValidating, setIsCodeValidating] = useState(false);
+
+  const form = useForm<CodeFormSchema>({
+    resolver: zodResolver(codeFormSchema),
+    defaultValues: {
+      code: "",
+    },
+  });
+
+  const resendMailMutation = api.mailer.resetPassword.useMutation({
+    onSuccess: (data) => {
+      toast.success("Сообщение успешно отправлено!");
+      resetPasswordStore.setCode(data.code);
+      setTimer(59);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const validateCode = (code: string) => {
+    return new Promise<void>((resolve) =>
+      setTimeout(() => {
+        if (code === resetPasswordStore.code) {
+          nextStep();
+        } else {
+          form.setError("code", {
+            message: "Неверный код подтверждения!",
+          });
+        }
+
+        resolve();
+      }, 1000),
+    );
+  };
+
+  const onSubmit = async (values: CodeFormSchema) => {
+    await validateCode(values.code);
+  };
+
+  const isLoading =
+    resendMailMutation.isLoading ||
+    form.formState.isSubmitting ||
+    isCodeValidating;
+
+  useInterval(() => setTimer((prev) => prev - 1), timer > 0 ? 1000 : null);
+
+  return (
+    <Form {...form}>
+      <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="code"
+          disabled={isLoading}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Код подтверждения</FormLabel>
+              <FormControl>
+                <InputOTP
+                  autoFocus
+                  maxLength={6}
+                  pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                  onComplete={async () => {
+                    setIsCodeValidating(true);
+                    await validateCode(form.getValues("code"));
+                    setIsCodeValidating(false);
+                  }}
+                  {...field}
+                >
+                  {isXsMobile ? (
+                    <>
+                      <InputOTPGroup className="w-full justify-center">
+                        <InputOTPSlot className="h-9 w-9" index={0} />
+                        <InputOTPSlot className="h-9 w-9" index={1} />
+                        <InputOTPSlot className="h-9 w-9" index={2} />
+                        <InputOTPSlot className="h-9 w-9" index={3} />
+                        <InputOTPSlot className="h-9 w-9" index={4} />
+                        <InputOTPSlot className="h-9 w-9" index={5} />
+                      </InputOTPGroup>
+                    </>
+                  ) : (
+                    <div className="flex w-full items-center justify-center">
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                      </InputOTPGroup>
+                      <InputOTPSeparator />
+                      <InputOTPGroup>
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                      </InputOTPGroup>
+                      <InputOTPSeparator />
+                      <InputOTPGroup>
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </div>
+                  )}
+                </InputOTP>
+              </FormControl>
+              <FormDescription>
+                {timer > 0 ? (
+                  <div className="flex flex-wrap items-center">
+                    Отправить повторно код через:&nbsp;
+                    <FlipNumbers
+                      width={9}
+                      height={14}
+                      color=""
+                      play
+                      numbers={timer.toString()}
+                    />
+                    &nbsp;сек.
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="link"
+                    disabled={isLoading}
+                    onClick={() =>
+                      resendMailMutation.mutate({
+                        login: resetPasswordStore.login,
+                      })
+                    }
+                  >
+                    {isLoading ? (
+                      <CircularProgress
+                        variant="indeterminate"
+                        className="mr-2 text-xl"
+                        strokeWidth={5}
+                      />
+                    ) : null}
+                    Отправить код еще раз
+                  </Button>
+                )}
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <footer className="flex flex-wrap items-center justify-between gap-2">
+          <Button
+            type="button"
+            variant="link"
+            disabled={isLoading}
+            onClick={prevStep}
+          >
+            <TbArrowLeft className="mr-2 text-lg" />
+            <span>Назад</span>
+          </Button>
+          <Button disabled={isLoading}>Дальше</Button>
+        </footer>
+      </form>
+    </Form>
+  );
+};
+
+const ResetPasswordForm: React.FC = () => {
+  const resetPasswordStore = useResetPasswordStore();
+  const { nextStep } = useStepper();
+
+  const form = useForm<ResetPasswordFormSchema>({
+    resolver: zodResolver(resetPasswordFormSchema),
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const resetPasswordMutation = api.user.resetPassword.useMutation({
+    onSuccess: () => {
+      toast.success("Пароль успешно обновлен!");
+      resetPasswordStore.reset();
+      nextStep();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const onSubmit = (values: ResetPasswordFormSchema) => {
+    resetPasswordMutation.mutate({
+      id: resetPasswordStore.id,
+      password: values.password,
+    });
+  };
+
+  return (
+    <Form {...form}>
+      <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="password"
+          disabled={resetPasswordMutation.isLoading}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Новый пароль</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="********" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          disabled={resetPasswordMutation.isLoading}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Повторите пароль</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="********" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <footer className="flex flex-wrap items-center justify-end gap-2">
+          <Button disabled={resetPasswordMutation.isLoading}>
+            {resetPasswordMutation.isLoading ? (
+              <CircularProgress
+                variant="indeterminate"
+                className="mr-2 text-xl"
+                strokeWidth={5}
+              />
+            ) : null}
+            Отправить
+          </Button>
+        </footer>
+      </form>
+    </Form>
+  );
+};
+
+const StepperActions: React.FC = () => {
+  const { hasCompletedAllSteps } = useStepper();
+
+  if (!hasCompletedAllSteps) return null;
+
+  return (
+    <div className="text-center">
+      <p>Супер! Теперь вы можете войти в свой аккаунт под новым паролем! 🎉</p>
+      <Button asChild variant="link" className="mt-1">
+        <Link href={PagePathMap.Auth}>
+          Авторизоваться <TbArrowRight className="ml-2" />
+        </Link>
+      </Button>
+    </div>
+  );
+};
+
+const steps = [{ label: "Логин" }, { label: "Код" }, { label: "Смена пароля" }];
+
+const ResetPasswordPage: NextPageWithLayout = () => {
   return (
     <main className="flex min-h-svh flex-col items-center justify-center bg-[radial-gradient(circle_at_bottom_left,rgb(250,232,2261)_10%,rgb(249,225,238)_30%,rgb(216,232,252)_50%,transparent_100%),radial-gradient(circle_at_bottom_right,rgb(115,234,236)_10%,rgb(170,202,244)_30%,rgba(216,232,252,1)_50%,transparent_100%)] bg-fixed px-2 py-3 dark:bg-[radial-gradient(circle_at_bottom_left,#6820b2_15%,#3760a1_40%,#4d68b6_60%,transparent_100%),radial-gradient(circle_at_bottom_right,#5a2492_20%,#3668b9_40%,#3258c5_60%,transparent_100%)]">
       <div className="mb-5 flex flex-col items-center justify-center gap-2 sm:mb-7">
@@ -82,56 +447,37 @@ const ResetPasswordPage: NextPageWithLayout = () => {
               Восстановление пароля
             </h3>
             <p className="mb-4 text-center text-sm text-muted-foreground">
-              Введи привязанный к акканту email адрес
+              Для восстановления пароля требуется иметь привязанный email адрес
+              на аккаунте.
             </p>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  disabled={isLoading}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="ivanov@mail.ru"
-                          type="email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Если вы забыли email адрес, или письмо не приходит,
-                        тогда обратитесь в тех. отдел.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex items-center justify-between gap-4">
-                  <Button asChild variant="link">
-                    <Link href={PagePathMap.Auth}>Авторизация</Link>
-                  </Button>
-                  <Button
-                    className="gap-2"
-                    variant="default"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <CircularProgress
-                        variant="indeterminate"
-                        className="text-xl"
-                        strokeWidth={5}
-                      />
-                    ) : null}
-                    Дальше
-                  </Button>
-                </div>
-              </form>
-            </Form>
+            <div className="space-y-4">
+              <Stepper variant="circle-alt" initialStep={0} steps={steps}>
+                {steps.map((step, index) => {
+                  if (index === 0) {
+                    return (
+                      <Step key={step.label}>
+                        <LoginForm />
+                      </Step>
+                    );
+                  }
+
+                  if (index === 1) {
+                    return (
+                      <Step key={step.label}>
+                        <CodeForm />
+                      </Step>
+                    );
+                  }
+
+                  return (
+                    <Step key={step.label}>
+                      <ResetPasswordForm />
+                    </Step>
+                  );
+                })}
+                <StepperActions />
+              </Stepper>
+            </div>
           </div>
         </div>
         <div className="hidden flex-col items-center justify-center bg-background/35 px-3 py-8 backdrop-blur md:flex">
@@ -151,7 +497,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
 };
 
 ResetPasswordPage.getLayout = (page) => (
-  <ScaffoldLayout title="Авторизация">{page}</ScaffoldLayout>
+  <ScaffoldLayout title="Восстановление пароля">{page}</ScaffoldLayout>
 );
 
 export default ResetPasswordPage;

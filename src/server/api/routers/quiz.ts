@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-export const lectureRouter = createTRPCRouter({
+export const quizRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
@@ -23,12 +23,13 @@ export const lectureRouter = createTRPCRouter({
       }),
     )
     .mutation(async (opts) => {
-      const newLecture = await opts.ctx.db.task.create({
+      const newQuiz = await opts.ctx.db.task.create({
         data: {
           courseId: opts.input.courseId,
           section: opts.input.section,
           title: opts.input.title,
-          type: "Lec",
+          type: "Quiz",
+          content: opts.input.content,
           strictViewUsers: {
             createMany: {
               data: opts.input.strictViewUsers.map((userId) => ({ userId })),
@@ -53,6 +54,6 @@ export const lectureRouter = createTRPCRouter({
         },
       });
 
-      return newLecture;
+      return newQuiz;
     }),
 });

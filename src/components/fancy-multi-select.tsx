@@ -3,7 +3,7 @@ import { Command, CommandGroup, CommandItem, CommandList } from "./ui/command";
 import { Badge } from "./ui/badge";
 import { BiX } from "react-icons/bi";
 import { Command as CommandPrimitive } from "cmdk";
-import { useControllableState } from "~/hooks/controllableState";
+import { useControllableState } from "~/hooks/use-controllable-state";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";
 

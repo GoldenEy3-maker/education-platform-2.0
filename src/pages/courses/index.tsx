@@ -35,7 +35,6 @@ import {
 import { Separator } from "~/components/ui/separator";
 import { Switch } from "~/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { PagePathMap, StatusCourseContentMap } from "~/libs/enums";
@@ -45,6 +44,7 @@ import { api, type RouterOutputs } from "~/libs/api";
 import dayjs from "dayjs";
 import { serializeText } from "~/components/editor/utils";
 import { type Descendant } from "slate";
+import { parseAsString, parseAsStringEnum, useQueryState } from "nuqs";
 
 const TabsMap = {
   All: "All",
@@ -127,9 +127,9 @@ const CoursesEmpty: React.FC<CoursesEmptyProps> = ({ icon, text }) => {
 
 const CoursesPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
-  const [searchValue, setSearchValue] = useRouterQueryState<string>(
+  const [searchValue, setSearchValue] = useQueryState(
     "search",
-    "",
+    parseAsString.withDefault(""),
   );
   const [filters, setFilters] = useState<Record<FiltersMap, boolean>>({
     HideArchived: false,
@@ -137,7 +137,10 @@ const CoursesPage: NextPageWithLayout = () => {
     HidePublished: false,
   });
   const [sortValue, setSortValue] = useState<SortValueMap>("Recent");
-  const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "All");
+  const [tabs, setTabs] = useQueryState(
+    "tab",
+    parseAsStringEnum<TabsMap>(Object.values(TabsMap)).withDefault("All"),
+  );
 
   const activeFilters = Object.values(filters).filter((val) => val === true);
 

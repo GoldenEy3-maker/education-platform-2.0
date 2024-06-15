@@ -10,12 +10,12 @@ import { Avatar } from "~/components/avatar";
 import { ChangePassword } from "~/components/settings/change-password";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useRouterQueryState } from "~/hooks/routerQueryState";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { PagePathMap } from "~/libs/enums";
 import { type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "./_app";
+import { parseAsStringEnum, useQueryState } from "nuqs";
 
 const TabsMap = {
   Profile: "Profile",
@@ -55,7 +55,10 @@ const TabsTriggerMap: Record<TabsMap, { icon: React.ReactNode; text: string }> =
   };
 
 const SettingsPage: NextPageWithLayout = () => {
-  const [tabs, setTabs] = useRouterQueryState<TabsMap>("tab", "Profile");
+  const [tabs, setTabs] = useQueryState(
+    "tab",
+    parseAsStringEnum<TabsMap>(Object.values(TabsMap)).withDefault("Password"),
+  );
 
   return (
     <main>

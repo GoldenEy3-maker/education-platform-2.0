@@ -193,10 +193,8 @@ export const QuizBuilderRenderElement: React.FC<
             }}
             leadingIcon={<TbQuestionMark className="text-xl" />}
           />
-          <div className="mt-4 grid grid-cols-[auto_1fr_auto] gap-x-4 gap-y-2">
-            <span className="text-sm">Правильный ответ</span>
-            <span className="text-sm">Вариант ответа</span>
-            <span className="text-sm">Удалить ответ</span>
+          <div className="mt-4 grid grid-cols-[auto_1fr_auto] gap-x-2 gap-y-2 xs:gap-x-4">
+            <Label className="col-span-3">Варианты ответа</Label>
             {element.options.map((opt, optIndex) => (
               <Fragment key={opt.id}>
                 <div className="flex items-center justify-center">
@@ -373,15 +371,83 @@ export const QuizBuilderRenderElement: React.FC<
       return (
         <Fragment>
           <div className="space-y-2">
-            <div className="grid grid-cols-[minmax(auto,15rem)_1fr_auto] gap-x-4 gap-y-2">
-              <Label>Правильный ответ</Label>
-              <Label>Вопрос</Label>
-              <span></span>
-              {element.questions.map((queston, questionIndex) => (
-                <Fragment key={queston.id}>
-                  <Select
-                    value={queston.optionId}
-                    onValueChange={(value) =>
+            <Label>Вопросы</Label>
+            {element.questions.map((queston, questionIndex) => (
+              <div
+                className="grid grid-cols-[1fr_auto] gap-x-2 gap-y-2 xs:grid-cols-[minmax(auto,15rem)_minmax(9rem,1fr)_auto] sm:gap-x-4"
+                key={queston.id}
+              >
+                <Select
+                  value={queston.optionId}
+                  onValueChange={(value) =>
+                    onChange((prev) =>
+                      prev.map((e) => {
+                        if (
+                          e.id === element.id &&
+                          e.type === "quiz-comparations"
+                        ) {
+                          return {
+                            ...e,
+                            questions: e.questions.map((q) => {
+                              if (q.id === queston.id) {
+                                return { ...q, optionId: value };
+                              }
+
+                              return q;
+                            }),
+                          };
+                        }
+
+                        return e;
+                      }),
+                    )
+                  }
+                >
+                  <Button
+                    type="button"
+                    asChild
+                    variant="outline"
+                    className="justify-between gap-2 text-left max-sm:row-start-2"
+                    disabled={
+                      element.options.filter((opt) => opt.label !== "")
+                        .length === 0
+                    }
+                  >
+                    <SelectTrigger>
+                      <p className="truncate">
+                        {queston.optionId !== ""
+                          ? element.options.find(
+                              (opt) => opt.id === queston.optionId,
+                            )?.label
+                          : "Верный вариант ответа..."}
+                      </p>
+                    </SelectTrigger>
+                  </Button>
+                  <SelectContent className="max-h-60 max-w-[17rem]">
+                    <SelectGroup>
+                      <SelectLabel>Варианты ответа</SelectLabel>
+                      {element.options
+                        .filter((opt) => opt.label !== "")
+                        .map((opt) => (
+                          <Button
+                            key={opt.id}
+                            asChild
+                            variant="ghost"
+                            type="button"
+                            className="flex h-auto min-h-10 justify-normal whitespace-normal break-words text-left"
+                          >
+                            <SelectItem value={opt.id}>{opt.label}</SelectItem>
+                          </Button>
+                        ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <div>
+                  <Input
+                    autoFocus
+                    placeholder="Вопрос..."
+                    value={queston.label}
+                    onChange={(event) => {
                       onChange((prev) =>
                         prev.map((e) => {
                           if (
@@ -392,9 +458,8 @@ export const QuizBuilderRenderElement: React.FC<
                               ...e,
                               questions: e.questions.map((q) => {
                                 if (q.id === queston.id) {
-                                  return { ...q, optionId: value };
+                                  return { ...q, label: event.target.value };
                                 }
-
                                 return q;
                               }),
                             };
@@ -402,56 +467,12 @@ export const QuizBuilderRenderElement: React.FC<
 
                           return e;
                         }),
-                      )
-                    }
-                  >
-                    <Button
-                      type="button"
-                      asChild
-                      variant="outline"
-                      className="justify-between gap-2 text-left"
-                      disabled={
-                        element.options.filter((opt) => opt.label !== "")
-                          .length === 0
-                      }
-                    >
-                      <SelectTrigger>
-                        <p className="truncate">
-                          {queston.optionId !== ""
-                            ? element.options.find(
-                                (opt) => opt.id === queston.optionId,
-                              )?.label
-                            : "Верный вариант ответа..."}
-                        </p>
-                      </SelectTrigger>
-                    </Button>
-                    <SelectContent className="max-h-60 max-w-[20rem]">
-                      <SelectGroup>
-                        <SelectLabel>Варианты ответа</SelectLabel>
-                        {element.options
-                          .filter((opt) => opt.label !== "")
-                          .map((opt) => (
-                            <Button
-                              key={opt.id}
-                              type="button"
-                              variant="ghost"
-                              className="h-auto min-h-10 w-full justify-start whitespace-normal text-left"
-                              asChild
-                            >
-                              <SelectItem value={opt.id}>
-                                {opt.label}
-                              </SelectItem>
-                            </Button>
-                          ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <div className="flex-1">
-                    <Input
-                      autoFocus
-                      placeholder="Вопрос..."
-                      value={queston.label}
-                      onChange={(event) => {
+                      );
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.code === "Enter") {
+                        event.preventDefault();
+
                         onChange((prev) =>
                           prev.map((e) => {
                             if (
@@ -460,55 +481,31 @@ export const QuizBuilderRenderElement: React.FC<
                             ) {
                               return {
                                 ...e,
-                                questions: e.questions.map((q) => {
-                                  if (q.id === queston.id) {
-                                    return { ...q, label: event.target.value };
-                                  }
-                                  return q;
-                                }),
+                                questions: [
+                                  ...e.questions.slice(0, questionIndex + 1),
+                                  {
+                                    id: crypto.randomUUID(),
+                                    label: "",
+                                    optionId: "",
+                                  },
+                                  ...e.questions.slice(questionIndex + 1),
+                                ],
                               };
                             }
 
                             return e;
                           }),
                         );
-                      }}
-                      onKeyDown={(event) => {
-                        if (event.code === "Enter") {
-                          event.preventDefault();
-
-                          onChange((prev) =>
-                            prev.map((e) => {
-                              if (
-                                e.id === element.id &&
-                                e.type === "quiz-comparations"
-                              ) {
-                                return {
-                                  ...e,
-                                  questions: [
-                                    ...e.questions.slice(0, questionIndex + 1),
-                                    {
-                                      id: crypto.randomUUID(),
-                                      label: "",
-                                      optionId: "",
-                                    },
-                                    ...e.questions.slice(questionIndex + 1),
-                                  ],
-                                };
-                              }
-
-                              return e;
-                            }),
-                          );
-                        }
-                      }}
-                    />
-                  </div>
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex items-center justify-center max-xs:row-span-2">
                   <Button
                     type="button"
                     variant="ghost-destructive"
                     size="icon"
-                    className="rounded-full"
+                    className="rounded-full "
                     onClick={() => {
                       onChange((prev) =>
                         prev.map((e) => {
@@ -532,9 +529,9 @@ export const QuizBuilderRenderElement: React.FC<
                   >
                     <TbTrashX className="text-lg" />
                   </Button>
-                </Fragment>
-              ))}
-            </div>
+                </div>
+              </div>
+            ))}
             <footer className="mt-2">
               <Button
                 type="button"
