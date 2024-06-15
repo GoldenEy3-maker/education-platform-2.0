@@ -7,9 +7,18 @@ export default withAuth({
     signIn: PagePathMap.Auth,
   },
   callbacks: {
-    authorized({ req }) {
+    async authorized({ req }) {
       const sessionToken = req.cookies.get("next-auth.session-token");
-      return sessionToken != null;
+
+      if (sessionToken == null) return false;
+
+      const res = await fetch(
+        `${process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "http://localhost:3000"}/api/user/check-session?token=${sessionToken.value}`,
+      );
+
+      if (res.status === 404) return false;
+
+      return true;
     },
   },
   secret: env.NEXTAUTH_SECRET,
