@@ -287,7 +287,14 @@ export const CourseHead: React.FC<CourseHeadProps> = ({
             className="grid h-auto max-w-fit grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3"
           >
             <Link href={PagePathMap.Profile + author?.id}>
-              <Avatar fallback="ДЛ" className="row-span-2 h-10 w-10" />
+              <Avatar
+                fallback={getFirstLettersUserCredentials(
+                  author?.surname ?? "",
+                  author?.name ?? "",
+                )}
+                src={author?.image}
+                className="row-span-2 h-10 w-10"
+              />
               <p className="truncate font-medium">
                 {author?.surname} {author?.name} {author?.fathername}
               </p>

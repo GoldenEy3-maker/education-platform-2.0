@@ -13,8 +13,9 @@ model User {
   surname         String
   name            String
   fathername      String?
-  email           String               @unique
+  email           String?              @unique
   emailVerified   DateTime?            @map("email_verified")
+  bgImage         String?
   image           String?
   login           String               @unique
   password        String

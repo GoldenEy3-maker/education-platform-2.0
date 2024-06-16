@@ -75,7 +75,7 @@ export const CourseSubscribersTab: React.FC<CourseSubscribersTabProps> = ({
         const credentials = prepareSearchMatching(
           `${sub.user.surname} ${sub.user.name} ${sub.user.fathername ?? ""}`,
         );
-        const email = prepareSearchMatching(sub.user.email);
+        const email = prepareSearchMatching(sub.user.email ?? "");
 
         return (
           group.includes(value) ||
