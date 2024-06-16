@@ -21,6 +21,21 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "./ui/command";
+import {
+  TbCalendarTime,
+  TbHome,
+  TbLock,
+  TbMail,
+  TbMessage,
+  TbNotebook,
+  TbSettings,
+  TbUser,
+} from "react-icons/tb";
+import Link from "next/link";
+import { PagePathMap } from "~/libs/enums";
+import { useRouter } from "next/router";
+import { api } from "~/libs/api";
+import { Skeleton } from "./ui/skeleton";
 
 type SearchCommandDialogProps = React.ComponentProps<"div">;
 
@@ -42,10 +57,19 @@ export const SearchCommandDialog: React.FC<SearchCommandDialogProps> = ({
   className,
   ...props
 }) => {
+  const router = useRouter();
   const { isMac } = useNavigatorUserAgent();
   const [isOpen, setIsOpen] = useState(false);
 
+  const getAllCoursesQuery = api.course.getAll.useQuery(undefined, {
+    refetchOnMount: false,
+  });
+
   useCtrlKeyKBind(() => setIsOpen(true));
+
+  useEffect(() => {
+    if (router.isReady) setIsOpen(false);
+  }, [router]);
 
   return (
     <div className={cn(className)} {...props}>
@@ -62,39 +86,77 @@ export const SearchCommandDialog: React.FC<SearchCommandDialogProps> = ({
         </span>
       </Button>
       <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder="Что ищите..." />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
-            <CommandItem>
-              <BiCalendar className="mr-2 h-4 w-4" />
-              <span>Calendar</span>
+          <CommandEmpty>Ничего не найдено.</CommandEmpty>
+          <CommandGroup heading="Страницы">
+            <CommandItem asChild>
+              <Link href={PagePathMap.Home}>
+                <TbHome className="mr-2 h-4 w-4" />
+                <span>Главная</span>
+              </Link>
             </CommandItem>
-            <CommandItem>
-              <BiSmile className="mr-2 h-4 w-4" />
-              <span>Search Emoji</span>
+            <CommandItem asChild>
+              <Link href={PagePathMap.Course}>
+                <TbNotebook className="mr-2 h-4 w-4" />
+                <span>Курсы</span>
+              </Link>
             </CommandItem>
-            <CommandItem>
-              <BiRocket className="mr-2 h-4 w-4" />
-              <span>Launch</span>
+            <CommandItem asChild>
+              <Link href={PagePathMap.Schedule}>
+                <TbCalendarTime className="mr-2 h-4 w-4" />
+                <span>Расписание</span>
+              </Link>
+            </CommandItem>
+            <CommandItem asChild>
+              <Link href={PagePathMap.Chat}>
+                <TbMessage className="mr-2 h-4 w-4" />
+                <span>Сообщения</span>
+              </Link>
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading="Settings">
-            <CommandItem>
-              <BiUser className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-              <CommandShortcut>⌘P</CommandShortcut>
+          {!getAllCoursesQuery.isLoading ? (
+            getAllCoursesQuery.data?.length ? (
+              <CommandGroup heading="Курсы">
+                {getAllCoursesQuery.data.map((course) => (
+                  <CommandItem key={course.id} asChild>
+                    <Link href={PagePathMap.Course + course.id}>
+                      <span>{course.fullTitle}</span>
+                    </Link>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ) : null
+          ) : (
+            <CommandGroup heading="Курсы">
+              <div className="space-y-1">
+                <Skeleton className="h-11 rounded-sm" />
+                <Skeleton className="h-11 rounded-sm" />
+                <Skeleton className="h-11 rounded-sm" />
+                <Skeleton className="h-11 rounded-sm" />
+              </div>
+            </CommandGroup>
+          )}
+          <CommandSeparator />
+          <CommandGroup heading="Настройки">
+            <CommandItem asChild>
+              <Link href={PagePathMap.Settings + "?tab=Profile"}>
+                <TbUser className="mr-2 h-4 w-4" />
+                <span>Профиль</span>
+              </Link>
             </CommandItem>
-            <CommandItem>
-              <BiMailSend className="mr-2 h-4 w-4" />
-              <span>Mail</span>
-              <CommandShortcut>⌘B</CommandShortcut>
+            <CommandItem asChild>
+              <Link href={PagePathMap.Settings + "?tab=Password"}>
+                <TbLock className="mr-2 h-4 w-4" />
+                <span>Пароль</span>
+              </Link>
             </CommandItem>
-            <CommandItem>
-              <BiCog className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-              <CommandShortcut>⌘S</CommandShortcut>
+            <CommandItem asChild>
+              <Link href={PagePathMap.Settings + "?tab=Email"}>
+                <TbMail className="mr-2 h-4 w-4" />
+                <span>Email</span>
+              </Link>
             </CommandItem>
           </CommandGroup>
         </CommandList>

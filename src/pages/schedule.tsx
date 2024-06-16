@@ -8,9 +8,6 @@ import {
   BiChevronLeft,
   BiChevronRight,
   BiSearch,
-  BiSolidBookBookmark,
-  BiSolidNotepad,
-  BiSolidWidget,
 } from "react-icons/bi";
 import { ScheduleItem } from "~/components/home/schedule-item";
 import { Button } from "~/components/ui/button";
@@ -21,13 +18,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
@@ -35,6 +25,7 @@ import { PagePathMap } from "~/libs/enums";
 import { type ValueOf } from "~/libs/utils";
 import { type NextPageWithLayout } from "./_app";
 import { parseAsStringEnum, useQueryState } from "nuqs";
+import { TbBook2, TbCategory, TbNotebook } from "react-icons/tb";
 
 const TabsMap = {
   All: "All",
@@ -48,42 +39,29 @@ const TabsTriggerMap: Record<TabsMap, { icon: React.ReactNode; text: string }> =
   {
     All: {
       icon: (
-        <BiSolidWidget className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <TbCategory className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Все",
     },
     Lessions: {
       icon: (
-        <BiSolidBookBookmark className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <TbBook2 className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Занятия",
     },
     Tasks: {
       icon: (
-        <BiSolidNotepad className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+        <TbNotebook className="shrink-0 text-xl group-data-[state=active]:text-primary" />
       ),
       text: "Задания",
     },
   };
-
-const SelectValueMap = {
-  Today: "Today",
-  LastWeek: "LastWeek",
-} as const;
-
-type SelectValueMap = ValueOf<typeof SelectValueMap>;
-
-const SelectValueContentMap: Record<SelectValueMap, string> = {
-  Today: "Сегодня",
-  LastWeek: "Неделя",
-};
 
 const SchedulePage: NextPageWithLayout = () => {
   const [tabs, setTabs] = useQueryState(
     "tab",
     parseAsStringEnum<TabsMap>(Object.values(TabsMap)).withDefault("All"),
   );
-  const [selectValue, setSelectValue] = useState<SelectValueMap>("LastWeek");
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: dayjs().add(7, "d").toDate(),
@@ -102,13 +80,13 @@ const SchedulePage: NextPageWithLayout = () => {
           На сегодня у вас есть 3 занятия и 2 задания.
         </span>
       </div>
-      <div className="mt-4 grid grid-cols-[1fr_repeat(2,minmax(0,auto))] gap-2">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
         <Input
           leadingIcon={<BiSearch className="text-xl" />}
           placeholder="Поиск занятий и заданий..."
           className="max-w-72"
         />
-        <Select
+        {/* <Select
           defaultValue={SelectValueMap.LastWeek}
           value={selectValue}
           onValueChange={(value) => setSelectValue(value as SelectValueMap)}
@@ -129,7 +107,7 @@ const SchedulePage: NextPageWithLayout = () => {
               </SelectItem>
             ))}
           </SelectContent>
-        </Select>
+        </Select> */}
         <Popover>
           <PopoverTrigger asChild>
             <Button
