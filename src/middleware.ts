@@ -10,15 +10,7 @@ export default withAuth({
     async authorized({ req }) {
       const sessionToken = req.cookies.get("next-auth.session-token");
 
-      if (sessionToken == null) return false;
-
-      const res = await fetch(
-        `${process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "http://localhost:3000"}/api/user/check-session?token=${sessionToken.value}`,
-      );
-
-      if (res.status === 404) return false;
-
-      return true;
+      return sessionToken != null;
     },
   },
   secret: env.NEXTAUTH_SECRET,

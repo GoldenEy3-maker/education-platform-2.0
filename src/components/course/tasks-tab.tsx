@@ -177,9 +177,7 @@ export const CourseTasksTab: React.FC<CourseTasksTabProps> = ({
 
         if (task.section === lastTask.section) {
           lastTasks.push(task);
-          acc[acc.length - 1] = lastTasks.sort(
-            (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
-          );
+          acc[acc.length - 1] = lastTasks;
         } else {
           acc.push([task]);
         }

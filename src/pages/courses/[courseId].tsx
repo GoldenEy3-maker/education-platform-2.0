@@ -84,7 +84,7 @@ const CoursePage: NextPageWithLayout = () => {
   const [searchValueTasks, setSearchValueTasks] = useState("");
   const [searchValueAnnouncements, setSearchValueAnnouncements] = useState("");
   const [sortValueTasks, setSortValueTasks] =
-    useState<SortValueTasksMap>("Recent");
+    useState<SortValueTasksMap>("Alphabet");
   const [filtersTasks, setFiltersTasks] = useState<
     Record<FiltersTasksMap, boolean>
   >({

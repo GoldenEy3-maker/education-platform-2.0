@@ -75,6 +75,9 @@ export const courseRouter = createTRPCRouter({
           },
           attachments: true,
           tasks: {
+            orderBy: {
+              section: "asc",
+            },
             include: {
               attachments: true,
               strictViewGroups: true,

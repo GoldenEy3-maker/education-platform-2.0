@@ -27,6 +27,7 @@ export const CourseOverviewTab: React.FC<CourseOverviewTabProps> = ({
             <h3 className="mb-2 border-b py-2 text-xl font-medium">Описание</h3>
             {description ? (
               <div
+                className="space-y-4 whitespace-pre-wrap"
                 dangerouslySetInnerHTML={{
                   __html: (JSON.parse(description) as Descendant[])
                     .map((node) => serializeHTML(node))

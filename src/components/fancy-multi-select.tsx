@@ -77,7 +77,7 @@ export const FancyMultiSelect: React.FC<FancyMultiSelectProps> = ({
   return (
     <Command
       onKeyDown={handleKeyDown}
-      className="overflow-visible bg-transparent"
+      className="h-auto overflow-visible bg-transparent"
     >
       <div className="group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring">
         <div className="flex flex-wrap gap-1">

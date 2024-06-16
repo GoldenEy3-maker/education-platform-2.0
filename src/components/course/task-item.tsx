@@ -134,7 +134,9 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
       <span className={cn(taskItemBadgeVariants({ type: props.type }))}>
         {TaskTypeContentMap[props.type]}
       </span>
-      <h4 className="mb-1 mt-3 text-lg font-medium">{props.title}</h4>
+      <h4 className="mb-1 mt-3 line-clamp-2 text-lg font-medium">
+        {props.title}
+      </h4>
       <div className="mb-1 flex h-9 items-center">
         <div className="mr-2 flex items-center gap-2 text-muted-foreground">
           <BiCalendar className="text-xl" />

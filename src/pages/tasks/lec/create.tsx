@@ -425,12 +425,12 @@ const CreateLecPage: NextPageWithLayout = () => {
                 </FormItem>
               )}
             />
-            <div className="flex flex-wrap gap-5">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(17rem,1fr))] gap-x-5 gap-y-4">
               <FormField
                 control={form.control}
                 name="section"
                 render={({ field }) => (
-                  <FormItem className="flex-1">
+                  <FormItem>
                     <FormLabel>Раздел курса</FormLabel>
                     {!getCreatedCoursesQuery.isLoading ? (
                       <Popover>
@@ -506,7 +506,7 @@ const CreateLecPage: NextPageWithLayout = () => {
                                   >
                                     <BiCheck
                                       className={cn(
-                                        "mr-2",
+                                        "mr-2 shrink-0",
                                         customSection === field.value
                                           ? "opacity-100"
                                           : "opacity-0",
@@ -532,7 +532,7 @@ const CreateLecPage: NextPageWithLayout = () => {
                 name="title"
                 disabled={isFormSubmitting || isSessionLoading}
                 render={({ field }) => (
-                  <FormItem className="flex-1">
+                  <FormItem>
                     <FormLabel>Заголовок</FormLabel>
                     <FormControl>
                       <Input placeholder="Заголовок лекции..." {...field} />
@@ -556,13 +556,13 @@ const CreateLecPage: NextPageWithLayout = () => {
                 />
               )}
             />
-            <div className="flex flex-wrap items-start gap-5">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(17rem,1fr))] gap-x-5 gap-y-4">
               <FormField
                 control={form.control}
                 name="strictViewUsers"
                 disabled={isFormSubmitting || isSessionLoading}
                 render={({ field: { value, onChange, ...field } }) => (
-                  <FormItem className="flex-1">
+                  <FormItem>
                     <FormLabel>Ограничения просмотра для студентов</FormLabel>
                     {!getStudentsQuery.isLoading ? (
                       <FormControl>
@@ -571,14 +571,17 @@ const CreateLecPage: NextPageWithLayout = () => {
                           value={value}
                           onValueChange={onChange}
                           options={
-                            getStudentsQuery.data?.map((user) => ({
-                              value: user.id,
-                              label: getPersonInitials(
-                                user.surname,
-                                user.name,
-                                user.fathername,
-                              ),
-                            })) ?? []
+                            getStudentsQuery.data
+                              ?.map((user) => ({
+                                value: user.id,
+                                label: getPersonInitials(
+                                  user.surname,
+                                  user.name,
+                                  user.fathername,
+                                ),
+                              }))
+                              .sort((a, b) => a.label.localeCompare(b.label)) ??
+                            []
                           }
                           {...field}
                         />
@@ -600,7 +603,7 @@ const CreateLecPage: NextPageWithLayout = () => {
                 name="strictViewGroups"
                 disabled={isFormSubmitting || isSessionLoading}
                 render={({ field: { value, onChange, ...field } }) => (
-                  <FormItem className="flex-1">
+                  <FormItem>
                     <FormLabel>Ограничения просмотра для групп</FormLabel>
                     {!getStudentsQuery.isLoading ? (
                       <FormControl>
@@ -612,6 +615,8 @@ const CreateLecPage: NextPageWithLayout = () => {
                             getStudentsQuery.data
                               ?.reduce<RouterOutputs["user"]["getStudents"]>(
                                 (acc, user) => {
+                                  if (!user.groupId) return acc;
+
                                   if (
                                     acc.find(
                                       (u) => u.groupId === user.groupId,
@@ -624,10 +629,21 @@ const CreateLecPage: NextPageWithLayout = () => {
                                 },
                                 [],
                               )
-                              .map((user) => ({
-                                value: user.groupId!,
-                                label: user.group!.name,
-                              })) ?? []
+                              .sort((a, b) =>
+                                b.group!.name.localeCompare(
+                                  a.group!.name,
+                                  undefined,
+                                  {
+                                    numeric: true,
+                                  },
+                                ),
+                              )
+                              .map((user) => {
+                                return {
+                                  value: user.groupId!,
+                                  label: user.group!.name,
+                                };
+                              }) ?? []
                           }
                           {...field}
                         />

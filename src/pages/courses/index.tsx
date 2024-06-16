@@ -127,6 +127,7 @@ const CoursesEmpty: React.FC<CoursesEmptyProps> = ({ icon, text }) => {
 
 const CoursesPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
+
   const [searchValue, setSearchValue] = useQueryState(
     "search",
     parseAsString.withDefault(""),
@@ -150,7 +151,9 @@ const CoursesPage: NextPageWithLayout = () => {
 
   const subscriptionsData =
     getAllCoursesQuery.data?.filter((course) =>
-      course.subscribers.some((sub) => sub.userId === session?.user.id),
+      session?.user.role === "Student"
+        ? course.subscribers.some((sub) => sub.userId === session?.user.id)
+        : course.authorId === session?.user.id,
     ) ?? [];
   const favoritesData =
     getAllCoursesQuery.data?.filter((course) =>
