@@ -1,14 +1,14 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { signIn } from "next-auth/react"
-import Link from "next/link"
-import { useRouter } from "next/router"
-import React, { useState } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import { z } from "zod"
-import { Avatar } from "~/components/avatar"
-import { CircularProgress } from "~/components/circular-progress"
-import { Button } from "~/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Avatar } from "~/components/avatar";
+import { CircularProgress } from "~/components/circular-progress";
+import { Button } from "~/components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,11 +16,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form"
-import { Input } from "~/components/ui/input"
-import { ScaffoldLayout } from "~/layouts/scaffold"
-import { PagePathMap } from "~/libs/enums"
-import { type NextPageWithLayout } from "./_app"
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { ScaffoldLayout } from "~/layouts/scaffold";
+import { PagePathMap } from "~/libs/enums";
+import { type NextPageWithLayout } from "./_app";
+import { CommissionDialogDrawer } from "~/components/commission-dialog-drawer";
 
 const formSchema = z.object({
   login: z.string().min(1, "Обязательное поле!"),
@@ -100,9 +101,21 @@ const AuthPage: NextPageWithLayout = () => {
             <h3 className="mb-1 text-center text-xl font-medium">
               Авторизация
             </h3>
-            <p className="mb-4 text-center text-sm text-muted-foreground">
+            <p className="mb-2 text-center text-sm text-muted-foreground">
               Введите свой корпоративный логин и пароль от учетной записи АГУ
             </p>
+            <CommissionDialogDrawer
+              onSelect={({ login, password }) => {
+                form.setValue("login", login);
+                form.setValue("password", password);
+              }}
+            >
+              <div className="flex items-center justify-center">
+                <Button type="button" variant="link">
+                  Для комиссии
+                </Button>
+              </div>
+            </CommissionDialogDrawer>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}

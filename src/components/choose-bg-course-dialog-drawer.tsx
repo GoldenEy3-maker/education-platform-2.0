@@ -91,7 +91,7 @@ export const ChooseBgCourseDialogDrawer: React.FC<
             Изображение можно будет понять в любой момент.
           </DrawerDescription>
         </DrawerHeader>
-        <div className="grid max-h-[calc(100vh-15rem)] gap-2 overflow-auto xs:grid-cols-[repeat(auto-fill,minmax(12rem,1fr))]">
+        <div className="grid max-h-[calc(100vh-15rem)] gap-2 overflow-auto p-4 pt-4 xs:grid-cols-[repeat(auto-fill,minmax(12rem,1fr))]">
           {preloadedImages.map((imageData, index) => (
             <button
               type="button"

@@ -61,6 +61,7 @@ export const ScheduleItem: React.FC<ScheduleItemProps> = ({
   teacher,
   classRoom,
   pavilion,
+  pavilionId,
   type,
   status,
   index,
