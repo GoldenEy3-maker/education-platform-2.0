@@ -3,7 +3,13 @@ import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { BiBell, BiCheckDouble, BiCog } from "react-icons/bi";
-import { TbBellZFilled } from "react-icons/tb";
+import {
+  TbBell,
+  TbBellZFilled,
+  TbChecks,
+  TbSettings,
+  TbSettings2,
+} from "react-icons/tb";
 import { cn, type ValueOf } from "~/libs/utils";
 import { Avatar } from "./avatar";
 import { Badge } from "./ui/badge";
@@ -110,7 +116,7 @@ export const NotificationPopover = () => {
           size="icon"
           className="data-[state=open]:bg-accent"
         >
-          <BiBell className="text-xl" />
+          <TbBell className="text-xl" />
           <Badge className="absolute right-0 top-0 flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1 py-0 text-xs">
             10
           </Badge>
@@ -126,7 +132,7 @@ export const NotificationPopover = () => {
             disabled={isLoading}
           >
             <span>Прочитать все</span>
-            <BiCheckDouble className="text-base" />
+            <TbChecks className="text-base" />
           </Button>
         </header>
         {session?.user ? (
@@ -175,7 +181,7 @@ export const NotificationPopover = () => {
                 disabled={isLoading}
                 className="rounded-full"
               >
-                <BiCog className="text-lg" />
+                <TbSettings2 className="text-lg" />
               </Button>
             </div>
             <TabsContent

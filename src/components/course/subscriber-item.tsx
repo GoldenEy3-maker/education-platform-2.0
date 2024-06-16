@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
+import { getFirstLettersUserCredentials } from "~/libs/utils";
 
 type SubscriberItemProps = {
   isAuthor: boolean;
@@ -71,7 +72,11 @@ export const SubscriberItem: React.FC<SubscriberItemProps> = ({
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="flex flex-col items-center ">
-        <Avatar fallback="КД" className="h-16 w-16" />
+        <Avatar
+          fallback={getFirstLettersUserCredentials(user.surname, user.name)}
+          src={user.image}
+          className="h-16 w-16"
+        />
         <p className="font-medium">
           {user.surname} {user.name}
         </p>

@@ -22,6 +22,13 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScheduleItem, ScheduleItemSkeleton } from "./schedule-item";
+import {
+  TbBallpen,
+  TbCalendarTime,
+  TbCategory2,
+  TbFlask,
+  TbNotes,
+} from "react-icons/tb";
 
 const TabsMap = {
   All: "All",
@@ -259,25 +266,25 @@ const LessionsEmpty: React.FC<LessionsEmptyProps> = ({ icon, text }) => {
 const EmptyDataMap: Record<TabsMapKeys, React.ReactNode> = {
   All: (
     <LessionsEmpty
-      icon={<BiSolidDetail className="text-7xl text-muted-foreground" />}
+      icon={<TbCategory2 className="text-7xl text-muted-foreground" />}
       text="На этот день у вас не запланировано занятий."
     />
   ),
   Lec: (
     <LessionsEmpty
-      icon={<BiSolidBookBookmark className="text-7xl text-muted-foreground" />}
+      icon={<TbNotes className="text-7xl text-muted-foreground" />}
       text="На этот день у вас не запланировано лекций."
     />
   ),
   Lab: (
     <LessionsEmpty
-      icon={<BiSolidFlask className="text-7xl text-muted-foreground" />}
+      icon={<TbFlask className="text-7xl text-muted-foreground" />}
       text="На этот день у вас не запланировано лабораторных."
     />
   ),
   Pract: (
     <LessionsEmpty
-      icon={<BiSolidWidget className="text-7xl text-muted-foreground" />}
+      icon={<TbBallpen className="text-7xl text-muted-foreground" />}
       text="На этот день у вас не запланировано практических."
     />
   ),
@@ -289,25 +296,25 @@ const TabsTriggerMap: Record<
 > = {
   All: {
     icon: (
-      <BiSolidDetail className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+      <TbCategory2 className="shrink-0 text-xl group-data-[state=active]:text-primary" />
     ),
     text: "Все",
   },
   Lec: {
     icon: (
-      <BiSolidBookBookmark className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+      <TbNotes className="shrink-0 text-xl group-data-[state=active]:text-primary" />
     ),
     text: "Лекции",
   },
   Lab: {
     icon: (
-      <BiSolidFlask className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+      <TbFlask className="shrink-0 text-xl group-data-[state=active]:text-primary" />
     ),
     text: "Лаб",
   },
   Pract: {
     icon: (
-      <BiSolidWidget className="shrink-0 text-xl group-data-[state=active]:text-primary" />
+      <TbBallpen className="shrink-0 text-xl group-data-[state=active]:text-primary" />
     ),
     text: "Практ",
   },
@@ -316,14 +323,6 @@ const TabsTriggerMap: Record<
 export const ScheduleSection: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const isLoading = false;
-
-  // useEffect(() => {
-  //   setIsLoading(true);
-  //   getLessionsPromise(currentDate.toDate())
-  //     .then((data) => setData(data))
-  //     .catch((err) => console.error(err))
-  //     .finally(() => setIsLoading(false));
-  // }, [currentDate]);
 
   const incrementMonth = () => {
     setCurrentDate((date) => date.add(1, "M"));
@@ -368,7 +367,7 @@ export const ScheduleSection: React.FC = () => {
   return (
     <section className="z-10 row-span-2 grid grid-rows-[auto_auto_1fr] rounded-lg border bg-background px-4 py-3 shadow">
       <header className="flex items-center gap-2 overflow-hidden pb-3">
-        <BiCalendar className="text-xl" />
+        <TbCalendarTime className="text-xl" />
         <h4 className="flex-grow truncate text-lg font-semibold">Расписание</h4>
         <Button variant="outline" type="button" asChild className="gap-1">
           <Link href={PagePathMap.Schedule}>

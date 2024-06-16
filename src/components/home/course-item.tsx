@@ -1,61 +1,64 @@
-import Link from "next/link"
-import { cn, getPersonInitials } from "~/libs/utils"
-import { Avatar } from "../avatar"
-import { CircularProgress } from "../circular-progress"
-import { Button } from "../ui/button"
-import { Skeleton } from "../ui/skeleton"
+import Link from "next/link";
+import { cn, getPersonInitials } from "~/libs/utils";
+import { Avatar } from "../avatar";
+import { CircularProgress } from "../circular-progress";
+import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../ui/tooltip"
+} from "../ui/tooltip";
+import { type Prisma } from "@prisma/client";
+import { PagePathMap } from "~/libs/enums";
 
 type CourseItemProps = {
   id: string;
   title: string;
   thumbnail?: string;
-  author: { surname: string; name: string; fathername?: string };
+  author: Prisma.UserGetPayload<{
+    select: { surname: true; name: true; fathername: true };
+  }>;
   progress?: number;
   className?: string;
 };
 
-export const CourseItem: React.FC<CourseItemProps> = (props) => {
+export const CourseItem: React.FC<CourseItemProps> = ({
+  id,
+  title,
+  thumbnail,
+  author,
+  progress,
+  className,
+}) => {
   return (
     <Button
       asChild
       variant="ghost"
       className={cn(
         "grid h-auto w-full grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3",
-        props.className,
+        className,
       )}
     >
-      <Link href="#">
-        <Avatar
-          fallback={props.title.at(0)}
-          src={props.thumbnail}
-          className="row-span-2"
-        />
-        <p className="truncate text-base">{props.title}</p>
+      <Link href={PagePathMap.Course + id}>
+        <Avatar fallback={title.at(0)} src={thumbnail} className="row-span-2" />
+        <p className="truncate text-base">{title}</p>
         <div className="col-start-2 row-start-2 flex items-center gap-2 overflow-hidden">
           <span className="truncate text-muted-foreground">
-            {getPersonInitials(
-              props.author.surname,
-              props.author.name,
-              props.author.fathername,
-            )}
+            {getPersonInitials(author.surname, author.name, author.fathername)}
           </span>
-          {props.progress ? (
+          {progress ? (
             <TooltipProvider>
               <Tooltip delayDuration={100}>
                 <TooltipTrigger>
                   <CircularProgress
-                    value={props.progress}
+                    value={progress}
                     strokeWidth={7}
                     className="text-xl text-primary"
                   />
                 </TooltipTrigger>
-                <TooltipContent>{props.progress}%</TooltipContent>
+                <TooltipContent>{progress}%</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           ) : null}

@@ -114,21 +114,22 @@ export const DeadlinesSection: React.FC = () => {
                 <DeadlineItem
                   title="Лабораторная работа #1"
                   course="Иностранный язык в профессиональной деятельности"
-                  date={new Date("5/30/2024")}
+                  date={new Date("6/30/2024")}
                 />
                 <DeadlineItem
-                  title="Лабораторная работа #1"
+                  title="Лабораторная работа #2"
                   course="Иностранный язык в профессиональной деятельности"
                   date={new Date("3/26/2024")}
                   isCompleted
                 />
                 <DeadlineItem
-                  title="Лабораторная работа #1"
+                  title="Лабораторная работа #3"
                   course="Иностранный язык в профессиональной деятельности"
                   date={new Date("3/26/2024")}
+                  isCompleted
                 />
                 <DeadlineItem
-                  title="Лабораторная работа #1"
+                  title="Лабораторная работа #4"
                   course="Иностранный язык в профессиональной деятельности"
                   date={new Date("3/26/2024")}
                 />

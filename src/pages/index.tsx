@@ -1,4 +1,3 @@
-import { BiHelpCircle } from "react-icons/bi";
 import { CoursesSection } from "~/components/home/courses-section";
 import { DeadlinesSection } from "~/components/home/deadlines-section";
 import { ScheduleSection } from "~/components/home/schedule-section";
@@ -6,6 +5,7 @@ import { Separator } from "~/components/ui/separator";
 import { MainLayout } from "~/layouts/main";
 import { ScaffoldLayout } from "~/layouts/scaffold";
 import { type NextPageWithLayout } from "./_app";
+import { TbHelp } from "react-icons/tb";
 
 const HomePage: NextPageWithLayout = () => {
   return (
@@ -15,7 +15,7 @@ const HomePage: NextPageWithLayout = () => {
       <ScheduleSection />
       <section className="rounded-lg border bg-background px-4 py-3 shadow">
         <header className="flex items-center gap-2 pb-3">
-          <BiHelpCircle className="text-xl" />
+          <TbHelp className="text-xl" />
           <h4 className="flex-grow text-lg font-semibold">
             Не знаешь с чего начать?
           </h4>

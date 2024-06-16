@@ -12,11 +12,14 @@ export const ChatLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const router = useRouter();
 
   return (
-    <main className="grid grid-cols-1 min-[1120px]:grid-cols-[20rem_1fr]">
+    <main className="grid h-[calc(100dvh-6rem)] grid-cols-1 min-[1120px]:grid-cols-[20rem_1fr]">
       <aside
-        className={cn("min-[1120px]:border-r min-[1120px]:p-4", {
-          "max-[1120px]:hidden": router.asPath.includes(PagePathMap.Chat),
-        })}
+        className={cn(
+          "flex h-[inherit] flex-col min-[1120px]:border-r min-[1120px]:p-4",
+          {
+            "max-[1120px]:hidden": router.asPath.includes(PagePathMap.Chat),
+          },
+        )}
       >
         <header className="flex items-center justify-between gap-2">
           <h1 className="text-xl font-medium">Сообщения</h1>
@@ -29,7 +32,7 @@ export const ChatLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           leadingIcon={<BiSearch className="text-xl" />}
           className="my-3"
         />
-        <div className="custom-scrollbar max-h-[calc(100vh-12rem)] space-y-1 overflow-auto min-[1120px]:max-h-[calc(100vh-14.5rem)]">
+        <div className="custom-scrollbar space-y-1 overflow-auto">
           <Button
             asChild
             variant="ghost"

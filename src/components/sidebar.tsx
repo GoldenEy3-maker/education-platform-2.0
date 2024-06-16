@@ -18,6 +18,15 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Skeleton } from "./ui/skeleton";
 import { Switch } from "./ui/switch";
+import {
+  TbCalendarTime,
+  TbHelp,
+  TbHome,
+  TbMessage,
+  TbMoon,
+  TbNotebook,
+  TbSettings,
+} from "react-icons/tb";
 
 export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
   className,
@@ -70,34 +79,38 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
       <nav className="flex flex-col gap-2">
         <Button asChild className="w-full justify-normal gap-2" variant="ghost">
           <Link href={PagePathMap.Home}>
-            <BiHome className="text-xl" /> <span>Главная</span>
+            <TbHome className="text-xl" /> <span>Главная</span>
           </Link>
         </Button>
         <Button asChild className="w-full justify-normal gap-2" variant="ghost">
           <Link href={PagePathMap.Courses}>
-            <BiBook className="text-xl" /> <span>Курсы</span>
+            <TbNotebook className="text-xl" /> <span>Курсы</span>
           </Link>
         </Button>
         <Button asChild className="w-full justify-normal gap-2" variant="ghost">
           <Link href={PagePathMap.Schedule}>
-            <BiCalendarAlt className="text-xl" /> <span>Расписание</span>
+            <TbCalendarTime className="text-xl" /> <span>Расписание</span>
           </Link>
         </Button>
         <Button asChild className="w-full justify-normal gap-2" variant="ghost">
           <Link href={PagePathMap.HomeChat}>
-            <BiMessage className="text-xl" /> <span>Сообщения</span>
+            <TbMessage className="text-xl" /> <span>Сообщения</span>
           </Link>
         </Button>
         <div className="relative mt-auto rounded-lg p-4">
           <div className="mb-2 flex items-center gap-2">
-            <BiHelpCircle className="text-xl" /> <span>Нужна помощь?</span>
+            <TbHelp className="text-xl" /> <span>Нужна помощь?</span>
           </div>
           <p className="text-sm">
             <Link href={"#"} className="text-primary">
               Свяжитесь
             </Link>{" "}
             с нашими экспертами или{" "}
-            <Link href="#" className="text-primary">
+            <Link
+              href="https://www.youtube.com/watch?v=j70dL0JZXGI"
+              target="_blank"
+              className="text-primary"
+            >
               посмотрите обучающий видеоролик
             </Link>
             .
@@ -117,7 +130,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
                   htmlFor="dark-theme"
                   className="pointer-events-none flex items-center gap-2"
                 >
-                  <BiMoon className="text-xl" />
+                  <TbMoon className="text-xl" />
                   <span>Темная тема</span>
                 </Label>
                 <Switch id="dark-theme" checked={theme === "dark"} />
@@ -132,7 +145,7 @@ export const Sidebar: React.FC<React.ComponentProps<"aside">> = ({
             variant="ghost"
           >
             <Link href={PagePathMap.Settings}>
-              <BiCog className="text-xl" /> <span>Настройки</span>
+              <TbSettings className="text-xl" /> <span>Настройки</span>
             </Link>
           </Button>
           <SignOutAlertDrawer>
